@@ -482,6 +482,9 @@ li {
     border: none;
     font-family: 'MontserratRegular';
     font-size: 16px;
+    word-break: break-word;
+    white-space: pre-line;
+    display: inline-flex;
 }
 #searchPropertyListing .block {
     /*border-bottom: 1px solid #463082;*/
@@ -500,7 +503,7 @@ li {
     z-index: 0;
     /* Set z-index to 0 as it will be on a layer below the contact form */
 }
-.gmnoprint{
+#googlemap .gmnoprint{
     display: none;
 }
 #currentUser {
