@@ -55,14 +55,15 @@ width: 100%;*/
     height: 45px;
 }
 .navbar-toggler {
-    color: #333 !important;
+    color: #333;
     float: right;
     font-size: 15px;
     margin-right: 10px;
-    padding: 3px 8px;
+    padding: 5px 3px;
+    border: none !important;
 }
 .navbar-default {
-    background-color: transparent !important;
+    background-color: transparent;
     /*background-color: #edeede;*/
     
     border: 0 none !important;
@@ -615,6 +616,10 @@ li {
 .activateDiv {
     top: 32px;
 }
+.isActiveLabel, #uploadPropertyBtn{
+    margin-top: 27px;
+    padding: 10px;
+}
 .modal-footer .toggle-on.btn,
 .modal-footer .toggle.btn-success {
     background-color: #5cb85c;
@@ -1012,6 +1017,17 @@ ul.topnav1 li.icon {
     height: 100%;
     opacity: 0.4;
 }
+.managePropertyTopSec, .propertyListTopSec{
+    position: absolute;
+}   
+
+.managePropertyTopSec{
+    top: 1%;
+    left: 36%;   
+}
+.managePropertyTopSec h2{
+    font-size: 20px !important;
+}
 /*.glyphicon {
   font-size: 25px;
 }*/
@@ -1282,7 +1298,7 @@ div.pac-container {
 }
 textarea {
     resize: none;
-    height: 140px !important;
+    height: 70px !important;
 }
 .tooltip.customClass .tooltip-inner {
     color: #880000;
@@ -1298,7 +1314,7 @@ input[type=radio] + label,
 input[type=checkbox] + label {
     display: inline-block;
     margin: 2px;
-    padding: 4px 12px;
+    padding: 4px 8px;
     font-size: 12px;
     line-height: 20px;
     color: #000;
@@ -2055,6 +2071,12 @@ multiselect .dropdown-menu > li > a i {
         left: 30%;
         width: 30%;
     }
+    .managePropertyTopSec{
+        left: 29%;   
+    }
+    .managePropertyTopSec h2{
+        font-size: 18px !important;
+    }
 }
 @media screen and (max-width: 991px) and (min-width: 0px) {
     .navbar-brand {
@@ -2079,6 +2101,12 @@ width: 100%;*/
         left: 25%;
         width: 28%;
     }
+    .managePropertyTopSec{
+        left: 30%;   
+    }
+    .managePropertyTopSec h2{
+        font-size: 14px !important;
+    }
 }
 @media screen and (max-width: 991px) and (min-width: 768px) {
     #filtercontainer {
@@ -2096,6 +2124,9 @@ width: 100%;*/
 @media screen and (max-width: 767px) and (min-width: 0px) {
     .collapse.in {
         margin-top: 0px;
+    }
+    section.container{
+        padding: 0px !important;
     }
     #maprentalsNavbar,
     .navbar-toggleable-xs {
@@ -2115,6 +2146,11 @@ width: 100%;*/
     }
     .navbar-toggle {
         margin-bottom: 0px;
+        color: #fff !important;
+        padding: 7px 3px 5px;
+    }
+    .navbar-default {
+        background-color: #463082;
     }
     .navbar-default .navbar-header {
         margin-top: 10px;
@@ -2231,13 +2267,20 @@ width: 100%;*/
         position: absolute;
         /*margin-top: 8px;*/
     }
-    .goToContactButton{
-
-    }
     .propertyListTopSec{
-        position: absolute;
         top: 12px;
         left: 35%;
+    }
+    .managePropertyTopSec{
+        top: 10px;
+        left: 35%;  
+    }
+    .managePropertyTopSec h2{
+        font-size: 14px !important;
+        color: #fff;
+    }
+    .isActiveLabel, #uploadPropertyBtn{
+        margin-top: 8px;
     }
     .goToContactButton{
         margin-left: 138px;
@@ -2257,6 +2300,10 @@ width: 100%;*/
     
     .modal-body{
         padding: 20px;
+    }
+
+    .modal-footer, .modal-footer .container{
+        padding: 5px 0px;
     }
 
     .dz-details img {
@@ -2325,6 +2372,18 @@ width: 100%;*/
     }
     .propertyListTopSec{
         left: 22%;
+    }
+    .managePropertyTopSec{
+        left: 20%;   
+    }
+    .managePropertyTopSec{
+        font-size: 12px !important;
+    }
+    input[type=radio] + label,
+    input[type=checkbox] + label {
+        margin: 1px;
+        padding: 4px 8px;
+        font-size: 10px;
     }
 }
 @media screen and (max-width: 400px) and (min-width: 0px) {
