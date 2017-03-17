@@ -1776,6 +1776,9 @@ ngb-datepicker {
     border-color: #e4e5e7 !important;
     padding: 5px !important;
 }
+.ngxmdp-custome .btn-green{
+    background-color: #2f0 !important;
+}
 .full button span {
     background-color: limegreen;
     border-radius: 32px;
