@@ -80,6 +80,10 @@ width: 100%;*/
 .navbar-nav > li > a {
     padding: 8px 10px 0 10px;
 }
+
+.navbar-nav > li.active > a{
+    color: #333 !important;
+}
 .dropdown:hover .dropdown-menu {
     /*display: block;*/
 }
@@ -295,6 +299,14 @@ li {
     color: #fff;
 }
 #matchingList {
+   /* position: absolute;
+    left: -60px;
+    z-index: 2;
+    background: transparent;
+    color: #fff;
+    bottom: 0px !important;
+    border-bottom: 95px solid #463082;
+    border-right: 95px solid transparent;*/
     position: absolute;
     background-color: #463082;
     bottom: 35px;
@@ -378,6 +390,7 @@ li {
     margin: 0 auto;
     vertical-align: middle;
 }
+
 .gm-style-iw > div {
     /*height: auto !important;*/
     
@@ -547,8 +560,8 @@ li {
     bottom: 20px;
     left: 0;
     display: block;
-    width: 110px;
-    height: 24px;
+    width: 78px;
+    height: 35px;
     background-color: #ED2028;
     border-radius: 15px;
     -webkit-box-shadow: inset 0 0 0 1px #white;
@@ -566,8 +579,8 @@ li {
     top: 5px;
     left: 5px;
     display: block;
-    width: 14px;
-    height: 15px;
+    width: 20px;
+    height: 24px;
     content: "";
     background-color: white;
     border-radius: 30px;
@@ -577,8 +590,8 @@ li {
     -webkit-transition: all .25s ease-in-out;
     -moz-transition: all .25s ease-in-out;
     transition: all .25s ease-in-out;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
 }
 .toggle input[type="checkbox"]:disabled + .handle,
 .toggle input[type="radio"]:disabled + .handle,
@@ -592,17 +605,17 @@ li {
 }
 .toggle input[type="checkbox"]:checked + .handle:before,
 .toggle input[type="radio"]:checked + .handle:before {
-    width: 112px;
+    width: 80px;
     background-color: #22B14C;
     content: "";
     top: 0px;
-    height: 25px;
+    height: 35px;
     left: -2px;
     border-radius: 15px;
 }
 .toggle input[type="checkbox"]:checked + .handle:after,
 .toggle input[type="radio"]:checked + .handle:after {
-    left: 90px;
+    left: 50px;
     content: "";
     color: green;
     -webkit-box-shadow: inset 0 0 0 1px #f5f7fa, 1px 1px 1px #c7ccd3;
@@ -616,18 +629,57 @@ li {
     left: 12px;
 }
 .toggleValue {
-    top: 3px;
+    top: 11px;
     position: absolute;
-    left: 28px;
+    left: 32px;
     color: #000;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: bolder;
 }
+.toggleValue.Active {
+    left: 10px;
+}
+
+.bigToggle .toggleValue.Active{
+    left: 20px;
+    top: 5px;
+}
+
+.bigToggle .toggleValue {
+    top: 5px;
+    font-size: 11px;
+}
+
+.bigToggle.toggle .handle{
+    width: 100px;
+    height: 23px;
+    font-size: 11px;
+}
+
+.bigToggle.toggle input[type="checkbox"]:checked + .handle:before,
+.bigToggle.toggle input[type="radio"]:checked + .handle:before {
+    width: 105px;
+    height: 23px;
+}
+
+.bigToggle.toggle input[type="checkbox"]:checked + .handle:after,
+.bigToggle.toggle input[type="radio"]:checked + .handle:after {
+    left: 83px;
+}
+
+.bigToggle.toggle .handle:before,
+.bigToggle.toggle .handle:after {
+    height: 15px;
+    width: 14px;
+    top: 3.5px;
+    left: 3px;
+}
+
 .activateDiv {
-    top: 32px;
+    top: 12px;
 }
 .isActiveLabel, #uploadPropertyBtn{
-    margin-top: 27px;
+    margin-top: 12px;
     padding: 10px;
 }
 .modal-footer .toggle-on.btn,
@@ -1214,15 +1266,16 @@ div.pac-container {
 }
 #dropzoneFileUpload {
     cursor: pointer;
-    padding: 10px 5px !important;
-    margin-bottom: 10px;
+    padding: 2px 5px !important;
+    margin-bottom: 0px;
 }
 .dropzone .dz-preview {
     margin: 6px !important;
+    height: 100px;
 }
 .dz-details img {
-    max-width: 120px;
-    height: 110px;
+    max-width: 107px;
+    height: 100px;
     border-radius: 20px;
 }
 .dz-message span{
@@ -1234,12 +1287,12 @@ div.pac-container {
     cursor: pointer !important;
     font-size: 12px;
     height: 20px;
-    left: 25px;
+    left: 20px;
     margin-left: 35px;
     margin-top: 5px !important;
     padding: 4px 3px 1px;
     position: relative;
-    top: -110px;
+    top: -98px;
     width: 20px;
     z-index: 20;
 }
@@ -1264,9 +1317,9 @@ div.pac-container {
     }
 }
 .dropzone {
-    background: #f9fbfe none repeat scroll 0 0 !important;
-    border: 2px dashed #c8cbce !important;
-    color: #97a1a8 !important;
+    background: #DDDDDD none repeat scroll 0 0 !important;
+    border: 2px dashed #333 !important;
+    color: #333 !important;
 }
 #propertyForm input[type=radio],
 #propertyForm input[type=checkbox],
@@ -1309,6 +1362,12 @@ div.pac-container {
 #propertyForm input#DateAvailable,
 #updatePropertyFrm input#DateAvailable {
     width: 170px;
+}
+#propertyForm .modal-body{
+    padding: 12px 15px;
+}
+#propertyForm .modal-footer{
+    padding: 0px 15px 10px;
 }
 .ng2-datetime-picker {
     background-color: blue;
@@ -1529,6 +1588,9 @@ input::-webkit-inner-spin-button {
 .borderless th {
     border: none !important;
 }
+.mrg0 {
+    margin: 0px !important;
+}
 .mrg15 {
     margin: 15px;
 }
@@ -1571,6 +1633,21 @@ input::-webkit-inner-spin-button {
 .pad0 {
     padding: 0px !important;
 }
+.pad3{
+    padding: 3px !important;
+}
+.pad5 {
+    padding: 5px !important;
+}
+.pad10 {
+    padding: 10px !important;
+}
+.pad15 {
+    padding: 15px !important;
+}
+.pad20 {
+    padding: 20px !important;
+}
 .padT7 {
     padding-top: 7px !important;
 }
@@ -1591,6 +1668,9 @@ input::-webkit-inner-spin-button {
 }
 .fs15 {
     font-size: 15px !important;
+}
+.fs20 {
+    font-size: 20px !important;
 }
 .br0 {
     border-radius: 0px !important;
@@ -2152,6 +2232,15 @@ width: 100%;*/
     }
 }
 @media screen and (max-width: 767px) and (min-width: 0px) {
+    .pad0-xs{
+        padding: 0px;
+    }
+    .pad5-xs{
+        padding: 5px;
+    }
+    .pad10-xs{
+        padding: 10px;
+    }
     .collapse.in {
         margin-top: 0px;
     }
@@ -2214,7 +2303,7 @@ width: 100%;*/
     }
 
     li.unAuthMenus{
-        background-color: #A349A4;
+        background-color: #463082;
     }
 
     .homeToListRentals{
@@ -2250,7 +2339,7 @@ width: 100%;*/
         margin-right: 5px;
     }
     .col-sm-12 hr {
-        margin: 10px 0px;
+        margin: 5px 0px;
     }
     
     .table-thumb {
@@ -2300,13 +2389,19 @@ width: 100%;*/
         height: 120px;
     }
     .item-block #property-slider img {
-        height: auto;
-        width: 100%;
+        height: 177px;
+        width: auto;
+    }
+    .carousel-inner>.item{
+        max-height: : 250px;
     }
     .backToList {
         /*left: 30%;*/
         position: absolute;
         /*margin-top: 8px;*/
+        padding: 0px 10px;
+        background-color: #30215C;
+        height: 34px;
     }
     .propertyListTopSec{
         top: 12px;
@@ -2325,8 +2420,11 @@ width: 100%;*/
         color: #fff !important;
     }
 
+    .activateDiv {
+        top: 25px;
+    }    
     .isActiveLabel, #uploadPropertyBtn{
-        margin-top: 8px;
+        margin-top: 0px;
     }
     .goToContactButton{
         margin-left: 138px;
@@ -2353,7 +2451,13 @@ width: 100%;*/
     }
 
     .dz-details img {
-        max-width: 115px;
+        max-width: 88px;
+        height: 90px;
+    }
+
+    #dropzoneFileUpload .glyphicon-remove {
+        left: 10px;
+        top: -88px;
     }
 
     #Tabs {
@@ -2362,6 +2466,10 @@ width: 100%;*/
 
     #propertyDetailMapDiv sebm-google-map{
         height: 177px;
+    }
+
+    .ngxmdp .headertodaybtn{
+        display: none !important;
     }
 }
 @media screen and (max-width: 500px) and (min-width: 0px) {
