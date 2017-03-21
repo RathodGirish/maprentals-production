@@ -2312,6 +2312,7 @@ width: 100%;*/
     #morefilter {
         margin-top: 0px !important;
         background-color: #DDDDDD;
+        height: 390px !important;
     }
     
     #propertyDetail .thumbnail,
