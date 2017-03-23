@@ -312,7 +312,7 @@ li {
     bottom: 35px;
     color: #fff;
     left: 20px;
-    z-index: 1;
+    z-index: 0;
     padding: 10px;
     font-weight: bold !important;
     border-radius: 5px;
@@ -454,6 +454,10 @@ li {
 .col-sm-12 hr {
     border-color: #463082;
     margin: 10px 0;
+}
+.infowindowBreak hr {
+    border: none;
+    margin: 10px 0 5px;
 }
 .lightgray {
     border-color: lightgray !important;
@@ -2331,7 +2335,8 @@ width: 100%;*/
     #morefilter {
         margin-top: 0px !important;
         background-color: #DDDDDD;
-        height: 390px !important;
+        height: 408px !important;
+        position: relative;
     }
     
     #propertyDetail .thumbnail,
@@ -2509,6 +2514,34 @@ width: 100%;*/
     .popover-infowindow { 
         margin-top: 240px !important; 
     }
+
+    #managePropertySection input[type=radio] + label,
+    input[type=checkbox] + label {
+        margin: 1px;
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    #morefilter input[type=radio] + label,
+    input[type=checkbox] + label {
+        margin: 1px;
+        padding: 6px 16px;
+        font-size: 12px;
+    }
+
+    input[type=radio] + label:hover,
+    input[type=checkbox] + label:hover {
+        background-color: #EEEEEE;
+        color: #333;
+    }
+
+    input[type=radio]:checked + label, input[type=checkbox]:checked + label{
+        color: #fff;
+    }
+
+    .ngxmdp .selector{
+        width: 210px !important;
+    }
 }
 @media screen and (max-width: 500px) and (min-width: 0px) {
     .navbar-toggle {
@@ -2571,12 +2604,7 @@ width: 100%;*/
     .managePropertyTopSec{
         font-size: 12px !important;
     }
-    input[type=radio] + label,
-    input[type=checkbox] + label {
-        margin: 1px;
-        padding: 4px 8px;
-        font-size: 10px;
-    }
+    
 }
 @media screen and (max-width: 400px) and (min-width: 0px) {
     
