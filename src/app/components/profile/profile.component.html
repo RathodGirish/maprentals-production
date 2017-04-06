@@ -1,0 +1,116 @@
+<div id="cover" *ngIf="loading==true"></div>
+<section class="container mrgT15" id="profileSection">
+    <div class="row">
+        <div class="pad0">
+            <p ng-bind="_success_msg" class="{{_success_msg != '' ? 'mrgT10': ''}} text-success clearfix col-sm-12">{{_success_msg}}</p>
+            <p ng-bind="_fail_msg" class="{{_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{_fail_msg}}</p>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <!-- Div Panel -->
+            <div class="panel panel-default">
+                <!-- Panel Heading -->
+                <div class="panel-heading col-sm-12 col-xs-12">
+                    <div class="panel-title">My Profile</div>
+                </div>
+                <!-- End panel heading -->
+                <!-- Panel body -->
+                <div class="panel-body">
+                    <form class="form-horizontal" id="updateProfileForm" #updateProfileForm="ngForm" novalidate (ngSubmit)="updateProfile($event, updateProfileForm.value, updateProfileForm.valid)">
+                        <div class="container-fluid">
+                            <hr>
+                            <p id="update_profile_success_result" class="text-success text-center"></p>
+                            <p id="update_profile_fail_result" class="text-danger text-center"></p>
+                            <div class="row">
+                                <div class="col-md-12 personal-info col-sm-12 mrgT10">
+                                    <div class="form-group">
+                                        <label for="Name" class="col-md-3 control-label">Name:</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="Name" name="FirstName" placeholder="Name" [ngModel]="profile.FirstName" #FirstName="ngModel"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="Company" class="col-md-3 control-label">Company:</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="Company" name="Company" placeholder="Company"  [ngModel]="profile.Company" #Company="ngModel"/>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="Phone" class="col-md-3 control-label">Phone:</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="Contact" name="Contact" placeholder="Phone"  [ngModel]="profile.Contact" #Contact="ngModel"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Landlord Type:</label>
+                                        <div class="col-md-8">
+                                            <input type="radio" id="privateOwner" class="" name="LandlordType" value="Private Owner" [ngModel]="profile.LandlordType" #LandlordType="ngModel">
+                                            <label for="privateOwner">Private Owner</label>
+
+                                            <input type="radio" id="Female" class="" name="LandlordType" value="Professional Manager" [ngModel]="profile.LandlordType" #LandlordType="ngModel">
+                                            <label for="Female">Professional Manager</label>
+                                        </div>
+                                    </div> 
+
+                                    <div class="form-group">
+                                        <label for="Email" class="col-md-3 control-label">Email:</label>
+                                        <div class="col-md-8">
+                                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Email"  [ngModel]="profile.Email" #Email="ngModel" readonly="" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password" class="col-md-3 control-label">Password:</label>
+                                        <div class="col-md-8">
+                                            <input type="password" class="form-control" id="Password" name="Password" placeholder="Password"  [ngModel]="profile.Password" #Password="ngModel"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-xs-offset-3 col-xs-6"> -->
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label"></label>
+                                            <div class="col-md-8">
+                                              <button type="submit" name="btnregister" id="btnUpdateProfile" class="btn btn-default" innerHTML="{{loadingBtnSpinner}}"></button> 
+                                            </div>
+                                        </div>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </form><!-- End form -->
+                    <div class="col-sm-12">
+                        <a href="javascript:void(0)" (click)="openModal()" class="delete-account pull-right" style="margin-right: 100px;">Delete My Account</a>
+                    </div>
+                </div><!-- ENd panel body -->
+            </div><!-- End panel group -->
+        </div><!-- End col div -->
+    </div>
+</section><!-- End container -->
+
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
+       [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body clearfix">
+                <div class="app-modal-body">
+                    <div class="col-sm-12 pad0">
+                        <button type="button" (click)="hideModal()" class="close pull-right">
+                            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
+                        <span>
+                            Are you sure to delete your account from map rentals? It will remove all your listing.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="hideModal()">No</button>
+                <button type="button" class="btn btn-danger" (click)="hideModal()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

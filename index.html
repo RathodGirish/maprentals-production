@@ -1,27 +1,26 @@
-<!doctype html>
 <html>
 <head>
-  	<meta charset="utf-8">
-  	<title>Maprentals</title>
-  	<base href="/">
-
-  	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  	<link rel="icon" type="image/x-icon" href="favicon.ico">
-  
-	  <link rel="stylesheet" href="/assets/public/css/bootstrap.css">
-    <link rel="stylesheet" href="/assets/public/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/public/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="/assets/public/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/assets/public/css/index.css">
-
-    <link rel="stylesheet" href="/assets/public/css/style.css">
-    <link rel="stylesheet" href="/assets/public/css/jquery-ui.css">
-	
-	<script type="text/javascript" src="/assets/public/js/jquery.min.js"></script>
-	<script type="text/javascript" src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-	<script type="text/javascript" src="/assets/public/js/bootstrap.min.js"></script>
-<link href="styles.d41d8cd98f00b204e980.bundle.css" rel="stylesheet"/></head>
+    <title>Lazy Loading with Angular2 Routing</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <base href="/">
+    <!-- 1. Load libraries -->
+    <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+        System.import('app').catch(function (err) {
+            console.error(err);
+        });
+    </script>
+</head>
+<!-- 3. Display the application -->
 <body>
-  <maprental>Loading</maprental>
-<script type="text/javascript" src="inline.65a07444e79b4568615e.bundle.js"></script><script type="text/javascript" src="polyfills.6d738bd0546afe60eb20.bundle.js"></script><script type="text/javascript" src="vendor.e54edba2eb5e03e2fbf9.bundle.js"></script><script type="text/javascript" src="main.9af73a23724133adff34.bundle.js"></script></body>
+<my-app>Loading...</my-app>
+</body>
 </html>

@@ -1,0 +1,70 @@
+=e($name)
+    @at-root #{&}__#{$name}
+        @content
+
+
+$font-size-base: 14px
+$font-size-small: 12px
+$padding-base-vertical: 8px
+$padding-base-horizontal: 12px
+
+
+.Marker
+    font-family: $font-ubuntu
+    font-weight: $font-weight-semi-bold
+    position: relative
+    width: 18px
+    height: 18px
+    color: $body-color
+
+    &__point,
+    &__content
+        position: relative
+        text-align: center
+        white-space: nowrap
+
+    +e(point)
+        font-size: ($font-size-small - 3)
+        z-index: 1
+        width: 18px
+        height: 18px
+        color: $color-white
+        line-height: 14px
+        background-color: $color-brand-red
+        border: 2px solid $color-white
+        border-radius: 50%
+        box-shadow: 0 0 2px 0 rgba(0, 0, 0, .25)
+
+
+    +e(content)
+        font-size: ($font-size-small - 1)
+        position: absolute
+        top: 100%
+        left: 50%
+        z-index: 2
+        height: 16px
+        margin-top: -1px
+        padding: 0 6px
+        transform: translate(-50%, 0)
+        line-height: 16px
+        letter-spacing: -.5px
+        background-color: $color-white
+        box-shadow: 1px .5px 1px 0 rgba(0, 0, 0, 0.25)
+
+
+/**
+ * Google map styles
+ ***********************************************************************************************************************
+ */
+.gm-offer-marker
+    overflow: visible !important
+    opacity: 1 !important
+
+    &:hover,
+    &.hover
+        z-index: 1001 !important
+
+
+.gm-offer-tooltip
+    & > img
+display: none // hide InfoBox default 'close' button
