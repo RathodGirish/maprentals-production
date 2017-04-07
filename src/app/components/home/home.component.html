@@ -263,6 +263,9 @@
         </template>
         <div id="googlemap" #googlemap class="col-lg-9 col-md-9 col-sm-12 col-xs-12 pad0" [class.hidden-xs]="isMapView == false">
 
+            <!-- <sebm-google-map>
+                  <custom-map></custom-map>
+            </sebm-google-map> -->
             <sebm-google-map 
                 id="googleMap" 
                 #googleMap 
@@ -287,6 +290,33 @@
                 </get-map-objects>
 
             </sebm-google-map>
+
+            <!-- <sebm-google-map 
+                id="googleMap" 
+                #googleMap 
+                [latitude]="latitude" 
+                [longitude]="longitude" 
+                [scrollwheel]="true" 
+                [zoom]="zoom" 
+                [zoomControl]="true" 
+                (mapClick)="mapClicked()"            
+                (centerChange)="mapCenterChanged($event)"
+                (boundsChange)="mapBoundsChanged($event)"
+                (zoomChange)="mapZoomChange($event)"
+                (idle)="mapIdle($event, infoWindow)" 
+                (click)="removeInfowindow();">
+
+                <custom-map-marker
+                    *ngFor="let cluster of clusters; let i = index"
+                    [markersInCluster]="cluster.markers"
+                    [addressId]="cluster.address_id"
+                    [lat]="cluster.coordinates.lat"
+                    [lng]="cluster.coordinates.lng"
+                    [label]="cluster.price.raw"
+                    [isViewed]="true">
+                </custom-map-marker>
+
+            </sebm-google-map> -->
 
         </div> 
 

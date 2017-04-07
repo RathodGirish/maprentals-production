@@ -23,7 +23,7 @@ import { GlobalVariable } from '../../services/static-variable';
 import { AppComponent } from '../../app.component';
 import { MapComponent }  from '../../components/map/map.component';
 import { Multiselect } from '../../components/custom/multiselect/multiselect.component'; 
-
+ 
 export var iconUrl: string="assets/public/img/pin-purple.png";
 
 import * as $ from 'jquery';
@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public isInfowindowOpen: string = 'No';
     public limitListingCount: number = 200;
     public markers: MarkerObject[] = [];
+    public clusters: Cluster[] = [];
     previousMarkers: any[] = [];
 
     public currentIconUrl: string = iconUrl; 
@@ -1301,7 +1302,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             draggable: false
                         };
 
+                        let clusterObj = {
+                            markers: property.Address,
+                            address_id: "1",
+                            price: property.Title,
+                            coordinates: {
+                                lat: property.Latitude,
+                                lng: property.Longitude
+                            }
+                        };
+
                         this.markers.push(markerObj); 
+                        this.clusters.push(clusterObj);
                     }
                 });
 
@@ -1514,4 +1526,14 @@ export interface FilterQueryObject{
     Smoking: string;
     ListedWithin: string;
     DateAvailable: string;
+}
+
+export interface Cluster {
+    markers: string;
+    address_id: string;
+    price: string;
+    coordinates: {
+        lat: number;
+        lng: number;
+    };
 }

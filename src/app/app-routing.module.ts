@@ -10,25 +10,44 @@ import {RouterModule} from '@angular/router';
         RouterModule.forRoot([
             {
                 path: '', 
-                redirectTo: '/home', 
+                redirectTo: '/Home', 
                 pathMatch: 'full'
             },
             {
-                path: 'home', 
+                path: 'Home', 
                 loadChildren: 'app/components/home/home.module#HomeModule'
             },
-
             {
-                path: 'propertyDetail/:id', 
-                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
+                path: 'about', 
+                loadChildren: 'app/components/about/about.module#AboutModule'
+            },
+            {
+                path: 'contact', 
+                loadChildren: 'app/components/contact/contact.module#ContactModule'
+            },
+            {
+                path: 'profile', 
+                loadChildren: 'app/components/profile/profile.module#ProfileModule'
+            },
+            {
+                path: 'myrentals', 
+                loadChildren: 'app/components/myrentals/myrentals.module#MyrentalsModule'
+            },
+            {
+                path: 'myrentals/:reload', 
+                loadChildren: 'app/components/myrentals/myrentals.module#MyrentalsModule'
+            },
+            {
+                path: 'manageProperty/:id', 
+                loadChildren: 'app/components/property/manage-property.module#ManagePropertyModule'
             },
             {
                 path: 'manageProperty/:id/:reload', 
                 loadChildren: 'app/components/property/manage-property.module#ManagePropertyModule'
             },
             {
-                path: 'manageProperty/:id', 
-                loadChildren: 'app/components/property/manage-property.module#ManagePropertyModule'
+                path: 'propertyDetail/:id', 
+                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
             },
             {
                 path: ':city/:propertyType', 
@@ -39,20 +58,14 @@ import {RouterModule} from '@angular/router';
                 loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
             },
             {
-                path: 'myrentals', 
-                loadChildren: 'app/components/myrentals/myrentals.module#MyrentalsModule'
+                path: ':city',
+                loadChildren: 'app/components/home/home.module#HomeModule',
+                data: {
+                  type: 'city'
+                }
             },
-            {
-                path: 'profile', 
-                loadChildren: 'app/components/profile/profile.module#ProfileModule'
-            },
-            {
-                path: 'about', 
-                loadChildren: 'app/components/about/about.module#AboutModule'
-            },
-            {
-                path: 'contact', 
-                loadChildren: 'app/components/contact/contact.module#ContactModule'
+            {   path: '**', 
+                redirectTo: '' 
             }
         ])
     ],

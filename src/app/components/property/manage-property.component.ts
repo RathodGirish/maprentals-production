@@ -110,17 +110,18 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
     	public ngZone: NgZone,
     	localStorage: CoolLocalStorage) { 
 		this.localStorage = localStorage;  
-		this.propertyId = route.snapshot.params['Id'];
+		
 	}
 
     ngOnInit() {
-    	this.currentUser = this.localStorage.getObject('currentUser');
-    	this.initProperty();
     	let THIS = this;
-    	this.route.params.subscribe(params => {
+    	THIS.propertyId = THIS.route.snapshot.params['id'];
+    	THIS.currentUser = this.localStorage.getObject('currentUser');
+    	THIS.initProperty();
+    	THIS.route.params.subscribe(params => {
 	       	THIS.isReload = params['Reload'];
 	    });
-
+    	console.log(' THIS.propertyId : ' + JSON.stringify(THIS.propertyId));
     	this.profileService.getProfileById(this.currentUser.Id)
             .subscribe((userDetails: any) => {
             	if(userDetails && userDetails.Company != ''){
@@ -836,6 +837,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	    	//$('div.selectorarrow').parent().remove();
 	    	//console.log(' THIS.isCalendarMouseHover2  ' + THIS.isCalendarMouseHover);
 		});
+
+		
 	}
  
 	ngOnDestroy() {

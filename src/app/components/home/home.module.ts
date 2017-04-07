@@ -11,6 +11,8 @@ import { Ng2ImgToolsModule } from 'ng2-img-tools';
 
 import { HomeComponent } from './home.component';
 import { MapComponent }  from '../map/map.component';
+// import {CustomMapDirective} '../../components/map/markerclusterer';
+// import { MarkerComponent } from '../../components/map/marker.component';
 import { HomeRoutingModule } from "./home-routing.module";
 
 
@@ -31,6 +33,8 @@ import { HomeRoutingModule } from "./home-routing.module";
         HomeComponent,
         MapComponent,
         Multiselect,
+        // MarkerComponent,
+        // CustomMapDirective,
         FilterPipe
     ]
 })

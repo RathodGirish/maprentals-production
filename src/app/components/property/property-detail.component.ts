@@ -86,7 +86,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 		console.log(' route.snapshot.params ' + JSON.stringify(route.snapshot.params));
 
 		if(this.commonAppService.isUndefined(this.propertyId)){
-			this.propertyId = this.commonAppService.getPropertyIdFromTitle(route.snapshot.params['title']);;
+			this.propertyId = this.commonAppService.getPropertyIdFromTitle(route.snapshot.params['title']);
 		}
 		console.log(' this.propertyId ' + JSON.stringify(this.propertyId));
 		$("meta[property='fb\\:app_id']").attr('content', "966242223397117");
@@ -121,21 +121,19 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 		this.currentUser = this.localStorage.getObject('currentUser');
 
 
-		// $("head").append("<meta property='fb:app_id' content='966242223397117' />");
+		$("head").append("<meta property='fb:app_id' content='966242223397117' />");
 
-		// $("head").append("<meta property='og:url' content='http://maprental.azureedge.net' />");
+		$("head").append("<meta property='og:url' content='http://maprentalstest.azurewebsites.net' />");
 
-		// $("head").append("<meta property='og:description' content='test descriptions' />");
+		$("head").append("<meta property='og:description' content='test descriptions' />");
 
-		// $("head").append("<meta property='og:title' content='test title' />");
+		$("head").append("<meta property='og:title' content='test title' />");
 
-		// $("head").append("<meta property='og:image' content='http://maprental.azureedge.net/property-pictures/201703281708571449.JPG?t=45345345' />");
+		$("head").append("<meta property='og:image' content='https://maprental.azureedge.net/property-pictures/201704070557077907.jpg?t=45345345' />");
 
-		// $("head").append("<meta property='og:image:type' content='image/jpeg' />");
+		$("head").append("<meta property='og:image:width' content='100' />");
 
-		// $("head").append("<meta property='og:image:width' content='100' />");
-
-		// $("head").append("<meta property='og:image:height' content='110' />");
+		$("head").append("<meta property='og:image:height' content='110' />");
 
 		if(typeof(this.propertyId) != "undefined" && this.propertyId != "new"){
 			this.loading = true;
