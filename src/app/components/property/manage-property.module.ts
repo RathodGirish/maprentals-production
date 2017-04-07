@@ -1,38 +1,35 @@
 /**
- * Home page modules
+ * ManageProperty Modules.
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgmCoreModule, GoogleMapsAPIWrapper } from 'angular2-google-maps/core'
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
-import { Multiselect, FilterPipe } from '../custom/multiselect/multiselect.component';
+
+import { DatepickerModule } from 'ng2-bootstrap/datepicker';
 import { NgxMyDatePickerModule  } from 'ngx-mydatepicker';
 import { Ng2ImgToolsModule } from 'ng2-img-tools';
-
-import { HomeComponent } from './home.component';
-import { MapComponent }  from '../map/map.component';
-import { HomeRoutingModule } from "./home-routing.module";
-
+import { PopoverModule } from 'ng2-bootstrap/popover';
+import { ManagePropertyComponent } from './manage-property.component';
+import { ManagePropertyRoutingModule } from "./manage-property-routing.module";
 
 @NgModule({
     imports: [
         CommonModule,
-        HomeRoutingModule,
+        ManagePropertyRoutingModule,
         AgmCoreModule.forRoot({
 	      apiKey: 'AIzaSyDDzDhPdfZqovfLofbrBlOQircVk9F975M',
 	      libraries: ['places']
 	    }),
-        NgxMyDatePickerModule,
+        NgxMyDatePickerModule, 
+        PopoverModule.forRoot(),
         Ng2ImgToolsModule,
         FormsModule, 
         ReactiveFormsModule
     ],
     declarations: [
-        HomeComponent,
-        MapComponent,
-        Multiselect,
-        FilterPipe
+        ManagePropertyComponent
     ]
 })
-export class HomeModule {
+export class ManagePropertyModule {
 }

@@ -1,0 +1,415 @@
+
+<div id="cover" *ngIf="loading==true"></div>
+<div class="managePropertyTopSec hidden-sm">
+    <h2 class="col-lg-12 col-md-12 col-sm-12 col-xs-12 col-md-12 text-center">List your rental for FREE!</h2>
+</div>
+
+<section id="managePropertySection" class="container">
+
+    <form id="propertyForm" #propertyForm="ngForm" novalidate (ngSubmit)="manageProperty($event, propertyForm.value, propertyForm.valid)" class="form-horizontal">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-7 col-md-7 col-sm-12 pad10-xs">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required" for="">Property : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="Apartment" class="PropertyType" name="PropertyType" value="Apartment" #Apartment  (change)="changeCheckboxString(Apartment, Apartment.checked, 'PropertyType'); selectedPropertyType=$event.target.value" [checked]="property.PropertyType == 'Apartment'">
+                            <label for="Apartment">Apartment</label>
+
+                            <input type="checkbox" id="House" class="PropertyType" name="PropertyType" value="House" #House  (change)="changeCheckboxString(House, House.checked, 'PropertyType'); selectedPropertyType=$event.target.value" [checked]="property.PropertyType == 'House'" >
+                            <label for="House">House</label>
+
+                            <input type="checkbox" id="Room" class="PropertyType" name="PropertyType" value="Room" #Room  (change)="changeCheckboxString(Room, Room.checked, 'PropertyType'); selectedPropertyType=$event.target.value" [checked]="property.PropertyType == 'Room'" >
+                            <label for="Room">Room</label>
+
+                            <div class="customeText">
+                                <input type="text" class="wd100 form-control PropertyType" id="PropertyTypeOther" name="PropertyType" placeholder="Other" (keyup)="updateCustomInputField($event, 'PropertyType'); selectedPropertyType=$event.target.value" />
+                            </div>
+
+                            <small *ngIf="!isValidPropertyType" class="text-danger">
+                                Please select property type.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="selectedPropertyType != 'Room' || selectedPropertyType == ''">
+                        <label class="col-sm-3 control-label required" for="">Beds : </label>
+                        <div class="col-sm-8" id="bedsValidateDiv">
+                            <input type="checkbox" id="Studio" class="Bed" name="Bed" value="Studio" #Studio  (change)="changeCheckboxString(Studio, Studio.checked, 'Bed');" [checked]="property.Bed == 'Studio'" >
+                            <label for="Studio">Studio</label>
+
+                            <input type="checkbox" id="beds1" class="Bed" name="Bed" value="1" #beds1  (change)="changeCheckboxString(beds1, beds1.checked, 'Bed');" [checked]="property.Bed == '1'" >
+                            <label for="beds1">1</label>
+
+                            <input type="checkbox" id="beds2" class="Bed" name="Bed" value="2" #beds2  (change)="changeCheckboxString(beds2, beds2.checked, 'Bed');" [checked]="property.Bed == '2'" >
+                            <label for="beds2">2</label>
+
+                            <input type="checkbox" id="beds3" class="Bed" name="Bed" value="3" #beds3  (change)="changeCheckboxString(beds3, beds3.checked, 'Bed');" [checked]="property.Bed == '3'" >
+                            <label for="beds3">3</label>
+
+                            <input type="checkbox" id="beds4" class="Bed" name="Bed" value="4" #beds4  (change)="changeCheckboxString(beds4, beds4.checked, 'Bed');" [checked]="property.Bed == '4'" >
+                            <label for="beds4">4</label>
+
+                            <div class="customeText">
+                                <input type="text" class="wd50 form-control Bed" id="Bed" name="Bed" (keypress)="isNumberKey($event)" (keyup)="updateCustomInputField($event, 'Bed');" />
+                            </div>
+
+                            <small *ngIf="!isValidBed && selectedPropertyType != 'Room'" class="text-danger">
+                                Please select beds.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Baths : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="baths1" class="Bath" name="Bath" value="1" #baths1  (change)="changeCheckboxString(baths1, baths1.checked, 'Bath');" [checked]="property.Bath == '1'" >
+                            <label for="baths1">1</label>
+
+                            <input type="checkbox" id="baths2" class="Bath" name="Bath" value="2" #baths2  (change)="changeCheckboxString(baths2, baths2.checked, 'Bath');" [checked]="property.Bath == '2'" >
+                            <label for="baths2">2</label>
+
+                            <input type="checkbox" id="baths3" class="Bath" name="Bath" value="3" #baths3  (change)="changeCheckboxString(baths3, baths3.checked, 'Bath');" [checked]="property.Bath == '3'" >
+                            <label for="baths3">3</label>
+
+                            <div class="customeText">
+                                <input type="text" class="wd50 form-control Bath" id="Bath" name="Bath" (keypress)="isNumberKey($event)" (keyup)="updateCustomInputField($event, 'Bath');" />
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Pets : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="No" class="Pet" name="Pet" value="No" data-val="No" #No  (change)="changeCheckboxArray(No, No.checked, 'Pet')" >
+                            <label for="No">No</label>
+
+                            <input type="checkbox" id="Cats" class="Pet" name="Pet" value="Cats" data-val="Cats" #Cats  (change)="changeCheckboxArray(Cats, Cats.checked, 'Pet')" >
+                            <label for="Cats">Cats</label>
+
+                            <input type="checkbox" id="Dogs" class="Pet" name="Pet" value="Dogs" data-val="Dogs" #Dogs  (change)="changeCheckboxArray(Dogs, Dogs.checked, 'Pet')" >
+                            <label for="Dogs">Dogs</label>
+
+                            <input type="checkbox" id="Any" class="Pet" name="Pet" value="Any" data-val="Any" #Any  (change)="changeCheckboxArray(Any, Any.checked, 'Pet')" >
+                            <label for="Any">Any</label>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Smoking : </label>
+                        <div class="col-sm-8">
+
+                            <input type="checkbox" id="smokingNo" class="Smoking" name="Smoking" value="false" #smokingNo  (change)="changeCheckboxString(smokingNo, smokingNo.checked, 'Smoking');" [checked]="property.Smoking == 'false'" >
+                            <label for="smokingNo">No</label>
+
+                            <input type="checkbox" id="smokingYes" class="Smoking" name="Smoking" value="true" #smokingYes  (change)="changeCheckboxString(smokingYes, smokingYes.checked, 'Smoking');" [checked]="property.Smoking == 'true'" >
+                            <label for="smokingYes">Yes</label>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Rent Includes : </label>
+                        <div class="col-sm-8">
+                            
+                            <input type="checkbox" id="Heat" class="rentIncludes" name="RentInclude" value="Heat" #Heat  (change)="changeCheckboxArray(Heat, Heat.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Heat') >= 0? true: false">
+                            <label for="Heat">Heat</label>
+
+                            <input type="checkbox" id="Electricity" class="rentIncludes" name="RentInclude" value="Electricity" #Electricity  (change)="changeCheckboxArray(Electricity, Electricity.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Electricity') >= 0? true: false">
+                            <label for="Electricity">Electricity</label>
+
+                            <input type="checkbox" id="Water" class="rentIncludes" name="RentInclude" value="Water" #Water (change)="changeCheckboxArray(Water, Water.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Water') >= 0? true: false">
+                            <label for="Water">Water</label>
+
+                            <input type="checkbox" id="Cable" class="rentIncludes" name="RentInclude" value="Cable" #Cable (change)="changeCheckboxArray(Cable, Cable.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Cable') >= 0? true: false">
+                            <label for="Cable" >Cable</label>
+
+                            <input type="checkbox" id="Internet" class="rentIncludes" name="RentInclude" value="Internet" #Internet (change)="changeCheckboxArray(Internet, Internet.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Internet') >= 0? true: false">
+                            <label for="Internet">Internet</label>
+
+                            <input type="checkbox" id="RentParking" class="rentIncludes" name="RentInclude" value="Parking" #RentParking  (change)="changeCheckboxArray(RentParking, RentParking.checked, 'RentInclude')" [checked]="property.RentInclude.indexOf('Parking') >= 0? true: false">
+                            <label for="RentParking">Parking</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Parking : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="None" class="Parking" name="Parking" value="None" #None  (change)="changeCheckboxString(None, None.checked, 'Parking');" [checked]="property.Parking == 'None'" >
+                            <label for="None">None</label>
+
+                            <input type="checkbox" id="Outdoor" class="Parking" name="Parking" value="Outdoor" #Outdoor  (change)="changeCheckboxString(Outdoor, Outdoor.checked, 'Parking');" [checked]="property.Parking == 'Outdoor'" >
+                            <label for="Outdoor">Outdoor</label>
+
+                            <input type="checkbox" id="Indoor" class="Parking" name="Parking" value="Indoor" #Indoor  (change)="changeCheckboxString(Indoor, Indoor.checked, 'Parking');" [checked]="property.Parking == 'Indoor'" >
+                            <label for="Indoor">Indoor</label>
+
+                            <input type="checkbox" id="Heated" class="Parking" name="Parking" value="Heated" #Heated  (change)="changeCheckboxString(Heated, Heated.checked, 'Parking');" [checked]="property.Parking == 'Heated'" >
+                            <label for="Heated">Heated</label>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-bottom: 0 !important">
+                        <label class="col-sm-3 control-label" for="">Amenities : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="Furnished" class="Amenities" name="Amenities" value="Furnished" #Furnished (change)="changeCheckboxArray(Furnished, Furnished.checked, 'Amenities')" [checked]="property.Amenities.indexOf('Furnished') >= 0? true: false">
+                            <label for="Furnished">Furnished</label>
+
+                            <input type="checkbox" id="EIA_Friendly" class="Amenities" name="Amenities" value="EIA Friendly" #EIA_Friendly (change)="changeCheckboxArray(EIA_Friendly, EIA_Friendly.checked, 'Amenities')" [checked]="property.Amenities.indexOf('EIA Friendly') >= 0? true: false">
+                            <label for="EIA_Friendly">EIA Friendly</label>
+
+                            <input type="checkbox" id="a55" class="Amenities" name="Amenities" value="55+" #a55 (change)="changeCheckboxArray(a55, a55.checked, 'Amenities')" [checked]="property.Amenities.indexOf('55+') >= 0? true: false">
+                            <label for="a55">55+</label>
+
+                            <input type="checkbox" id="Onsite_Laundry" class="Amenities" name="Amenities" value="Onsite Laundry" #Onsite_Laundry (change)="changeCheckboxArray(Onsite_Laundry, Onsite_Laundry.checked, 'Amenities')" [checked]="property.Amenities.indexOf('Onsite Laundry') >= 0? true: false">
+                            <label for="Onsite_Laundry">Onsite Laundry</label>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 pad0"><hr></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Landlord Type : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="privateOwner" class="LandlordType" name="LandlordType" value="Private Owner" #privateOwner  (change)="changeCheckboxString(privateOwner, privateOwner.checked, 'LandlordType');" [checked]="property.LandlordType == 'Private Owner'" >
+                            <label for="privateOwner">Private Owner</label>
+
+                            <input type="checkbox" id="professionalManager" class="LandlordType" name="LandlordType" value="Professional Manager" #professionalManager  (change)="changeCheckboxString(professionalManager, professionalManager.checked, 'LandlordType');" [checked]="property.LandlordType == 'Professional Manager'" >
+                            <label for="professionalManager">Professional Manager</label>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Available Date : </label>
+                        <div class="col-sm-8">
+                            <div class="col-xs-3 col-sm-6 pad0">
+                                <input type="checkbox" id="Immediately" class="propAvailableDate" value='Immediately' name="IsImmediateAvailable" [ngModel]="property.IsImmediateAvailable" #IsImmediateAvailable="ngModel" [checked]="property.DateAvailable != ''? false: true" (click)="changeIsImmediateAvailable()">
+                                <label class='' for="Immediately">Immediately</label>
+                            </div>
+
+                            <div class="col-xs-8 col-sm-6 padL0 input-group ngxmdp-custome has-feedback">
+                                <input class="form-control" style="float:none" placeholder="Date" ngx-mydatepicker name="DateAvailable"  [options]="myDatePickerOptions" #dp="ngx-mydatepicker" (dateChanged)="propAvailableDateChange($event)" (click)="dp.toggleCalendar();" [(ngModel)]="DateAvailable" />
+                                <span class="input-group-btn">
+                                    <button *ngIf="property.DateAvailable != '' && property.DateAvailable != null" type="button" class="btn btn-default" (click)="dp.clearDate();$event.stopPropagation()">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default" (click)="dp.toggleCalendar();$event.stopPropagation()">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="">Agreement : </label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="Lease" class="AgreementType" name="AgreementType" value="Lease" #Lease  (change)="changeCheckboxString(Lease, Lease.checked, 'AgreementType'); selectedAgreement=$event.target.value" [checked]="property.AgreementType == 'Lease'" >
+                            <label for="Lease">Lease</label>
+
+                            <input type="checkbox" id="Sublet" class="AgreementType" name="AgreementType" value="Sublet" #Sublet  (change)="changeCheckboxString(Sublet, Sublet.checked, 'AgreementType'); selectedAgreement=$event.target.value" [checked]="property.AgreementType == 'Sublet'" >
+                            <label for="Sublet">Sublet</label>
+
+                            <input type="checkbox" id="MonthtoMonth" class="AgreementType" name="AgreementType" value="Month-to-Month" #MonthtoMonth  (change)="changeCheckboxString(MonthtoMonth, MonthtoMonth.checked, 'AgreementType'); selectedAgreement=$event.target.value" [checked]="property.AgreementType == 'Month-to-Month'" >
+                            <label for="MonthtoMonth">Month-to-Month</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="selectedAgreement != 'Month-to-Month' || property.AgreementType == ''">
+                        <label class="col-sm-3 control-label" for="">Term Length : </label>
+                        <div class="col-sm-8">
+
+                            <input type="checkbox" id="Year1" class="AgreementTermLength" name="AgreementTermLength" value="12" #Year1  (change)="changeCheckboxString(Year1, Year1.checked, 'AgreementTermLength');" [checked]="property.AgreementTermLength == '12'" >
+                            <label for="Year1">1 Year</label>
+
+                            <input type="checkbox" id="Month6" class="AgreementTermLength" name="AgreementTermLength" value="6" #Month6  (change)="changeCheckboxString(Month6, Month6.checked, 'AgreementTermLength');" [checked]="property.AgreementTermLength == '6'" >
+                            <label for="Month6">6 Month</label>
+
+                            <div class="customeText">
+                                <input type="text" class="wd100 form-control AgreementTermLength" placeholder="months" id="AgreementTermLength" name="AgreementTermLength" (keypress)="isNumberKey($event)" (keyup)="updateCustomInputField($event, 'AgreementTermLength');" />
+                            </div>
+
+                            <!-- <input type="radio" id="1Year" class="termLength" name="AgreementTermLength" value="12" [ngModel]="property.AgreementTermLength" #termLength="ngModel">
+                            <label for="1Year">1 Year</label>
+
+                            <input type="radio" id="6Month" class="termLength" name="AgreementTermLength" value="6" [ngModel]="property.AgreementTermLength" #AgreementTermLength="ngModel">
+                            <label for="6Month">6 Month</label>
+
+                            <div class="customeNumber" id="termLengthCustomDiv">
+                                <input type="number" class="form-control" id="termLengthCustom" name="AgreementTermLength" placeholder="Months" [ngModel]="property.AgreementTermLength" #AgreementTermLength="ngModel" />
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 pad10-xs">
+                    <template #popoverMap><div [innerHtml]="popoverMapHtml"></div></template>
+                    <div class="col-md-12 col-sm-12 pad0 hidden-xs" [popover]="popoverMap" container="body" triggers="mouseenter:mouseleave" placement="bottom">
+                        <div>
+                            <sebm-google-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom"
+                            [zoomControl]="true"
+                            (centerChange)="mapCenterChanged($event)"
+                            (boundsChange)="mapBoundsChanged($event)"
+                            (idle)="mapIdle($event)">
+                                <sebm-google-map-marker [latitude]="markerLatitude" [longitude]="markerLongitude"
+                                [markerDraggable]=true
+                                (dragEnd)="updateLocation($event)">
+                                </sebm-google-map-marker>
+                            </sebm-google-map>
+                            
+                        </div>
+                        <!-- <h4 class="col-md-12 col-sm-12">Wrong address showing? Move the pin to correct location.</h4> -->
+                    </div>
+                    <h5 class="col-md-12 col-sm-12 text-danger hidden" id='addressMapError'></h5>
+
+                    <div class="col-xs-12 pad0">
+                        <div class="form-group  mrgT10">
+                            <label class="col-sm-2 col-md-4 text-left padT7 required" for="Address">Address : </label>
+                            <div class="col-sm-10 col-md-8" id="addressValidateDiv">
+                                <input id="Address" name="Address" placeholder="Property Address" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #Address [formControl]="searchControl" value="{{address}}" (keyup)="updateAddress($event)">
+
+                                <small *ngIf="!isValidAddress" class="text-danger">
+                                    Please select proper address.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-4 required" for="MonthlyRent">Monthly Rent : </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <input class="form-control" type="text" id="MonthlyRent" name="MonthlyRent" placeholder="Price ($)" [ngModel]="property.MonthlyRent" #MonthlyRent="ngModel" required="" (keypress)="isNumberKey($event)">
+                            <small [hidden]="MonthlyRent.valid || (MonthlyRent.pristine && !propertyForm.submitted)" class="text-danger">
+                                Please enter Monthly Rent
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 pad0">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-md-4 text-left required" for="Title">Title : </label>
+                            <div class="col-sm-10 col-md-8">
+                                <input type="text" class="form-control" id="Title" name="Title" placeholder="Title"  [ngModel]="property.Title" #Title="ngModel" required/>
+                                <small [hidden]="Title.valid || (Title.pristine && !propertyForm.submitted)" class="text-danger">
+                                    Property Title is Required
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-md-4 text-left" for="Description">Description : </label>
+                            <div class="col-sm-10 col-md-8">
+                                <textarea rows="3" (keyup)="updateDescription($event)" class="form-control" id="Description" name="Description" placeholder="Description" [ngModel]="property.Description" #Description="ngModel"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4" for="OwnerName">Name : </label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="OwnerName" name="OwnerName" placeholder="Name" [ngModel]="property.OwnerName" #OwnerName="ngModel"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group" [hidden]="selectedPhoneOnly == true">
+                        <label class="col-xs-12 col-sm-4" for="Email">Email : </label>
+                        <div class="col-xs-8 col-sm-5">
+                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" [ngModel]="property.Email" #Email="ngModel"  (keyup)="updateEmail($event)"/>
+                            <small *ngIf="!isValidEmail" class="text-danger">
+                                Please enter Email and format should be john@doe.com.
+                            </small>
+                        </div>
+                        <div class="pad0 col-xs-4 col-sm-3">
+                            <input type="checkbox" id="IsEmailOnly" class="emailOnly" name="IsEmailOnly" [ngModel]="property.IsEmailOnly" #IsEmailOnly="ngModel" (change)="selectedEmailOnly=$event.target.checked">
+                            <label for="IsEmailOnly" data-toggle="tooltip" data-placement="top" title="Tenants will contact you by Email only">Email Only</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" [hidden]="selectedEmailOnly == true">
+                        <label class="col-xs-12 col-sm-4" for="Phone">Phone : </label>
+                        <div class="col-xs-8 col-sm-5">
+                            <input type="text" class="form-control" id="Phone" name="Phone" placeholder="Phone Number" maxlength="10" [ngModel]="property.Phone" #Phone="ngModel" (keyup)="updatePhone($event)" />
+                            <small *ngIf="!isValidPhone" class="text-danger">
+                                Please enter phone number
+                            </small>
+                        </div>
+                        <div class="pad0 col-xs-4 col-sm-3">
+                            <input type="checkbox" id="IsPhoneOnly" class="IsPhoneOnly" name="IsPhoneOnly" [ngModel]="property.IsPhoneOnly" #IsPhoneOnly="ngModel" (change)="selectedPhoneOnly=$event.target.checked">
+                            <label for="IsPhoneOnly" data-toggle="tooltip" data-placement="top" title="Tenants will contact you by Phone only">Phone Only</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 pad10-xs">
+                    <div class="dropzone" id="dropzoneFileUpload">
+                        <div class="dz-message" data-dz-message><span>Click/Drag images here to upload</span></div>
+                        <div id="dropzone-drop-area" class="dropzone-drop-area">
+                            <div *ngIf="!fileDropped" class="centered noselect clickthrough">
+                                <ng-content></ng-content>
+                            </div>
+                        </div>
+                    </div>
+                    <small *ngIf="!isValidImages" class="text-danger">
+                        Upload minimum 1 image and maximum 10 images.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <template #popoverActiveInactiveToggle><div [innerHtml]="popoverActiveInactiveHtml"></div></template>
+            <div class="container">
+                <div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-3  col-lg-offset-3 col-sm-4 col-md-3 col-lg-3 col-xs-9">
+                    <div class='form-group' [popover]="popoverActiveInactiveToggle" container="body" triggers="">
+                        <label class='col-xs-5 col-sm-6 col-md-6 control-label isActiveLabel' for=''> Activate?</label>
+                        <div class='col-xs-6 col-sm-6 col-md-6 activateDiv' [popover]="popoverActiveInactiveToggle" container="body" triggers="mouseenter:mouseleave">
+                            <label class="toggle">
+                                <input #isActiveToggle type="checkbox" (click)="changeIsActive()">
+                                <span class="handle"><span class="toggleValue {{isActiveValue}}">{{isActiveValue}}</span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-3 col-xs-12 pad0-xs">
+                    <div class="col-sm-12 col-xs-12 pad0-xs">
+                        <button #uploadPropertyBtn id="uploadPropertyBtn" type="submit" class="btn btn-primary btn-lg col-xs-12" innerHTML="{{loadingBtnSpinner}}"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<script>
+    $(function() {
+        $("#dropzoneFileUpload").sortable({
+            items: '.dz-preview',
+            cursor: 'move',
+            opacity: 0.5,
+            containment: '#dropzoneFileUpload',
+            distance: 20,
+            tolerance: 'pointer',
+            stop: function () {
+
+                // var queue = dropzoneFileUpload.files;
+                // $('#dropzoneFileUpload .dz-preview .dz-filename [data-dz-name]').each(function (count, el) {           
+                //     var name = el.getAttribute('data-name');
+                //     queue.forEach(function(file) {
+                //        if (file.name === name) {
+                //             newQueue.push(file);
+                //        }
+                //     });
+                // });
+
+                // uploadzone.files = newQueue;
+
+            }
+        });
+    });
+</script>

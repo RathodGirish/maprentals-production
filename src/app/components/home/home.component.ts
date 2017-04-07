@@ -7,14 +7,14 @@ import { FormsModule, ReactiveFormsModule, FormControl, Validators, FormGroup, F
 import {Observable} from 'rxjs/Rx';
 import { MetadataService } from 'ng2-metadata';
 import { DatepickerModule } from 'ng2-bootstrap/datepicker';
-import {IMyOptions, IMyDateModel} from 'ngx-mydatepicker';
+import { IMyOptions, IMyDateModel } from 'ngx-mydatepicker';
 import { GoogleMapsAPIWrapper, MarkerManager, AgmCoreModule, MapsAPILoader, NoOpMapsAPILoader, MouseEvent, InfoWindowManager, SebmGoogleMap, SebmGoogleMapMarker, SebmGoogleMapInfoWindow  } from "angular2-google-maps/core";
 import { RouteConfig, RouteParams, RouterLink, ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoolLocalStorage } from 'angular2-cool-storage';
-import {GeneratedUrl} from 'angular2/src/router/rules/route_paths/route_path';
+import { GeneratedUrl } from 'angular2/src/router/rules/route_paths/route_path';
 
 import { PropertyService, CommonAppService } from '../../services/index';
 

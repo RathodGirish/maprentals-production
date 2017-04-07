@@ -1,15 +1,17 @@
+/**
+ * Slider Component.
+ */
 import {Component, OnInit, OnDestroy, Input, HostBinding } from '@angular/core';
 
-import {Carousel, Direction} from  './carousel.component';
+import {CarouselComponent, Direction} from  './carousel.component';
 
 @Component({
-    moduleId: "sildeModule",
+	moduleId: "sildeModule",
     selector: 'slide',
-    templateUrl: './slide.component.html'
+    templateUrl: './slider.component.html'
 })
-export class Slide implements OnInit, OnDestroy {
-  
-    @Input() public index:number;
+export class SliderComponent{
+	@Input() public index:number;
     @Input() public direction:Direction;
 
     @HostBinding('class.active')
@@ -19,7 +21,7 @@ export class Slide implements OnInit, OnDestroy {
     @HostBinding('class.carousel-item')
     public addClass:boolean = true;
 
-    constructor(public carousel:Carousel) {
+    constructor(public carousel:CarouselComponent) {
     }
 
     public ngOnInit() {

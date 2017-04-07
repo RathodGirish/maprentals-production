@@ -1,164 +1,164 @@
-import {Component, OnDestroy, Input} from '@angular/core';
-import {Slide} from './slide.component';
+/**
+ * Carousel Component.
+ */
+import { Component, OnDestroy, Input} from '@angular/core';
+import {SliderComponent} from './slider.component';
 
 export enum Direction {UNKNOWN, NEXT, PREV}
 
 @Component({
-    moduleId: "carouselModule",
+	moduleId: "carouselModule",
     selector: 'carousel',
     templateUrl: './carousel.component.html'
 })
+export class CarouselComponent {
+	public slides: Array<SliderComponent> = [];
+	  public currentInterval: any;
+	  public isPlaying: boolean;
+	  public destroyed: boolean = false;
+	  public currentSlide: SliderComponent;
+	  public _interval: number;
 
-export class Carousel {
-  
-  public slides: Array<Slide> = [];
-  public currentInterval: any;
-  public isPlaying: boolean;
-  public destroyed: boolean = false;
-  public currentSlide: Slide;
-  public _interval: number;
+	  @Input() public noWrap: boolean;
+	  @Input() public noPause: boolean;
+	  @Input() public noTransition: boolean;
 
-  @Input() public noWrap: boolean;
-  @Input() public noPause: boolean;
-  @Input() public noTransition: boolean;
+	  @Input() public get interval(): number {
+	    return this._interval;
+	  }
 
-  @Input() public get interval(): number {
-    return this._interval;
-  }
+	    constructor() {
+	         console.log("Carousel created"); 
+	        //  $(".carousel").on("swipe",function(){
+	        //   console.log(' test ');
+	        // });      
+	    }
 
-    constructor() {
-         console.log("Carousel created"); 
-        //  $(".carousel").on("swipe",function(){
-        //   console.log(' test ');
-        // });      
-    }
+	  public set interval(value: number) {
+	    this._interval = value;
+	    this.restartTimer();
+	  }
 
-  public set interval(value: number) {
-    this._interval = value;
-    this.restartTimer();
-  }
+	  doSwipe(direction: string) {
+	      console.log('direction ' + direction);
+	  }
 
-  doSwipe(direction: string) {
-      console.log('direction ' + direction);
-  }
+	  public getInstance() {
+	    return this;
+	  }
+	  
+	  public select(nextSlide: SliderComponent, direction: Direction = Direction.UNKNOWN) {
+	    let nextIndex = nextSlide.index;
+	    if (direction === Direction.UNKNOWN) {
+	      direction = nextIndex > this.getCurrentIndex() ? Direction.NEXT : Direction.PREV;
+	    }
 
-  public getInstance() {
-    return this;
-  }
-  
-  public select(nextSlide: Slide, direction: Direction = Direction.UNKNOWN) {
-    let nextIndex = nextSlide.index;
-    if (direction === Direction.UNKNOWN) {
-      direction = nextIndex > this.getCurrentIndex() ? Direction.NEXT : Direction.PREV;
-    }
+	    // Prevent this user-triggered transition from occurring if there is already one in progress
+	    if (nextSlide && nextSlide !== this.currentSlide) {
+	      this.goNext(nextSlide, direction);
+	    }
+	  }
 
-    // Prevent this user-triggered transition from occurring if there is already one in progress
-    if (nextSlide && nextSlide !== this.currentSlide) {
-      this.goNext(nextSlide, direction);
-    }
-  }
+	  public goNext(slide: SliderComponent, direction: Direction) {
+	    if (this.destroyed) {
+	      return;
+	    }
 
-  public goNext(slide: Slide, direction: Direction) {
-    if (this.destroyed) {
-      return;
-    }
+	    slide.direction = direction;
+	    slide.active = true;
 
-    slide.direction = direction;
-    slide.active = true;
+	    if (this.currentSlide) {
+	      this.currentSlide.direction = direction;
+	      this.currentSlide.active = false;
+	    }
 
-    if (this.currentSlide) {
-      this.currentSlide.direction = direction;
-      this.currentSlide.active = false;
-    }
+	    this.currentSlide = slide;
 
-    this.currentSlide = slide;
+	    // every time you change slides, reset the timer
+	    this.restartTimer();
+	  }
 
-    // every time you change slides, reset the timer
-    this.restartTimer();
-  }
+	  public getSlideByIndex(index: number) {
+	    let len = this.slides.length;
+	    for (let i = 0; i < len; ++i) {
+	      if (this.slides[i].index === index) {
+	        return this.slides[i];
+	      }
+	    }
+	  }
 
-  public getSlideByIndex(index: number) {
-    let len = this.slides.length;
-    for (let i = 0; i < len; ++i) {
-      if (this.slides[i].index === index) {
-        return this.slides[i];
-      }
-    }
-  }
+	  public getCurrentIndex() {
+	    return !this.currentSlide ? 0 : this.currentSlide.index;
+	  }
 
-  public getCurrentIndex() {
-    return !this.currentSlide ? 0 : this.currentSlide.index;
-  }
+	  public next() {
+	    let newIndex = (this.getCurrentIndex() + 1) % this.slides.length;
 
-  public next() {
-    let newIndex = (this.getCurrentIndex() + 1) % this.slides.length;
+	    if (newIndex === 0 && this.noWrap) {
+	      this.pause();
+	      return;
+	    }
 
-    if (newIndex === 0 && this.noWrap) {
-      this.pause();
-      return;
-    }
+	    return this.select(this.getSlideByIndex(newIndex), Direction.NEXT);
+	  }
 
-    return this.select(this.getSlideByIndex(newIndex), Direction.NEXT);
-  }
+	  public prev() {
+	    let newIndex = this.getCurrentIndex() - 1 < 0 ? this.slides.length - 1 : this.getCurrentIndex() - 1;
 
-  public prev() {
-    let newIndex = this.getCurrentIndex() - 1 < 0 ? this.slides.length - 1 : this.getCurrentIndex() - 1;
+	    if (this.noWrap && newIndex === this.slides.length - 1) {
+	      this.pause();
+	      return;
+	    }
 
-    if (this.noWrap && newIndex === this.slides.length - 1) {
-      this.pause();
-      return;
-    }
+	    return this.select(this.getSlideByIndex(newIndex), Direction.PREV);
+	  }
 
-    return this.select(this.getSlideByIndex(newIndex), Direction.PREV);
-  }
+	  public restartTimer() {
+	    this.resetTimer();
+	    let interval = +this.interval;
+	    if (!isNaN(interval) && interval > 0) {
+	      this.currentInterval = setInterval(() => {
+	        let nInterval = +this.interval;
+	        if (this.isPlaying && !isNaN(this.interval) && nInterval > 0 && this.slides.length) {
+	          this.next();
+	        } else {
+	          this.pause();
+	        }
+	      }, interval);
+	    }
+	  }
 
-  public restartTimer() {
-    this.resetTimer();
-    let interval = +this.interval;
-    if (!isNaN(interval) && interval > 0) {
-      this.currentInterval = setInterval(() => {
-        let nInterval = +this.interval;
-        if (this.isPlaying && !isNaN(this.interval) && nInterval > 0 && this.slides.length) {
-          this.next();
-        } else {
-          this.pause();
-        }
-      }, interval);
-    }
-  }
+	  public resetTimer() {
+	    if (this.currentInterval) {
+	      clearInterval(this.currentInterval);
+	      this.currentInterval = null;
+	    }
+	  }
 
-  public resetTimer() {
-    if (this.currentInterval) {
-      clearInterval(this.currentInterval);
-      this.currentInterval = null;
-    }
-  }
+	  public play() {
+	    if (!this.isPlaying) {
+	      this.isPlaying = true;
+	      this.restartTimer();
+	    }
+	  }
 
-  public play() {
-    if (!this.isPlaying) {
-      this.isPlaying = true;
-      this.restartTimer();
-    }
-  }
+	  public pause() {
+	    if (!this.noPause) {
+	      this.isPlaying = false;
+	      this.resetTimer();
+	    }
+	  }
 
-  public pause() {
-    if (!this.noPause) {
-      this.isPlaying = false;
-      this.resetTimer();
-    }
-  }
-
-  public addSlide(slide: Slide) {
-    slide.index = this.slides.length;
-    this.slides.push(slide);
-    if (this.slides.length === 1 || slide.active) {
-      this.select(this.slides[this.slides.length - 1]);
-      if (this.slides.length === 1) {
-        this.play();
-      }
-    } else {
-      slide.active = false;
-    }
-  }
+	  public addSlide(slide: SliderComponent) {
+	    slide.index = this.slides.length;
+	    this.slides.push(slide);
+	    if (this.slides.length === 1 || slide.active) {
+	      this.select(this.slides[this.slides.length - 1]);
+	      if (this.slides.length === 1) {
+	        this.play();
+	      }
+	    } else {
+	      slide.active = false;
+	    }
+	  }
 }
-
