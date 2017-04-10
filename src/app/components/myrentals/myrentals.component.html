@@ -1,3 +1,5 @@
+
+
 <div id="cover" *ngIf="loading==true"></div>
 <div class="myrentalsTopSec">
     <h4 class="col-lg-12 col-md-12 col-sm-12 col-xs-12 col-md-12 text-center">My Rentals</h4>
@@ -8,7 +10,13 @@
             <p ng-bind="_success_msg" class="{{_success_msg != '' ? 'mrgT10': ''}} text-success clearfix col-sm-12">{{_success_msg}}</p>
             <p ng-bind="_fail_msg" class="{{_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{_fail_msg}}</p>
         </div>
+        <div class="col-lg-12 mrgB5 pad0">
+            <div class="col-lg-4 pad0">
+                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="Search">
+            </div>
+        </div>
         <div class="wrapper table-responsive hidden-xs">
+            
             <table class="table table-bordered table-striped">
                 <thead class="header">
                     <tr>
@@ -23,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let prop of myrentals">
+                    <tr *ngFor="let prop of myrentals | customFilter:Search">
                         <td>
                             <div class='col-xs-10 col-sm-10 col-md-10 mrgT5' >
                                 <label class="toggle col-sm-12 bigToggle" >
@@ -80,7 +88,7 @@
                     </tr>
                 </thead> -->
                 <tbody>
-                    <tr *ngFor="let prop of myrentals">
+                    <tr *ngFor="let prop of myrentals | customFilter:Search">
                         <td class="padB10">
                             <div class='cursor-pointer col-xs-12 col-sm-10 col-md-10 mrgT5 pad0' >
                                 <a href="javascript:void(0)" ><img src="{{prop.Picture}}" class="table-thumb thumbnail"></a>

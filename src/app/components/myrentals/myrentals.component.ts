@@ -11,6 +11,7 @@ import { CommonAppService, PropertyService } from '../../services/index';
 
 import { CoolLocalStorage } from 'angular2-cool-storage';
 
+
 @Component({
 	selector: 'profile',
 	providers: [
@@ -22,6 +23,9 @@ import { CoolLocalStorage } from 'angular2-cool-storage';
 })
 export class MyrentalsComponent implements OnInit{
 	currentUser: any;
+	public Search = '';
+	public userFilter: any = { Title: '', Address: '', MonthlyRent: ''};
+	public filter: any;
 	public myrentals: any[] = [];
 	public loading: boolean = false;
 	public _success_msg: string = '';
@@ -172,4 +176,11 @@ export class MyrentalsComponent implements OnInit{
 		}
 		this.hideModal();
 	}
+
+	updateData(value: any) {
+		console.log('event value'+ value);
+		// this.userFilter.Title = value;
+		// this.userFilter.Address = value;
+		// this.userFilter.MonthlyRent = value;
+    }
 }

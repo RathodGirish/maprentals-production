@@ -7,6 +7,8 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { MyrentalsComponent } from './myrentals.component';
 import { MyrentalsRoutingModule } from "./myrentals-routing.module";
 
+import { CustomFilter } from '../../components/custom/pipes/CustomFilter';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -15,6 +17,7 @@ import { MyrentalsRoutingModule } from "./myrentals-routing.module";
         ReactiveFormsModule
     ],
     declarations: [
+        CustomFilter,
         MyrentalsComponent
     ]
 })
