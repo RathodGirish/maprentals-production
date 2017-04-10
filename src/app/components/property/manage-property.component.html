@@ -386,6 +386,28 @@
         </div>
     </form>
 </section>
+<button type="button" class="btn btn-default" (click)="openModal()">Popup</button>
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
+       [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header clearfix">
+                <div class="col-sm-12 pad0">
+                    <button type="button" (click)="hideModal()" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="">Validation Alert</h4>
+                </div>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="validation-modal-body">
+                    <p>The following required fields were left blank:</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="hideModal()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(function() {
         $(".dropzone-drop-area").sortable({

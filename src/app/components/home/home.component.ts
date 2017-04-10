@@ -1,14 +1,14 @@
 /**
  * Home Page Component.
  */
-import { Component, ViewChild, NgModule, OnInit, Output, AfterViewInit, EventEmitter, OnDestroy, ElementRef, NgZone, Renderer, Directive} from '@angular/core';
+import { Component, ViewChild, NgModule, OnInit, Output, AfterViewInit, EventEmitter, OnDestroy, ElementRef, NgZone, Renderer, Directive } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
-import {Observable} from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import { MetadataService } from 'ng2-metadata';
 import { DatepickerModule } from 'ng2-bootstrap/datepicker';
 import { IMyOptions, IMyDateModel } from 'ngx-mydatepicker';
-import { GoogleMapsAPIWrapper, MarkerManager, AgmCoreModule, MapsAPILoader, NoOpMapsAPILoader, MouseEvent, InfoWindowManager, SebmGoogleMap, SebmGoogleMapMarker, SebmGoogleMapInfoWindow  } from "angular2-google-maps/core";
+import { GoogleMapsAPIWrapper, MarkerManager, AgmCoreModule, MapsAPILoader, NoOpMapsAPILoader, MouseEvent, InfoWindowManager, SebmGoogleMap, SebmGoogleMapMarker, SebmGoogleMapInfoWindow } from "angular2-google-maps/core";
 import { RouteConfig, RouteParams, RouterLink, ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -21,34 +21,34 @@ import { PropertyService, CommonAppService } from '../../services/index';
 import { LoginModalComponent } from '../../components/popup-modals/loginModal.component';
 import { GlobalVariable } from '../../services/static-variable';
 import { AppComponent } from '../../app.component';
-import { MapComponent }  from '../../components/map/map.component';
-import { Multiselect } from '../../components/custom/multiselect/multiselect.component'; 
- 
-export var iconUrl: string="assets/public/img/pin-purple.png";
+import { MapComponent } from '../../components/map/map.component';
+import { Multiselect } from '../../components/custom/multiselect/multiselect.component';
+
+export var iconUrl: string = "assets/public/img/pin-purple.png";
 
 import * as $ from 'jquery';
 
 @Component({
     providers: [
-        PropertyService, 
+        PropertyService,
         CommonAppService,
-        SebmGoogleMap, 
-        GoogleMapsAPIWrapper, 
-        MarkerManager, 
-        Multiselect, 
-        MapComponent, 
-        InfoWindowManager, 
-        CoolLocalStorage, 
-        DatepickerModule, 
+        SebmGoogleMap,
+        GoogleMapsAPIWrapper,
+        MarkerManager,
+        Multiselect,
+        MapComponent,
+        InfoWindowManager,
+        CoolLocalStorage,
+        DatepickerModule,
         FormBuilder,
         Title
     ],
-    styleUrls: [ './home.component.css' ],
+    styleUrls: ['./home.component.css'],
     templateUrl: './home.component.html'
 })
 
 export class HomeComponent implements OnInit, AfterViewInit {
-    localStorage: CoolLocalStorage; 
+    localStorage: CoolLocalStorage;
     public currentUser: any;
     public properties: any[] = [];
     public allFullProperties: any[] = [];
@@ -64,19 +64,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     public _map: SebmGoogleMap = null;
     @Output('map') mapChanged: EventEmitter<SebmGoogleMap> = new EventEmitter<SebmGoogleMap>();
-    set map(val){
+    set map(val) {
         this._map = val;
         this.mapChanged.emit(val);
     }
-    get map(){
+    get map() {
         return this._map;
     }
 
-    @ViewChild('infoWindowDiv') infoWindowDiv:ElementRef;
+    @ViewChild('infoWindowDiv') infoWindowDiv: ElementRef;
 
     public address: string;
     public searchControl: FormControl;
-    
+
     public isBoundJustChanged: boolean = false;
     public isInfowindowOpen: string = 'No';
     public limitListingCount: number = 200;
@@ -84,23 +84,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public clusters: Cluster[] = [];
     previousMarkers: any[] = [];
 
-    public currentIconUrl: string = iconUrl; 
+    public currentIconUrl: string = iconUrl;
     public resultCounter: number;
     public centerBounds: any;
     public currentBounds: any;
 
-    @ViewChild('googleMap') googleMap:ElementRef;
+    @ViewChild('googleMap') googleMap: ElementRef;
     public googleMaps: any;
 
     @ViewChild("SearchTop")
     public searchElementRef: ElementRef;
 
     @ViewChild("homeContainer")
-    public homeContainer:any;
+    public homeContainer: any;
 
-    public mmap : any;
+    public loginModal: LoginModalComponent;
 
-    public isOpenLoginModal : any = "false";
+    public mmap: any;
+
+    public isOpenLoginModal: any = "false";
 
     /*------ filter -------------*/
     public propertyTypeItems: Observable<Array<any>>;
@@ -138,7 +140,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public isMapView: any = true;
     public toggleMapListViewText: string = "List";
 
-    @ViewChild('AvailableDate') AvailableDate:ElementRef;
+    @ViewChild('AvailableDate') AvailableDate: ElementRef;
 
     public currentRouteUrl = "/";
 
@@ -152,8 +154,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         public fb: FormBuilder,
         public propertyService: PropertyService,
         public commonAppService: CommonAppService,
-        public _mapApiWrapper:GoogleMapsAPIWrapper,
-        public _markerManager: MarkerManager, 
+        public _mapApiWrapper: GoogleMapsAPIWrapper,
+        public _markerManager: MarkerManager,
         public _infoWindowManager: InfoWindowManager,
         public _mapComponent: MapComponent,
         public mapsAPILoader: MapsAPILoader,
@@ -161,7 +163,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         public sebmGoogleMap: SebmGoogleMap,
         public ngZone: NgZone,
         localStorage: CoolLocalStorage
-        ) { 
+    ) {
 
         let THIS = this;
 
@@ -170,7 +172,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.paramPropertyType = this.route.snapshot.params['propertyType'];
 
         this.paramPropertyType = this.commonAppService.getPropertyTypeFromParam(this.paramPropertyType);
-        if(!this.commonAppService.isUndefined(this.paramPropertyType)){
+        if (!this.commonAppService.isUndefined(this.paramPropertyType)) {
             this.filterQueryObject.PropertyType.push(this.paramPropertyType);
         }
 
@@ -178,25 +180,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this._propertyTypeItems = [];
 
         this.beds = Observable.of(this._beds);
-        this.beds.subscribe(res => { 
-            this.watchedBedsItems = res; 
+        this.beds.subscribe(res => {
+            this.watchedBedsItems = res;
         });
 
         this.propertyTypeItems = Observable.of(this._propertyTypeItems);
-        this.propertyTypeItems.subscribe(res => { this.watchedPropertyTypeItems = res; 
+        this.propertyTypeItems.subscribe(res => {
+        this.watchedPropertyTypeItems = res;
         });
 
-        // this.localStorage = localStorage; 
-
-        
+        this.localStorage = localStorage;
         $(window).trigger('resize');
 
-        localStorage = this.localStorage;
         // this.currentUser = localStorage.getObject('currentUser');
         this.loading = true;
         this.currentIconUrl = iconUrl;
-        
-        this.router.events.subscribe((url:any) => {
+
+        this.router.events.subscribe((url: any) => {
             THIS.currentRouteUrl = url;
             console.log(' THIS.currentRouteUrl ' + THIS.currentRouteUrl);
             THIS.title.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
@@ -205,67 +205,67 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
         });
         //this.metaDataService.setTag('description');
-        
-        
-        this.route.params.subscribe(params => {
-            this.isOpenLoginModal  = params['login'];
 
-            if(this.isOpenLoginModal == "true" && this.commonAppService.isUndefined(this.currentUser)){
+
+        this.route.params.subscribe(params => {
+            this.isOpenLoginModal = params['login'];
+
+            if (this.isOpenLoginModal == "true" && this.commonAppService.isUndefined(this.currentUser)) {
                 setTimeout(() => {
                     document.getElementById('loginModalBtn').click();
-                    
+
                 }, 2000);
             }
         });
         // this.renderer.invokeElementMethod(this.homeContainer.nativeElement, 'resiz', []);
-        
+
         // this.storageMap = this.localStorage.getObject('storageMap');
         // this.storageFilters = this.localStorage.getObject('storageFilters');
-        
-        if(!this.commonAppService.isUndefined(this.storageFilters)){
+
+        if (!this.commonAppService.isUndefined(this.storageFilters)) {
             console.log(' this.storageFilters ' + JSON.stringify(this.storageFilters));
             this.filterQueryObject = this.storageFilters;
             this.localStorage.removeItem('storageFilters');
             this.setFilterFromStorage(this.storageFilters);
         } else {
-            if(this.commonAppService.isUndefined(this.storageFilters) || this.storageFilters.Bed.length <= 0){
+            if (this.commonAppService.isUndefined(this.storageFilters) || this.storageFilters.Bed.length <= 0) {
 
-                this._beds.push({ label: "Studio", value: "Studio"});
-                this._beds.push({ label: "1", value: "1"});
-                this._beds.push({ label: "2", value: "2"});
-                this._beds.push({ label: "3", value: "3"});
-                this._beds.push({ label: "4", value: "4"});
-                this._beds.push({ label: "5+", value: "5+"});
+                this._beds.push({ label: "Studio", value: "Studio" });
+                this._beds.push({ label: "1", value: "1" });
+                this._beds.push({ label: "2", value: "2" });
+                this._beds.push({ label: "3", value: "3" });
+                this._beds.push({ label: "4", value: "4" });
+                this._beds.push({ label: "5+", value: "5+" });
             }
 
-            if(this.commonAppService.isUndefined(this.storageFilters) || this.storageFilters.PropertyType.length <= 0){
-                if(this.paramPropertyType == 'Apartment'){
-                    this._propertyTypeItems.push({ label: "Apartment", value: "Apartment", selected: true, checked: true});
+            if (this.commonAppService.isUndefined(this.storageFilters) || this.storageFilters.PropertyType.length <= 0) {
+                if (this.paramPropertyType == 'Apartment') {
+                    this._propertyTypeItems.push({ label: "Apartment", value: "Apartment", selected: true, checked: true });
                 } else {
-                    this._propertyTypeItems.push({ label: "Apartment", value: "Apartment"});
+                    this._propertyTypeItems.push({ label: "Apartment", value: "Apartment" });
                 }
 
-                if(this.paramPropertyType == 'House'){
-                    this._propertyTypeItems.push({ label: "House", value: "House", selected: true, checked: true});
+                if (this.paramPropertyType == 'House') {
+                    this._propertyTypeItems.push({ label: "House", value: "House", selected: true, checked: true });
                 } else {
 
-                    this._propertyTypeItems.push({ label: "House", value: "House"});
+                    this._propertyTypeItems.push({ label: "House", value: "House" });
                 }
 
-                if(this.paramPropertyType == 'Room'){
-                    this._propertyTypeItems.push({ label: "Room", value: "Room", selected: true, checked: true});
+                if (this.paramPropertyType == 'Room') {
+                    this._propertyTypeItems.push({ label: "Room", value: "Room", selected: true, checked: true });
                 } else {
-                    this._propertyTypeItems.push({ label: "Room", value: "Room"});
+                    this._propertyTypeItems.push({ label: "Room", value: "Room" });
                 }
 
-                if(this.paramPropertyType == 'Other'){
-                    this._propertyTypeItems.push({ label: "Other", value: "Other", selected: true, checked: true});
+                if (this.paramPropertyType == 'Other') {
+                    this._propertyTypeItems.push({ label: "Other", value: "Other", selected: true, checked: true });
                 } else {
-                    this._propertyTypeItems.push({ label: "Other", value: "Other"});
+                    this._propertyTypeItems.push({ label: "Other", value: "Other" });
                 }
 
-            }      
-        }  
+            }
+        }
 
         //create search FormControl
         this.searchControl = new FormControl();
@@ -277,7 +277,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     let firstResult = $(".pac-container .pac-item:first").text();
 
                     let geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({"address":firstResult }, function(results, status) {
+                    geocoder.geocode({ "address": firstResult }, function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
                             THIS.latitude = results[0].geometry.location.lat();
                             THIS.longitude = results[0].geometry.location.lng();
@@ -287,7 +287,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         }
                     });
                 } else {
-                    $(".pac-container").css("visibility","visible");
+                    $(".pac-container").css("visibility", "visible");
                 }
 
             });
@@ -320,61 +320,67 @@ export class HomeComponent implements OnInit, AfterViewInit {
             });
         });
         console.log('this.storageMap ' + JSON.stringify(this.storageMap));
-        if(!this.commonAppService.isUndefined(this.storageMap)){
+        if (!this.commonAppService.isUndefined(this.storageMap)) {
             this.zoom = this.storageMap.zoom;
-            this.latitude =  this.storageMap.latitude;
+            this.latitude = this.storageMap.latitude;
             this.longitude = this.storageMap.longitude;
 
             this.localStorage.removeItem('storageMap');
-        } else if(!this.commonAppService.isUndefined(this.paramCityName)){
-            
-            this.zoom = 11;
-            this.latitude = 49.895136;
-            this.longitude = -97.13837439999998;
-            this.mapsAPILoader.load().then(() => {
-                let geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'address': this.paramCityName }, (results, status) => {
-                    let latitude = results[0].geometry.location.lat();
-                    let longitude = results[0].geometry.location.lng();
-                    let formatted_address = results[0].formatted_address;
-                    $('#SearchTop').val(formatted_address);
-                    THIS.zoom = 11;
-                    if(latitude && longitude){
-                        THIS.latitude = latitude;
-                        THIS.longitude = longitude;
-                    } else {
-                        
-                        THIS.latitude = 49.895136;
-                        THIS.longitude = -97.13837439999998;
-                    }                
+        } else if (!this.commonAppService.isUndefined(this.paramCityName)) {
+            THIS.zoom = 11;
+            if (this.paramCityName.toUpperCase() == "ACTIVATE") {
+               // this.loginModal.show(true);
+               if(this.commonAppService.isUndefined(this.commonAppService.getCurrentUser())){
+                   document.getElementById('loginModalBtn').click();
+               }
+            } else {
+                this.zoom = 11;
+                this.latitude = 49.895136;
+                this.longitude = -97.13837439999998;
+                this.mapsAPILoader.load().then(() => {
+                    let geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'address': this.paramCityName }, (results, status) => {
+                        let latitude = results[0].geometry.location.lat();
+                        let longitude = results[0].geometry.location.lng();
+                        let formatted_address = results[0].formatted_address;
+                        $('#SearchTop').val(formatted_address);
+                        if (latitude && longitude) {
+                            THIS.latitude = latitude;
+                            THIS.longitude = longitude;
+                        } else {
+
+                            THIS.latitude = 49.895136;
+                            THIS.longitude = -97.13837439999998;
+                        }
+                    });
                 });
-            });
-            
+            }
         } else {
             let visitorLocationDetails: any;
             // this.commonAppService.getVisitorLocationDetails(function (details){
             //     visitorLocationDetails = details;
             //     console.log('visitorLocationDetails ' + JSON.stringify(visitorLocationDetails));  
             //     console.log('city ' + JSON.stringify(visitorLocationDetails.city));  
-                // if(visitorLocationDetails){
-                //     THIS.latitude = visitorLocationDetails.lat;
-                //     THIS.longitude = visitorLocationDetails.lon;
-                // } else {
-                //     THIS.latitude = 49.895136;
-                //     THIS.longitude = -97.13837439999998;
-                // }
+            // if(visitorLocationDetails){
+            //     THIS.latitude = visitorLocationDetails.lat;
+            //     THIS.longitude = visitorLocationDetails.lon;
+            // } else {
+            //     THIS.latitude = 49.895136;
+            //     THIS.longitude = -97.13837439999998;
+            // }
             //});
             this.zoom = 11;
             this.latitude = 49.895136;
             this.longitude = -97.13837439999998;
         }
-        this.storageMap = {latitude: this.latitude, longitude: this.longitude, zoom: this.zoom};
+        this.storageMap = { latitude: this.latitude, longitude: this.longitude, zoom: this.zoom };
         console.log('this.latitude ' + JSON.stringify(this.latitude));
         console.log('this.longitude ' + JSON.stringify(this.longitude));
     }
 
     public ngOnInit() {
-
+        let THIS = this;
+        THIS.currentUser = this.localStorage.getObject('currentUser');
     }
 
     ngAfterViewInit() {
@@ -396,17 +402,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
     }
 
-    setLatLongZoom(obj: any){
+    setLatLongZoom(obj: any) {
         this.zoom = obj.zoom;
         this.latitude = obj.latitude;
         this.longitude = obj.longitude;
     }
 
-    infoWindowDivClick(event: any){
-        console.log(' infoWindowDivClick success ' );
+    infoWindowDivClick(event: any) {
+        console.log(' infoWindowDivClick success ');
     }
 
-    public callGetPropertiesByLatLng(lat: number, lng: number){
+    public callGetPropertiesByLatLng(lat: number, lng: number) {
         this.windowWidth = $(window).width().toString();
         this.windowHeight = $(window).height().toString();
         // this.limitListingCount = 1000;
@@ -415,19 +421,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
             .subscribe((data: any) => {
                 this.loading = false;
                 console.log(' TOTAL FETCH DATA ' + JSON.stringify(data.length));
-                data.sort(function(a,b){
+                data.sort(function (a, b) {
                     let parsed_date = new Date(parseInt(b.DateListed));
                     let relative_to = new Date(parseInt(a.DateListed));
-                    let diff = parsed_date.getTime()-relative_to.getTime();
+                    let diff = parsed_date.getTime() - relative_to.getTime();
                     let flag = new Number(Math.floor(diff));
                     return flag;
                 });
 
                 this.allFullProperties = [];
                 data.map((property: any, index: any) => {
-                    
-                    if(property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount && property.Pictures.length > 0){
-                        this.allFullProperties.push(property); 
+
+                    if (property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount && property.Pictures.length > 0) {
+                        this.allFullProperties.push(property);
                     }
                 });
 
@@ -440,28 +446,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
             });
     }
 
-    setMapManager(mapApiWrapper: GoogleMapsAPIWrapper){
+    setMapManager(mapApiWrapper: GoogleMapsAPIWrapper) {
         this._mapApiWrapper = mapApiWrapper;
         //this.map = map;
     }
 
-    setSebmGoogleMap(sebmGoogleMap: SebmGoogleMap){
+    setSebmGoogleMap(sebmGoogleMap: SebmGoogleMap) {
         this.map = sebmGoogleMap;
     }
 
-    setMarkerManager(markerManager: MarkerManager){
+    setMarkerManager(markerManager: MarkerManager) {
         this._markerManager = markerManager;
     }
 
-    setInfoWindowManager(infoWindowManager: InfoWindowManager){
+    setInfoWindowManager(infoWindowManager: InfoWindowManager) {
         this._infoWindowManager = infoWindowManager;
     }
 
-    checkMarkerAlreadyExist(checkMarker: any){
+    checkMarkerAlreadyExist(checkMarker: any) {
         for (let key in this.previousMarkers) {
             if (this.previousMarkers.hasOwnProperty(key)) {
                 let markerItem = this.previousMarkers[key];
-                if(markerItem.latitude == checkMarker.latitude && markerItem.longitude == checkMarker.longitude){
+                if (markerItem.latitude == checkMarker.latitude && markerItem.longitude == checkMarker.longitude) {
                     return true;
                 }
             }
@@ -472,76 +478,76 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public currentMarker: SebmGoogleMapMarker;
     public currentInfowindow = new SebmGoogleMapInfoWindow(this._infoWindowManager, this.infoWindowDiv);
 
-    addMarkers(markers: any){
+    addMarkers(markers: any) {
         let THIS = this;
-        if(markers.length <= 0){
+        if (markers.length <= 0) {
             THIS.removeMarkers(this.previousMarkers);
         }
         for (let key in markers) {
             if (markers.hasOwnProperty(key)) {
                 let markerItem = markers[key];
-                
+
                 let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(markerItem.DateListed), new Date());
 
                 this.currentMarker = new SebmGoogleMapMarker(this._markerManager);
-                this.currentMarker.iconUrl = (DAYDIFF > 2)?  GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN;
+                this.currentMarker.iconUrl = (DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN;
                 this.currentMarker.latitude = markerItem.Latitude;
                 this.currentMarker.longitude = markerItem.Longitude;
-                this.currentMarker.title = "test";
+                this.currentMarker.title = "";
                 this.currentMarker.zIndex = parseInt(key);
                 this.currentMarker.opacity = 1;
                 this.currentMarker.visible = true;
-                // this.currentMarker.label = ""; 
+                // this.currentMarker.label = "1"; 
 
                 let flag: boolean = this.checkMarkerVisible(markerItem.Latitude, markerItem.Longitude);
 
-                if(!flag){
+                if (!flag) {
                     this._markerManager.deleteMarker(this.currentMarker);
                 } else {
                     let isMarkerExists = this.checkMarkerAlreadyExist(this.currentMarker);
 
-                    if(!isMarkerExists){
+                    if (!isMarkerExists) {
                         this._markerManager.addMarker(this.currentMarker);
 
                         this.previousMarkers.push(this.currentMarker);
                         let w = THIS.getWindowWidth();
                         this._markerManager.createEventObservable('mouseover', this.currentMarker)
-                        .subscribe((position: any) => {
-                            this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
-                            //if(parseInt(w) > 767){
+                            .subscribe((position: any) => {
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
+                                //if(parseInt(w) > 767){
                                 THIS.openInfowindow(markerItem, position);
-                            //}
-                        });
+                                //}
+                            });
 
                         this._markerManager.createEventObservable('click', this.currentMarker)
-                        .subscribe((position: any) => {
-                            this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
-                            if(parseInt(w) <= 767){
-                                THIS.openInfowindow(markerItem, position);
-                            }
-                        }); 
+                            .subscribe((position: any) => {
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
+                                if (parseInt(w) <= 767) {
+                                    THIS.openInfowindow(markerItem, position);
+                                }
+                            });
 
                         // google.maps.event.addListener(this.currentMarker, 'mouseover', function() {
                         // });
 
                         this._markerManager.createEventObservable('mouseout', this.currentMarker)
-                        .subscribe((position: any) => {
-                            this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE;
-                            console.log(' THIS.getIsInfowindowOpenValue ' + THIS.getIsInfowindowOpenValue());
-                            setTimeout(() => {
-                                if(THIS.getIsInfowindowOpenValue() == 'No'){
-                                   this._infoWindowManager.close(THIS.currentInfowindow); 
-                                   THIS.changeMarkerColor(markerItem, 0, false);
-                                }
-                            }, 500);
-                        });  
-                    }                    
+                            .subscribe((position: any) => {
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE;
+                                console.log(' THIS.getIsInfowindowOpenValue ' + THIS.getIsInfowindowOpenValue());
+                                setTimeout(() => {
+                                    if (THIS.getIsInfowindowOpenValue() == 'No') {
+                                        this._infoWindowManager.close(THIS.currentInfowindow);
+                                        THIS.changeMarkerColor(markerItem, 0, false);
+                                    }
+                                }, 500);
+                            });
+                    }
                 }
             }
         }
     }
 
-    openInfowindow(markerItem: any, position: any){
+    openInfowindow(markerItem: any, position: any) {
         let THIS = this;
         let w = THIS.getWindowWidth();
         THIS.changeMarkerColor(markerItem, 0, true);
@@ -568,7 +574,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         let infoWindowLat = 49.895136;
         let infoWindowLong = -97.13837439999998;
-        if(parseInt(w) > 767){
+        if (parseInt(w) > 767) {
             infoWindowLat = position.latLng.lat();
             infoWindowLong = position.latLng.lng();
         } else {
@@ -577,12 +583,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
         THIS.currentInfowindow.latitude = infoWindowLat;
         THIS.currentInfowindow.longitude = infoWindowLong;
-        
-        
-        let node=document.createElement('div');
-        let thisProperty = (markerItem.PropertyType == 'Room')?'Room Rental' : markerItem.PropertyType;
 
-        let thisBed = (markerItem.Bed == 'Studio')?'Studio' : markerItem.Bed + 'br';
+
+        let node = document.createElement('div');
+        let thisProperty = (markerItem.PropertyType == 'Room') ? 'Room Rental' : markerItem.PropertyType;
+
+        let thisBed = (markerItem.Bed == 'Studio') ? 'Studio' : markerItem.Bed + 'br';
 
         node.innerHTML = THIS.getHtmlForInfowindow(markerItem);
         //$('.popover').addClass('popover-infowindow');
@@ -590,16 +596,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
         //THIS.popoverInfowindowHtml = THIS.getHtmlForInfowindow(markerItem);
         THIS.currentInfowindow.content = node;
 
-        node.onclick=function(){
+        node.onclick = function () {
             THIS.propertyDetails(this, markerItem.Id);
         };
 
-        node.addEventListener("mouseover", function(e: any) {
+        node.addEventListener("mouseover", function (e: any) {
             console.log(' nodemouseover call _infoWindowManager');
             THIS.setIsInfowindowOpenValue('Yes');
         });
 
-        node.addEventListener("mouseleave", function(e: any) {
+        node.addEventListener("mouseleave", function (e: any) {
             console.log(' nodemouseleave call _infoWindowManager');
             THIS.setIsInfowindowOpenValue('No');
             THIS.removeInfowindow();
@@ -608,10 +614,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this._infoWindowManager.addInfoWindow(THIS.currentInfowindow);
 
-        if(parseInt(w) > 767){
+        if (parseInt(w) > 767) {
             THIS.currentInfowindow.latitude = position.latLng.lat();
             THIS.currentInfowindow.longitude = position.latLng.lng();
-            this._infoWindowManager.setOptions(THIS.currentInfowindow, { pixelOffset: offset});
+            this._infoWindowManager.setOptions(THIS.currentInfowindow, { pixelOffset: offset });
 
         } else {
             if (quadrant == "br") {
@@ -625,7 +631,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             }
             // THIS.latitude = 49.895136;
             // THIS.longitude = -97.13837439999998;
-            this._infoWindowManager.setOptions(THIS.currentInfowindow, { disableAutoPan : true});
+            this._infoWindowManager.setOptions(THIS.currentInfowindow, { disableAutoPan: true });
         }
 
         THIS.currentInfowindow.latitude = center.lat();
@@ -638,10 +644,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // }); 
 
         this._infoWindowManager.createEventObservable('mouseover', this.currentInfowindow)
-        .subscribe((position: any) => {
-            THIS.setIsInfowindowOpenValue('Yes');
-            console.log(' mouseover call _infoWindowManager');
-        }); 
+            .subscribe((position: any) => {
+                THIS.setIsInfowindowOpenValue('Yes');
+                console.log(' mouseover call _infoWindowManager');
+            });
 
         $('.gm-style-iw').next('div').find('img').click();
         this.removeInfowindow();
@@ -649,19 +655,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log(' windowWidth ' + w);
     }
 
-    removeMarkers(prevMarkers: any){
+    removeMarkers(prevMarkers: any) {
         console.log(' removeMarkers this.previousMarkers ' + JSON.stringify(this.previousMarkers.length) + 'prevMarkers.length' + prevMarkers.length);
         let currentPreMarkersList = [];
 
         this.previousMarkers.map((mark: any, index: any) => {
-            currentPreMarkersList.push(mark); 
+            currentPreMarkersList.push(mark);
         });
 
         for (let markerKey in currentPreMarkersList) {
             if (currentPreMarkersList.hasOwnProperty(markerKey)) {
                 let removeMarkerItem = currentPreMarkersList[markerKey];
                 let flag: boolean = this.checkMarkerVisible(removeMarkerItem.Latitude, removeMarkerItem.Longitude);
-                if(flag == false){
+                if (flag == false) {
                     this._markerManager.deleteMarker(removeMarkerItem);
                     this.previousMarkers.splice(this.previousMarkers.indexOf(removeMarkerItem), 1);
                 }
@@ -669,26 +675,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
     }
 
-    getMarkerLabel(markerItem: any){
+    getMarkerLabel(markerItem: any) {
         let markerLabelCounter;
         let THIS = this;
         let tempMarkerArray = [];
         this.markers.map((property: any, index: any) => {
-            if(property && property.Latitude == markerItem.Latitude && property.Longitude == markerItem.Longitude){
+            if (property && property.Latitude == markerItem.Latitude && property.Longitude == markerItem.Longitude) {
                 tempMarkerArray.push(property);
             }
         });
 
         console.log(' tempMarkerArray.length ' + tempMarkerArray.length);
-         
+
         return tempMarkerArray.length + "";
     }
-    
-    getHtmlForInfowindow(markerItem: any){
+
+    getHtmlForInfowindow(markerItem: any) {
         let THIS = this;
         THIS.thisMarkersArray = [];
         this.markers.map((property: any, index: any) => {
-            if(property && property.Latitude == markerItem.Latitude && property.Longitude == markerItem.Longitude){
+            if (property && property.Latitude == markerItem.Latitude && property.Longitude == markerItem.Longitude) {
                 THIS.thisMarkersArray.push(property);
             }
         });
@@ -697,43 +703,43 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let HTML = "";
         for (let markerKey in THIS.thisMarkersArray) {
             let thisMarkerItem = THIS.thisMarkersArray[markerKey];
-            let thisProperty = (thisMarkerItem.PropertyType == 'Room')?'Room Rental' : thisMarkerItem.PropertyType;
-            let thisBed = (thisMarkerItem.PropertyType == 'Room')?'' :((thisMarkerItem.Bed == 'Studio')?'Studio' : thisMarkerItem.Bed + 'br');
+            let thisProperty = (thisMarkerItem.PropertyType == 'Room') ? 'Room Rental' : thisMarkerItem.PropertyType;
+            let thisBed = (thisMarkerItem.PropertyType == 'Room') ? '' : ((thisMarkerItem.Bed == 'Studio') ? 'Studio' : thisMarkerItem.Bed + 'br');
             HTML += "<div class='list_rental_inforwindow_div'></div>";
-            HTML += "<div id='' class='col-xs-12 col-sm-12 col-md-12 pad0' >"+
-                    "<button class='closeWindowButton btn btn-danger hidden-sm  hidden-md  hidden-lg'>X</button>"+
-                    "<a href='/"+ this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) +"/"+ this.commonAppService.getParamFromPropertyType(thisProperty) +"/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='"+thisMarkerItem.Id+"' class='list_rental_inforwindow' id='markerItem.Id' >"+
-                        "<div class='col-xs-12 col-sm-12 pad0'>"+
-                            "<div class='item'>"+
-                                "<img src='"+ thisMarkerItem.PicUrl +"' alt='' class='infowindow-property-pic thumbnail'>"+
-                            "</div>"+
-                        "</div>"+
-                        "<span class='col-xs-12 infowindow-caption col-sm-12'>"+
-                            "<div class='col-xs-4 col-sm-4'>"+
-                                "<h4 class='text-white'>$"+ thisMarkerItem.MonthlyRent +"</h4>"+
-                            "</div>"+
-                            "<div class='col-xs-5 col-sm-5 text-right'>"+
-                                "<h6 class='price text-white text-center'>"+ thisProperty +"</h6>"+
-                            "</div>"+
-                            "<div class='col-xs-3 col-sm-3 text-right'>"+
-                                "<h6 class='price text-white'>"+ thisBed +"</h6>"+
-                            "</div>"+
-                        "</span>"+
-                    "</a>"+
+            HTML += "<div id='' class='col-xs-12 col-sm-12 col-md-12 pad0' >" +
+                "<button class='closeWindowButton btn btn-danger hidden-sm  hidden-md  hidden-lg'>X</button>" +
+                "<a href='/" + this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) + "/" + this.commonAppService.getParamFromPropertyType(thisProperty) + "/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='" + thisMarkerItem.Id + "' class='list_rental_inforwindow' id='markerItem.Id' >" +
+                "<div class='col-xs-12 col-sm-12 pad0'>" +
+                "<div class='item'>" +
+                "<img src='" + thisMarkerItem.PicUrl + "' alt='' class='infowindow-property-pic thumbnail'>" +
+                "</div>" +
+                "</div>" +
+                "<span class='col-xs-12 infowindow-caption col-sm-12'>" +
+                "<div class='col-xs-4 col-sm-4'>" +
+                "<h4 class='text-white'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
+                "</div>" +
+                "<div class='col-xs-5 col-sm-5 text-right'>" +
+                "<h6 class='price text-white text-center'>" + thisProperty + "</h6>" +
+                "</div>" +
+                "<div class='col-xs-3 col-sm-3 text-right'>" +
+                "<h6 class='price text-white'>" + thisBed + "</h6>" +
+                "</div>" +
+                "</span>" +
+                "</a>" +
                 "</div>";
-                if(new Number(THIS.thisMarkersArray.length) > parseInt(markerKey+1) ) {
-                    HTML += "<div class='col-xs-12 col-sm-12 pad0'>"+
-                        "<div class='col-xs-12 col-sm-12 pad0 infowindowBreak'><hr></div>"+
+            if (new Number(THIS.thisMarkersArray.length) > parseInt(markerKey + 1)) {
+                HTML += "<div class='col-xs-12 col-sm-12 pad0'>" +
+                    "<div class='col-xs-12 col-sm-12 pad0 infowindowBreak'><hr></div>" +
                     "</div>";
-                }
-                
+            }
+
         }
 
         // $(document).on('mouseover', 'div.list_rental_inforwindow', function() {
         //     THIS.setIsInfowindowOpenValue('Yes');
         // });
 
-        $(document).on("mouseenter", "div.list_rental_inforwindow_div", function() {
+        $(document).on("mouseenter", "div.list_rental_inforwindow_div", function () {
             console.log('mouseover works!!!!!!!!!');
             THIS.setIsInfowindowOpenValue('Yes');
         });
@@ -744,22 +750,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
 
         // $(".list_rental_inforwindow_div").on("mouseover", "div", function() {
-           
+
         // });
 
-        $(document).on('click', 'button.closeWindowButton', function() {
+        $(document).on('click', 'button.closeWindowButton', function () {
             //THIS._infoWindowManager.close(THIS.currentInfowindow); 
         });
 
-        $(document).on('mouseleave', 'div.list_rental_inforwindow_div', function() {
+        $(document).on('mouseleave', 'div.list_rental_inforwindow_div', function () {
             THIS.setIsInfowindowOpenValue('No');
-            THIS._infoWindowManager.close(THIS.currentInfowindow); 
+            THIS._infoWindowManager.close(THIS.currentInfowindow);
         });
 
         return HTML;
     }
 
-    editProperty(event: any, Id: string){
+    editProperty(event: any, Id: string) {
         event.stopPropagation();
         window.location.href = "manageProperty/" + Id;
         // this.router.navigate( [
@@ -767,61 +773,61 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // ]);
     }
 
-    propertyDetails(event: any, Id: any){
+    propertyDetails(event: any, Id: any) {
         this.localStorage.setObject('storageFilters', this.filterQueryObject);
         this.localStorage.setObject('storageMap', this.storageMap);
 
         this.propertyService.updatePropertyViewsCount(Id)
-                .subscribe((data: any) => {
-                    this.loading = false;
-                    console.log(' data ' + JSON.stringify(data));
-                    //event.stopPropagation();
-                    // this.router.navigate( [
-                    //     'propertyDetails', { Id: Id}
-                    // ]);
-                },
-                (error: any) => {
-                    this.loading = false;
-                    console.log(' Error while updateProfile : ' + JSON.stringify(error));
-                    // event.stopPropagation();
-                    // this.router.navigate( [
-                    //     'propertyDetails', { Id: Id}
-                    // ]);
-                });
+            .subscribe((data: any) => {
+                this.loading = false;
+                console.log(' data ' + JSON.stringify(data));
+                //event.stopPropagation();
+                // this.router.navigate( [
+                //     'propertyDetails', { Id: Id}
+                // ]);
+            },
+            (error: any) => {
+                this.loading = false;
+                console.log(' Error while updateProfile : ' + JSON.stringify(error));
+                // event.stopPropagation();
+                // this.router.navigate( [
+                //     'propertyDetails', { Id: Id}
+                // ]);
+            });
 
     }
 
-    changeMarkerColor(prop: any, index: any, flag: boolean){
+    changeMarkerColor(prop: any, index: any, flag: boolean) {
         for (let markerKey in this.previousMarkers) {
             let preMarkerItem = this.previousMarkers[markerKey];
             if (prop.Latitude == preMarkerItem.latitude && prop.Longitude == preMarkerItem.longitude) {
                 let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(preMarkerItem.title), new Date());
 
-                preMarkerItem.iconUrl = (flag == true)? GlobalVariable.PIN_RED : ((DAYDIFF > 2)?  GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN);
+                preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED : ((DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN);
 
                 this._markerManager.updateIcon(preMarkerItem);
             }
         }
     }
 
-    toggleMore(){
+    toggleMore() {
         this.isMoreFilter = !this.isMoreFilter;
-        this.moreFilterText = (this.isMoreFilter)? "More" : "Less";
+        this.moreFilterText = (this.isMoreFilter) ? "More" : "Less";
     }
 
-    closeMore(){
+    closeMore() {
         this.isMoreFilter = !this.isMoreFilter;
     }
 
-    infowindowMouseOver(event: any){
-         console.log(' infowindowMouseOver');
+    infowindowMouseOver(event: any) {
+        console.log(' infowindowMouseOver');
     }
 
 
-    setFilterFromStorage(defaultFilters: any){
+    setFilterFromStorage(defaultFilters: any) {
         let THIS = this;
         console.log(' defaultFilters.Min ' + JSON.stringify(defaultFilters.Min));
-        
+
         for (var key in defaultFilters) {
             if (defaultFilters.hasOwnProperty(key)) {
                 // console.log(' final defaultFilters[key] ' + defaultFilters[key] + ' key  : ' + key);
@@ -829,11 +835,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     let PropertyTypeArray = ['Apartment', 'House', 'Room', 'Other'];
 
                     $.each(PropertyTypeArray, function (i, typeVal) {
-                        if(defaultFilters[key].indexOf(typeVal) >= 0){
-                            THIS._propertyTypeItems.push({ label: typeVal, value: typeVal, selected: true, checked: true});
+                        if (defaultFilters[key].indexOf(typeVal) >= 0) {
+                            THIS._propertyTypeItems.push({ label: typeVal, value: typeVal, selected: true, checked: true });
                         } else {
                             console.log('THIS._propertyTypeItems  ' + THIS._propertyTypeItems);
-                            THIS._propertyTypeItems.push({ label: typeVal, value: typeVal});
+                            THIS._propertyTypeItems.push({ label: typeVal, value: typeVal });
                         }
                     });
                 }
@@ -850,11 +856,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     let BedArray = ['Studio', '1', '2', '3', '4', '5+'];
 
                     $.each(BedArray, function (i, typeVal) {
-                        if(defaultFilters[key].indexOf(typeVal) >= 0){
-                            THIS._beds.push({ label: typeVal, value: typeVal, selected: true, checked: true});
+                        if (defaultFilters[key].indexOf(typeVal) >= 0) {
+                            THIS._beds.push({ label: typeVal, value: typeVal, selected: true, checked: true });
                         } else {
                             console.log('THIS._beds  ' + THIS._beds);
-                            THIS._beds.push({ label: typeVal, value: typeVal});
+                            THIS._beds.push({ label: typeVal, value: typeVal });
                         }
                     });
                 }
@@ -906,48 +912,48 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
     }
 
-    clearFilter(){
+    clearFilter() {
         this.initFilterQueryObject();
         this.filterListing(this.allFullProperties);
         //$('#morefilter').find('input[type=checkbox]').prop('checked', false);
         //$('#morefilter').find('input[type=radio]').prop('checked', false);
 
         $('#filtercontainer')
-          .find(".form-control,textarea,select")
-             .val('')
-             .end()
-          .find("input[type=checkbox], input[type=radio]")
-             .prop("checked", "")
-             .end()
-          .find("li")
-             .removeClass('selected')
-             .end();
+            .find(".form-control,textarea,select")
+            .val('')
+            .end()
+            .find("input[type=checkbox], input[type=radio]")
+            .prop("checked", "")
+            .end()
+            .find("li")
+            .removeClass('selected')
+            .end();
 
         $('.multi-select-popup .dropdown-item')
-          .find("i")
-          .removeClass("fa-check").addClass("glyphicon-none");             
+            .find("i")
+            .removeClass("fa-check").addClass("glyphicon-none");
     }
 
-    closeInforwindow(){
+    closeInforwindow() {
         // this.infoWindow.close();
         let w = this.getWindowWidth();
-        if(this.getIsInfowindowOpenValue() == 'No'){
-            this._infoWindowManager.close(this.currentInfowindow);    
+        if (this.getIsInfowindowOpenValue() == 'No') {
+            this._infoWindowManager.close(this.currentInfowindow);
         }
     }
 
-    removeInfowindow(){
+    removeInfowindow() {
         $('.gm-style-iw').parent().remove();
     }
 
-    updateResultCounter(){
-        this.resultCounter = this.properties.filter(value => 
+    updateResultCounter() {
+        this.resultCounter = this.properties.filter(value =>
             (value.PicUrl != '' && (this.checkMarkerVisible(value.Latitude, value.Longitude)))).length;
     }
 
     /*------ Filter Property ------- */
 
-    propTypeSelected(event: any){
+    propTypeSelected(event: any) {
         let propertyTypeItems: string[] = this.commonAppService.getSelectedFromMultiselect(this.watchedPropertyTypeItems);
 
         this.filterQueryObject.PropertyType = propertyTypeItems;
@@ -955,8 +961,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public PropertyTypeMobile: string[] = [];
-    propMobilePropertyTypeChange(event: any){
-        if(event.target.checked == true){
+    propMobilePropertyTypeChange(event: any) {
+        if (event.target.checked == true) {
             this.PropertyTypeMobile.push(event.target.value);
         } else {
             this.PropertyTypeMobile.splice(this.PropertyTypeMobile.indexOf(event.target.value), 1);
@@ -965,21 +971,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.filterListing(this.allFullProperties);
     }
 
-    propMinChange(value: any){
-        if(value != this.filterQueryObject.Min){
+    propMinChange(value: any) {
+        if (value != this.filterQueryObject.Min) {
             this.filterQueryObject.Min = value;
             this.filterListing(this.allFullProperties);
         }
     }
 
-    propMaxChange(value: any){
-        if(value != this.filterQueryObject.Max){
+    propMaxChange(value: any) {
+        if (value != this.filterQueryObject.Max) {
             this.filterQueryObject.Max = value;
             this.filterListing(this.allFullProperties);
         }
     }
 
-    propBedSelected(event: any){
+    propBedSelected(event: any) {
         let propertyBedItems: string[] = this.commonAppService.getSelectedFromMultiselect(this.watchedBedsItems);
 
         this.filterQueryObject.Bed = propertyBedItems;
@@ -987,8 +993,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public BedMobile: string[] = [];
-    propMobileBedChange(event: any){
-        if(event.target.checked == true){
+    propMobileBedChange(event: any) {
+        if (event.target.checked == true) {
             this.BedMobile.push(event.target.value);
         } else {
             this.BedMobile.splice(this.BedMobile.indexOf(event.target.value), 1);
@@ -997,33 +1003,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.filterListing(this.allFullProperties);
     }
 
-    propAvailableDateSelected(event: any){
+    propAvailableDateSelected(event: any) {
 
-        this.filterQueryObject.DateAvailable = ((event.target.checked == true)? new Date().toString() : "");
+        this.filterQueryObject.DateAvailable = ((event.target.checked == true) ? new Date().toString() : "");
         this.filterListing(this.allFullProperties);
     }
 
-    propAvailableDateChange(event: IMyDateModel){
+    propAvailableDateChange(event: IMyDateModel) {
         console.log(' event.jsdate ' + event.jsdate);
-        this.filterQueryObject.DateAvailable = ((event.jsdate != null)? event.jsdate.toString() : "");
+        this.filterQueryObject.DateAvailable = ((event.jsdate != null) ? event.jsdate.toString() : "");
         this.filterListing(this.allFullProperties);
     }
 
-    availableDateMouseover(event: IMyDateModel){
+    availableDateMouseover(event: IMyDateModel) {
         console.log(' availableDateMouseover ');
         // let eventNew = new MouseEvent('click', {bubbles: true});
         // this.renderer.invokeElementMethod(this.AvailableDate.nativeElement, 'dispatchEvent', [eventNew]);
     }
 
-    propKeywordsChange(value: any){
-        if(value.length >= 0){
+    propKeywordsChange(value: any) {
+        if (value.length >= 0) {
             this.filterQueryObject.Keywords = value;
             this.filterListing(this.allFullProperties);
         }
     }
 
     public ListedWithin: string = "";
-    propListedWithinChange(event: any){
+    propListedWithinChange(event: any) {
         console.log(' propListedWithinChange event.target.value ' + event.target.value);
         $('input[type=checkbox][name=listedWithin].listedWithin').each(function () {
             console.log('$(this).data(val) ' + $(this).data('val'));
@@ -1032,14 +1038,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
             }
         });
 
-        this.ListedWithin = (event.target.checked == true)? event.target.value : "";
+        this.ListedWithin = (event.target.checked == true) ? event.target.value : "";
         this.filterQueryObject.ListedWithin = this.ListedWithin;
         this.filterListing(this.allFullProperties);
     }
 
     public Bath: string[] = [];
-    propBathChange(event: any){
-        if(event.target.checked == true){
+    propBathChange(event: any) {
+        if (event.target.checked == true) {
             this.Bath.push(event.target.value);
         } else {
             this.Bath.splice(this.Bath.indexOf(event.target.value), 1);
@@ -1049,7 +1055,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public Pet: string[] = [];
-    propPetChange(event: any){
+    propPetChange(event: any) {
         // if(event.target.checked == true){
         //     this.Pet.push(event.target.value);
         // } else {
@@ -1061,31 +1067,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public Smoking: string = "";
-    propSmokingChange(event: any){
+    propSmokingChange(event: any) {
         $('input[type=checkbox][name=smoking].smoking').each(function () {
             if ($(this).data('val') != event.target.value) {
                 $(this).prop("checked", false);
             }
         });
 
-        this.Smoking = (event.target.checked == true)? event.target.value : "";
+        this.Smoking = (event.target.checked == true) ? event.target.value : "";
         this.filterQueryObject.Smoking = this.Smoking;
         this.filterListing(this.allFullProperties);
     }
-    filterListing(data: any){
+    filterListing(data: any) {
         console.log(' this.filterQueryObject ' + JSON.stringify(this.filterQueryObject));
-        
+
         let filteredListing: any[] = [];
         // let filteredListing = Object.assign([], this.allFullProperties);
         this.allFullProperties.map((property: any) => {
-            if(property && property.Id != 0){
-                filteredListing.push(property); 
+            if (property && property.Id != 0) {
+                filteredListing.push(property);
             }
         });
 
         console.log(' filteredListing ' + JSON.stringify(filteredListing.length));
         let counter = 0;
-        if(filteredListing.length <= 0){
+        if (filteredListing.length <= 0) {
             this.markers = [];
             return;
         }
@@ -1169,28 +1175,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                             let DAYDIFF = null;
                             let DAYDIFF1 = null;
-                            if(!this.commonAppService.isUndefined(dateAvailableValue) && !this.commonAppService.isUndefined(rentalItem.DateAvailable)){
+                            if (!this.commonAppService.isUndefined(dateAvailableValue) && !this.commonAppService.isUndefined(rentalItem.DateAvailable)) {
                                 DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date(rentalItem.DateAvailable));
                             }
-                            if(!this.commonAppService.isUndefined(dateAvailableValue)){
+                            if (!this.commonAppService.isUndefined(dateAvailableValue)) {
                                 DAYDIFF1 = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date());
                             }
 
-                            if(this.commonAppService.isUndefined(dateAvailableValue)){
+                            if (this.commonAppService.isUndefined(dateAvailableValue)) {
 
-                            } else  if(!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) && DAYDIFF1 > 0 && rentalItem.IsImmediateAvailable == false && DAYDIFF > 0) {
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) && DAYDIFF1 > 0 && rentalItem.IsImmediateAvailable == false && DAYDIFF > 0) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else  if(!this.commonAppService.isUndefined(dateAvailableValue) &&  DAYDIFF1 <= 0 && rentalItem.IsImmediateAvailable == true && DAYDIFF == null) {
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && DAYDIFF1 <= 0 && rentalItem.IsImmediateAvailable == true && DAYDIFF == null) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else  if(!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) &&  DAYDIFF1 < 0 && DAYDIFF < 0 && rentalItem.IsImmediateAvailable == false) {
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) && DAYDIFF1 < 0 && DAYDIFF < 0 && rentalItem.IsImmediateAvailable == false) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             }
                         }
 
-                        if(filterkey == 'Keywords'){
+                        if (filterkey == 'Keywords') {
                             let keywords = this.filterQueryObject[filterkey];
 
                             if (keywords != '' && (this.commonAppService.isUndefined(rentalItem.Title))) {
@@ -1204,7 +1210,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                         if (filterkey == 'ListedWithin') {
                             let listedWithinValue = this.filterQueryObject[filterkey];
-                            let thisDateListed = rentalItem.DateListed; 
+                            let thisDateListed = rentalItem.DateListed;
                             // 
                             let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(thisDateListed), new Date());
 
@@ -1212,18 +1218,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             } else if (listedWithinValue.length != '' && !this.commonAppService.isUndefined(thisDateListed)) {
-                                
+
                                 if (listedWithinValue == 'Month' && DAYDIFF > 30) {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 } else if (listedWithinValue == 'Week' && DAYDIFF > 7) {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
-                                } else if (listedWithinValue == '48h' &&  DAYDIFF > 2) {
+                                } else if (listedWithinValue == '48h' && DAYDIFF > 2) {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 }
-                            } 
+                            }
                         }
 
                         if (filterkey == 'Bath') {
@@ -1278,14 +1284,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     }
                 }
             }
-            if(counter == this.allFullProperties.length){
+            if (counter == this.allFullProperties.length) {
                 console.log(' filteredListing ' + JSON.stringify(filteredListing.length));
                 console.log(' this.allFullProperties.length ' + JSON.stringify(this.allFullProperties.length));
                 this.properties = Object.assign([], filteredListing);
 
                 this.markers = [];
                 this.properties.map((property: any) => {
-                    if(property && property.Id != 0){
+                    if (property && property.Id != 0) {
                         // console.log(' property ' + JSON.stringify(property));
                         let markerObj = {
                             Latitude: property.Latitude,
@@ -1312,45 +1318,45 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             }
                         };
 
-                        this.markers.push(markerObj); 
+                        this.markers.push(markerObj);
                         this.clusters.push(clusterObj);
                     }
                 });
 
-                if(this.previousMarkers && this.previousMarkers.length > 0){
+                if (this.previousMarkers && this.previousMarkers.length > 0) {
                     this.removeMarkers(this.previousMarkers);
                 }
 
                 this.addMarkers(this.markers);
-                
-                console.log(' this.properties '+ JSON.stringify(this.properties.length));
-                console.log(' this.markers '+ JSON.stringify(this.markers.length));
-                console.log(' this.previousMarkers '+ JSON.stringify(this.previousMarkers.length));
+
+                console.log(' this.properties ' + JSON.stringify(this.properties.length));
+                console.log(' this.markers ' + JSON.stringify(this.markers.length));
+                console.log(' this.previousMarkers ' + JSON.stringify(this.previousMarkers.length));
                 this.resultCounter = filteredListing.length;
                 //this.updateResultCounter();
             }
         }
-        
+
     }
 
     @ViewChild('infoWindow') infoWindow: any;
 
     mapClicked() {
         //this._infoWindowManager.close(this.currentInfowindow);
-        if(this.markers.length > 0){
+        if (this.markers.length > 0) {
             $('.gm-style-iw').next('div').find('img').click();
         }
     }
 
     markerHover(index: number, infoWindow: any, marker: any) {
         $('.gm-style-iw').next('div').find('img').click();
-    }  
+    }
 
-    mapBoundsChanged(bounds: any){
+    mapBoundsChanged(bounds: any) {
         console.log(' mapBoundsChanged call');
-        if(!this.commonAppService.isUndefined(bounds)){
+        if (!this.commonAppService.isUndefined(bounds)) {
 
-            if(!this.commonAppService.isUndefined(bounds) && !this.commonAppService.isUndefined(this.centerBounds)){
+            if (!this.commonAppService.isUndefined(bounds) && !this.commonAppService.isUndefined(this.centerBounds)) {
             }
 
             let center = bounds.getCenter();
@@ -1360,23 +1366,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
             let lng = center.lng();
             this.storageMap.latitude = lat;
             this.storageMap.longitude = lng;
-            if(this.isBoundJustChanged == false){
+            if (this.isBoundJustChanged == false) {
                 this.isBoundJustChanged = true;
                 //this.callGetPropertiesByLatLng(lat, lng);    
-            } 
+            }
         }
     }
 
-    mapIdle(event: any, infoWindow: any){
+    mapIdle(event: any, infoWindow: any) {
         let lat = this.centerBounds.lat();
         let lng = this.centerBounds.lng();
         console.log(' mapIdle call' + this.windowWidth + '| this.isInfowindowOpen' + this.isInfowindowOpen);
         //if(parseInt(this.windowWidth) > 767 || this.isInfowindowOpen == false){
-            this.callGetPropertiesByLatLng(lat, lng);
+        this.callGetPropertiesByLatLng(lat, lng);
         //}
     }
 
-    mapCenterChanged(event: any){
+    mapCenterChanged(event: any) {
         // console.log(' this.isInfowindowOpen ' + this.isInfowindowOpen );
         // if(this.isInfowindowOpen == false){
         //     console.log(' mapCenterChanged call zoom ' + this.zoom);
@@ -1386,8 +1392,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // }
     }
 
-    mapZoomChange(zoom: number){
-        console.log(' mapZoomChange ' + zoom );
+    mapZoomChange(zoom: number) {
+        console.log(' mapZoomChange ' + zoom);
         this.zoom = zoom;
         this.storageMap.zoom = zoom;
         this.limitListingCountUpdate(this.zoom);
@@ -1397,60 +1403,60 @@ export class HomeComponent implements OnInit, AfterViewInit {
         //this.callGetPropertiesByLatLng(lat, lng);
     }
 
-    checkMarkerVisible(lat: number, lng: number){
+    checkMarkerVisible(lat: number, lng: number) {
         let lat1 = this.currentBounds.getSouthWest().lat();
         let lng1 = this.currentBounds.getSouthWest().lng();
         let lat2 = this.currentBounds.getNorthEast().lat();
         let lng2 = this.currentBounds.getNorthEast().lng();
-        
+
         // let isExists: boolean = this.currentBounds.contains( new google.maps.LatLng(lat, lng) );
         // //console.log(' isExists ' + isExists);
         // return isExists;
-        if((lat >= lat1 && lat <= lat2) && (lng >= lng1 && lng <= lng2)){
+        if ((lat >= lat1 && lat <= lat2) && (lng >= lng1 && lng <= lng2)) {
             // return this.currentBounds.contains({'lat': lat, 'lng': lng});
-            return true;    
-        } 
+            return true;
+        }
         return false;
     }
 
     limitListingCountUpdate(currentZoom: number) {
-        if(currentZoom <=5 ){
+        if (currentZoom <= 5) {
             this.limitListingCount = 120;
-        } else if(currentZoom > 5 && currentZoom <=8){
+        } else if (currentZoom > 5 && currentZoom <= 8) {
             this.limitListingCount = 150;
-        } else if(currentZoom > 8 && currentZoom <=12){
+        } else if (currentZoom > 8 && currentZoom <= 12) {
             this.limitListingCount = 200;
-        } else if(currentZoom > 12 && currentZoom <= 15){
+        } else if (currentZoom > 12 && currentZoom <= 15) {
             this.limitListingCount = 230;
-        } else if(currentZoom > 15 && currentZoom <= 20){
+        } else if (currentZoom > 15 && currentZoom <= 20) {
             this.limitListingCount = 250;
-        } else if(currentZoom > 20){
-            this.limitListingCount = 350; 
+        } else if (currentZoom > 20) {
+            this.limitListingCount = 350;
         }
     }
 
     onResize(event: any) {
-        console.log( 'event.target.innerWidth ' +  event.target.innerWidth); 
-        console.log( 'event.target.innerHeight ' +  event.target.innerHeight);
+        console.log('event.target.innerWidth ' + event.target.innerWidth);
+        console.log('event.target.innerHeight ' + event.target.innerHeight);
         this.windowHeight = (event.target.innerHeight);
         this.windowWidth = (event.target.innerWidth);
         this.setMapAndListSize(this.windowHeight);
     }
 
-    setMapAndListSize(height: any){
-        console.log( ' setMapAndListSize ' +  height);
+    setMapAndListSize(height: any) {
+        console.log(' setMapAndListSize ' + height);
         let HEIGHT = "";
-        if(height >= 1000){
+        if (height >= 1000) {
             HEIGHT = (height - 290) + 'px';
-        } else if(height >= 900){
+        } else if (height >= 900) {
             HEIGHT = (height - 255) + 'px';
-        } else if(height >= 700){
+        } else if (height >= 700) {
             HEIGHT = (height - 135) + 'px';
         } else {
             HEIGHT = (height - 125) + 'px';
         }
 
-        console.log( ' after setMapAndListSize ' +  HEIGHT);
+        console.log(' after setMapAndListSize ' + HEIGHT);
         $('#searchPropertyListing').css({
             'height': HEIGHT
         });
@@ -1469,33 +1475,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
     }
 
-    isNumberKey(event: any){
+    isNumberKey(event: any) {
         const pattern = /[0-9\+\-\ ]/;
         let inputChar = String.fromCharCode(event.charCode);
         if (!pattern.test(inputChar)) {
-          event.preventDefault();
+            event.preventDefault();
         }
     }
 
-    openModal(ButtonId: string){
-        console.log( ' -----ButtonId ' +  ButtonId); 
+    openModal(ButtonId: string) {
+        console.log(' -----ButtonId ' + ButtonId);
         document.getElementById(ButtonId).click();
     }
 
-    toggleMapListView(){
+    toggleMapListView() {
         this.isMapView = !this.isMapView;
-        this.toggleMapListViewText = (this.isMapView == true)? "List" : "Map";
+        this.toggleMapListViewText = (this.isMapView == true) ? "List" : "Map";
     }
 
-    getWindowWidth(){
+    getWindowWidth() {
         return $(window).width().toString();
     }
 
-    getIsInfowindowOpenValue(){
+    getIsInfowindowOpenValue() {
         return this.isInfowindowOpen;
     }
 
-    setIsInfowindowOpenValue(value: any){
+    setIsInfowindowOpenValue(value: any) {
         this.isInfowindowOpen = value;
     }
 }
@@ -1515,7 +1521,7 @@ export interface MarkerObject {
     draggable: boolean;
 }
 
-export interface FilterQueryObject{
+export interface FilterQueryObject {
     PropertyType: string[];
     Min: string;
     Max: string;

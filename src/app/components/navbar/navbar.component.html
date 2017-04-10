@@ -1,69 +1,65 @@
-
 <nav class="navbar navbar-default navbar-dark bg-inverse">
   <div class="container-fluid">
     <div class="clearfix navbar-header">
-      <a href="javascript:void(0)" (click)="isCollapsed = !isCollapsed"
-        class="navbar-toggler pull-xs-right hidden-sm-up hidden-sm hidden-md hidden-lg" aria-controls="maprentalsNavbar"
-        #maprentalsNavbarBtn
-        id="maprentalsNavbarBtn"
-        aria-label="Toggle navigation">
-          <i class="glyphicon" [class.glyphicon-option-vertical]="isCollapsed == true" [class.glyphicon-remove]="isCollapsed == false"></i>
-      </a>
-      <a #navbarbrand class="navbar-brand jura-font" (click)="goToHomePage()" href="/">
+      <a href="javascript:void(0)" (click)="isCollapsed = !isCollapsed" class="navbar-toggler pull-xs-right hidden-sm-up hidden-sm hidden-md hidden-lg"
+        aria-controls="maprentalsNavbar" #maprentalsNavbarBtn id="maprentalsNavbarBtn" aria-label="Toggle navigation">
+        <i class="glyphicon" [class.glyphicon-option-vertical]="isCollapsed == true" [class.glyphicon-remove]="isCollapsed == false"></i>
+        </a>
+        <a #navbarbrand class="navbar-brand jura-font" (click)="goToHomePage()" href="/">
           <img src="assets/public/img/logo.png" class='hidden-xs' />
           <img src="assets/public/img/logo-small.png" class='hidden-sm hidden-md hidden-lg' />
-      </a>
+        </a>
     </div>
-   
-    <div class="navbar-toggleable-xs navbar-collapse" id="#maprentalsNavbar"
-    [attr.aria-expanded]="!isCollapsed" [ngClass]="{collapse: isCollapsed}">
+
+    <div class="navbar-toggleable-xs navbar-collapse" id="#maprentalsNavbar" [attr.aria-expanded]="!isCollapsed" [ngClass]="{collapse: isCollapsed}">
       <ul class="nav navbar-nav navbar-right">
         <li class="hidden-sm hidden-md hidden-lg">
-          <a (click)='checkAuth($event); isCollapsed = !isCollapsed;' class="btnlogin">List Rental</a> 
+          <a (click)='checkAuth($event); isCollapsed = !isCollapsed;' class="btnlogin">List Rental</a>
         </li>
 
         <li class='hidden-sm hidden-md hidden-lg' *ngIf="currentUser == null">
-          <a (click)="login()" class="btnlogin">Login</a> 
+          <a (click)="login()" class="btnlogin">Login</a>
         </li>
 
         <ng-container *ngIf="currentUser != null">
-          <li class="hidden-sm hidden-md hidden-lg" *ngFor="let userMenu of userMenus"  routerLinkActive="active"
-            [ngClass]="getUserMenuClasses(userMenu)">
+          <li class="hidden-sm hidden-md hidden-lg" *ngFor="let userMenu of userMenus" routerLinkActive="active" [ngClass]="getUserMenuClasses(userMenu)">
             <a class="nav-item nav-link" [routerLink]="[userMenu.path]" routerLinkActive="active" (click)="isCollapsed = !isCollapsed;">{{userMenu.title}}</a>
           </li>
         </ng-container>
-        
+
         <ng-container *ngIf="currentUser != null">
           <li>
-            <a (click)='logout($event); "isCollapsed = !isCollapsed;"' class="btnlogout hidden-sm hidden-md hidden-lg">Log out</a> 
+            <a (click)='logout($event); "isCollapsed = !isCollapsed;"' class="btnlogout hidden-sm hidden-md hidden-lg">Log out</a>
           </li>
         </ng-container>
 
-        <li class="hidden-sm hidden-md hidden-lg unAuthMenus" *ngFor="let menuItem of menuItems"
-          routerLinkActive="active"
-          [ngClass]="getMenuItemClasses(menuItem)">
+        <li class="hidden-sm hidden-md hidden-lg unAuthMenus" *ngFor="let menuItem of menuItems" routerLinkActive="active" [ngClass]="getMenuItemClasses(menuItem)">
           <a class="nav-item nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active" (click)="isCollapsed = !isCollapsed;">{{menuItem.title}}</a>
         </li>
 
         <li role="separator" class="divider hidden-xs"></li>
 
         <li class="dropdown hidden-xs">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id=""><div>Menu <div class="caret"></div></div></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="">
+            <div>Menu
+              <div class="caret"></div>
+            </div>
+          </a>
           <ul class="dropdown-menu">
-            <li (click)="isCollapsed = true" *ngFor="let menuItem of menuItems"
-              class="nav-item" routerLinkActive="active"
-              [ngClass]="getMenuItemClasses(menuItem)">
+            <li (click)="isCollapsed = true" *ngFor="let menuItem of menuItems" class="nav-item" routerLinkActive="active" [ngClass]="getMenuItemClasses(menuItem)">
               <a class="nav-item nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active">{{menuItem.title}}</a>
             </li>
           </ul>
         </li>
 
         <li class="dropdown hidden-xs" *ngIf="currentUser != null">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id=""><div>{{userMenuTitle}} <div class="caret"></div></div></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="">
+            <div>{{userMenuTitle}}
+              <div class="caret"></div>
+            </div>
+          </a>
           <ul class="dropdown-menu">
-            <li (click)="isCollapsed = true" *ngFor="let userMenu of userMenus"
-              class="nav-item" routerLinkActive="active"
-              [ngClass]="getUserMenuClasses(userMenu)">
+            <li (click)="isCollapsed = true" *ngFor="let userMenu of userMenus" class="nav-item" routerLinkActive="active" [ngClass]="getUserMenuClasses(userMenu)">
               <a class="nav-item nav-link" [routerLink]="[userMenu.path]" routerLinkActive="active">{{userMenu.title}}</a>
             </li>
             <li role="separator" class="divider"></li>
@@ -72,10 +68,10 @@
         </li>
 
         <li class='hidden-xs' *ngIf="currentUser == null">
-          <a (click)="login()" class="btnlogin">Login</a> 
+          <a (click)="login()" class="btnlogin">Login</a>
         </li>
 
-        <li class='hidden-xs listRentalFreeLi pad0' >
+        <li class='hidden-xs listRentalFreeLi pad0'>
           <span class="btnlstrental cursor-pointer" id="btnlstrental" (click)="checkAuth($event)"><img src="assets/public/img/free-ribbon.png" class='free-img' /><b class="padR15">List a Rental</b></span>
         </li>
       </ul>

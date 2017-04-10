@@ -8,13 +8,13 @@ import {RouterModule} from '@angular/router';
 @NgModule({
     imports: [
         RouterModule.forRoot([
+            // {
+            //     path: '', 
+            //     redirectTo: '/', 
+            //     pathMatch: 'full'
+            // },
             {
                 path: '', 
-                redirectTo: '/Home', 
-                pathMatch: 'full'
-            },
-            {
-                path: 'Home', 
                 loadChildren: 'app/components/home/home.module#HomeModule'
             },
             {

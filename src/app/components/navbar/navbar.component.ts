@@ -3,8 +3,6 @@ import { Router, ActivatedRoute, CanActivate, ActivatedRouteSnapshot, RouterStat
 import { ROUTES } from './navbar-routes.config';
 import { MenuType } from './navbar.metadata';
 import { User } from '../../components/models/user';
-import { LoginModalComponent } from '../../components/popup-modals/loginModal.component';
-import { RegistrationModalComponent } from '../../components/popup-modals/registrationModal.component';
 
 import { UserService, AccountService, CommonAppService } from '../../services/index';
 import { CoolLocalStorage } from 'angular2-cool-storage';
@@ -13,12 +11,12 @@ import { CoolLocalStorage } from 'angular2-cool-storage';
   moduleId: "navbarModule",
   selector: 'navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: [ './navbar.component.css' ],
+  styleUrls: ['./navbar.component.css'],
   providers: [
-        CommonAppService,
-        AccountService,
-        CoolLocalStorage
-    ]
+    CommonAppService,
+    AccountService,
+    CoolLocalStorage
+  ]
 })
 
 export class NavbarComponent implements OnInit {
@@ -28,17 +26,14 @@ export class NavbarComponent implements OnInit {
   public brandMenu: any;
   public userMenuTitle: string = "Hi, ";
   isCollapsed = true;
-  public isLoginByRentalLink: boolean= true;
-  public isOpenLoginModal : boolean = false;
-
-  @ViewChild(LoginModalComponent)
-  public lmodal: LoginModalComponent;
+  public isLoginByRentalLink: boolean = true;
+  public isOpenLoginModal: boolean = false;
 
   @ViewChild('navbarbrand')
-  public navbarbrand: any; 
+  public navbarbrand: any;
 
   @ViewChild('maprentalsNavbarBtn')
-  public maprentalsNavbarBtn: any;    
+  public maprentalsNavbarBtn: any;
 
   @ViewChild("Search")
   public searchElementRef: ElementRef;
@@ -48,15 +43,15 @@ export class NavbarComponent implements OnInit {
   localStorage: CoolLocalStorage;
   //router : Router;
 
-  constructor(localStorage: CoolLocalStorage, 
+  constructor(localStorage: CoolLocalStorage,
     public route: ActivatedRoute,
-    public router: Router, 
-    public renderer: Renderer, 
+    public router: Router,
+    public renderer: Renderer,
     public accountService: AccountService,
     public commonAppService: CommonAppService) {
-    this.localStorage = localStorage;  
+    this.localStorage = localStorage;
     console.log(' currentUser ' + JSON.stringify(this.currentUser));
-    this.isOpenLoginModal  = route.snapshot.params['login'];
+    this.isOpenLoginModal = route.snapshot.params['login'];
     //console.log('navbar this.isOpenLoginModal ' + this.isOpenLoginModal);
   }
 
@@ -65,11 +60,11 @@ export class NavbarComponent implements OnInit {
     this.userMenus = ROUTES.filter(menuItem => menuItem.menuType === MenuType.AUTH);
     this.brandMenu = ROUTES.filter(menuItem => menuItem.menuType === MenuType.BRAND)[0];
     //this.currentUser = this.localStorage.getObject('currentUser');
-    
+
     this.currentUser = this.commonAppService.getCurrentUser();
     console.log(' this.commonAppService.getCurrentUser ' + JSON.stringify(this.commonAppService.getCurrentUser()));
-    if(!this.commonAppService.isUndefined(this.currentUser)){
-        this.userMenuTitle = 'Hi, ' + this.currentUser.Email.substring(0,8);
+    if (!this.commonAppService.isUndefined(this.currentUser)) {
+      this.userMenuTitle = 'Hi, ' + this.currentUser.Email.substring(0, 8);
     }
     console.log(' currentUser ' + JSON.stringify(this.currentUser));
   }
@@ -90,12 +85,12 @@ export class NavbarComponent implements OnInit {
     };
   }
 
-  checkAuth(event: any){
+  checkAuth(event: any) {
     this.isLoginByRentalLink = true;
     event.stopPropagation();
     this.isCollapsed = false;
-    console.log(' checkAuth call1 ' + this.currentUser);  
-    if(this.currentUser == null){
+    console.log(' checkAuth call1 ' + this.currentUser);
+    if (this.currentUser == null) {
       document.getElementById('maprentalsNavbarBtn').click();
       this.openModal('loginModalBtn');
     } else {
@@ -108,23 +103,23 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  login(){
+  login() {
     this.isLoginByRentalLink = false;
     document.getElementById('maprentalsNavbarBtn').click();
     this.openModal('loginModalBtn');
   }
 
-  openModal(ButtonId: string){
+  openModal(ButtonId: string) {
     document.getElementById(ButtonId).click();
   }
 
-  logout(event: any){
+  logout(event: any) {
     event.stopPropagation();
     this.localStorage.removeItem('currentUser');
     this.renderer.invokeElementMethod(this.navbarbrand.nativeElement, 'click', []);
   }
 
-  goToHomePage(){
+  goToHomePage() {
     this.localStorage.removeItem('storageFilters');
     this.localStorage.removeItem('storageMap');
     // this.router.navigate( [

@@ -370,6 +370,8 @@ export class CommonAppService {
     getTitleByUrl(url: any){
     	let urlArray = url.urlAfterRedirects.split("/");
     	let city = this.capitalizeFirstLetter(urlArray[1]);
+		console.log(' 111 city ' + city);
+		city = (city.toUpperCase() == "ACTIVATE")? "" : city;
     	if(urlArray.length == 2 && urlArray[1] == ""){
     		return "MapRentals.ca Winnipeg Apartments & Houses For Rent";	
     	} else if(urlArray.length == 2 && urlArray[1] != ""){
@@ -435,7 +437,6 @@ export class CommonAppService {
 
     	return DESCRIPTION;
     }
-
 }
 
 interface Wrapped<T> {

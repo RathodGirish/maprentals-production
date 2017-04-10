@@ -521,6 +521,7 @@ li {
     float: right;
 }
 .property-description {
+    color: #000;
     background: none;
     border: none;
     font-family: 'MontserratRegular';
