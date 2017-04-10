@@ -547,9 +547,9 @@ li {
     z-index: 0;
     /* Set z-index to 0 as it will be on a layer below the contact form */
 }
-#googlemap .gmnoprint{
+/*#googlemap .gmnoprint{
     display: none;
-}
+}*/
 #currentUser {
     /*width: 110px;
   overflow:hidden; 

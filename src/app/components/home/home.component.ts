@@ -89,8 +89,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public centerBounds: any;
     public currentBounds: any;
 
-    @ViewChild('googleMap') googleMap: ElementRef;
-    public googleMaps: any;
+    // @ViewChild('googleMap') googleMap: ElementRef;
+    // public googleMaps: any;
 
     @ViewChild("SearchTop")
     public searchElementRef: ElementRef;
@@ -497,7 +497,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 this.currentMarker.zIndex = parseInt(key);
                 this.currentMarker.opacity = 1;
                 this.currentMarker.visible = true;
-                // this.currentMarker.label = "1"; 
+                this.currentMarker.label = this.getMarkerLabel(markerItem); 
 
                 let flag: boolean = this.checkMarkerVisible(markerItem.Latitude, markerItem.Longitude);
 
@@ -1463,9 +1463,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         $('#rentalsItems').css({
             'height': HEIGHT
         });
-        $('#googlemap').css({
-            'height': HEIGHT
-        });
+        // $('#googlemap').css({
+        //     'height': HEIGHT
+        // });
         $('#morefilter').css({
             'height': HEIGHT
         });
