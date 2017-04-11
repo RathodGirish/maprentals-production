@@ -490,14 +490,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(markerItem.DateListed), new Date());
 
                 this.currentMarker = new SebmGoogleMapMarker(this._markerManager);
-                this.currentMarker.iconUrl = (DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN;
+                
                 this.currentMarker.latitude = markerItem.Latitude;
                 this.currentMarker.longitude = markerItem.Longitude;
                 this.currentMarker.title = "";
                 this.currentMarker.zIndex = parseInt(key);
                 this.currentMarker.opacity = 1;
                 this.currentMarker.visible = true;
-                this.currentMarker.label = this.getMarkerLabel(markerItem); 
+                let markerLabel = this.getMarkerLabel(markerItem);
+                this.currentMarker.label = (markerLabel == "1"? "": markerLabel); 
+
+                this.currentMarker.iconUrl = (DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
 
                 let flag: boolean = this.checkMarkerVisible(markerItem.Latitude, markerItem.Longitude);
 
@@ -513,7 +516,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         let w = THIS.getWindowWidth();
                         this._markerManager.createEventObservable('mouseover', this.currentMarker)
                             .subscribe((position: any) => {
-                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED_20;
                                 //if(parseInt(w) > 767){
                                 THIS.openInfowindow(markerItem, position);
                                 //}
@@ -521,7 +524,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                         this._markerManager.createEventObservable('click', this.currentMarker)
                             .subscribe((position: any) => {
-                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED;
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_RED_20;
                                 if (parseInt(w) <= 767) {
                                     THIS.openInfowindow(markerItem, position);
                                 }
@@ -529,10 +532,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                         // google.maps.event.addListener(this.currentMarker, 'mouseover', function() {
                         // });
-
                         this._markerManager.createEventObservable('mouseout', this.currentMarker)
                             .subscribe((position: any) => {
-                                this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE;
+                                this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE_20;
                                 console.log(' THIS.getIsInfowindowOpenValue ' + THIS.getIsInfowindowOpenValue());
                                 setTimeout(() => {
                                     if (THIS.getIsInfowindowOpenValue() == 'No') {
@@ -565,11 +567,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (quadrant == "br") {
             offset = new google.maps.Size(-140, 250);
         } else if (quadrant === "tr") {
-            offset = new google.maps.Size(160, 250);
+            offset = new google.maps.Size(160, 255);
         } else if (quadrant === "bl") {
             offset = new google.maps.Size(-145, 5);
         } else if (quadrant === "tl") {
-            offset = new google.maps.Size(170, 15);
+            offset = new google.maps.Size(170, 1);
         }
 
         let infoWindowLat = 49.895136;
@@ -705,6 +707,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
             let thisMarkerItem = THIS.thisMarkersArray[markerKey];
             let thisProperty = (thisMarkerItem.PropertyType == 'Room') ? 'Room Rental' : thisMarkerItem.PropertyType;
             let thisBed = (thisMarkerItem.PropertyType == 'Room') ? '' : ((thisMarkerItem.Bed == 'Studio') ? 'Studio' : thisMarkerItem.Bed + 'br');
+
+            let thisPropertyHTML = "<div class='col-xs-5 col-sm-5 text-right'>" +
+                "<h6 class='price text-white text-center'>" + thisProperty + "</h6>" +
+                "</div>";
+            let thisBedHTML = "<div class='col-xs-3 col-sm-3 text-right'>" +
+                "<h6 class='price text-white'>" + thisBed + "</h6>" +
+                "</div>";
+
+            let thisMonthlyRentHTML = "<div class='col-xs-4 col-sm-4'>" +
+                "<h4 class='text-white'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
+                "</div>";                
+
+            if(thisMarkerItem.PropertyType == 'Room'){
+                 thisPropertyHTML = "<div class='col-xs-6 col-sm-6 text-right'>" +
+                "<h6 class='price text-white text-right'>" + thisProperty + "</h6>" +
+                "</div>"; 
+
+                thisBedHTML = "";    
+                thisMonthlyRentHTML = "<div class='col-xs-6 col-sm-6'>" +
+                "<h4 class='text-white'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
+                "</div>";     
+            } 
+
+            
             HTML += "<div class='list_rental_inforwindow_div'></div>";
             HTML += "<div id='' class='col-xs-12 col-sm-12 col-md-12 pad0' >" +
                 "<button class='closeWindowButton btn btn-danger hidden-sm  hidden-md  hidden-lg'>X</button>" +
@@ -715,15 +741,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 "</div>" +
                 "</div>" +
                 "<span class='col-xs-12 infowindow-caption col-sm-12'>" +
-                "<div class='col-xs-4 col-sm-4'>" +
-                "<h4 class='text-white'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
-                "</div>" +
-                "<div class='col-xs-5 col-sm-5 text-right'>" +
-                "<h6 class='price text-white text-center'>" + thisProperty + "</h6>" +
-                "</div>" +
-                "<div class='col-xs-3 col-sm-3 text-right'>" +
-                "<h6 class='price text-white'>" + thisBed + "</h6>" +
-                "</div>" +
+                thisMonthlyRentHTML +
+                thisPropertyHTML + 
+                thisBedHTML+
                 "</span>" +
                 "</a>" +
                 "</div>";
@@ -803,7 +823,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             if (prop.Latitude == preMarkerItem.latitude && prop.Longitude == preMarkerItem.longitude) {
                 let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(preMarkerItem.title), new Date());
 
-                preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED : ((DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE : GlobalVariable.PIN_GREEN);
+                preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED_20 : ((DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20);
 
                 this._markerManager.updateIcon(preMarkerItem);
             }

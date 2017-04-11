@@ -47,15 +47,33 @@ import {RouterModule} from '@angular/router';
             },
             {
                 path: 'propertyDetail/:id', 
-                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
+                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule',
+                data: {
+                    meta: {
+                        title: 'PropertyDetailModule page',
+                        description: 'Description of the PropertyDetailModule page'
+                    }
+                }
             },
             {
                 path: ':city/:propertyType', 
-                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
+                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule',
+                data: {
+                    meta: {
+                        title: 'PropertyDetailModule page',
+                        description: 'Description of the PropertyDetailModule page'
+                    }
+                }
             },
             {
                 path: ':city/:propertyType/:title', 
-                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule'
+                loadChildren: 'app/components/property/property-detail.module#PropertyDetailModule',
+                data: {
+                    meta: {
+                        title: 'PropertyDetailModule page',
+                        description: 'Description of the PropertyDetailModule page'
+                    }
+                }
             },
             {
                 path: ':city',

@@ -23,9 +23,15 @@ export const GlobalVariable = Object.freeze({
 
     PIN_PURPLE: 'assets/public/img/pin-purple.png',
 
+    PIN_PURPLE_20: 'assets/public/img/pin-purple-20.png',
+
     PIN_RED: 'assets/public/img/pin-red.png',
 
-    PIN_GREEN: 'assets/public/img/pin-green.png'
+    PIN_RED_20: 'assets/public/img/pin-red-20.png',
+
+    PIN_GREEN: 'assets/public/img/pin-green.png',
+
+    PIN_GREEN_20: 'assets/public/img/pin-green-20.png'
 });
    
 

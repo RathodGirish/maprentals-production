@@ -1698,6 +1698,10 @@ input::-webkit-inner-spin-button {
     border-radius: 0px !important;
 }
 
+.text-align-center{
+    text-align: center;
+}
+
 .btnsetview {
     position: absolute;
     right: -5px;
@@ -2159,7 +2163,6 @@ multiselect .dropdown-menu > li > a i {
     border-top-color: #333 !important;
     border-bottom-color: #333 !important;
 }
-
 
 @import url('http://getbootstrap.com/dist/css/bootstrap.css');
 .glyphicon-refresh-animate {

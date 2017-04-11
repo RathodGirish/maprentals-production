@@ -283,7 +283,7 @@
                 (zoomChange)="mapZoomChange($event)" (idle)="mapIdle($event, infoWindow)" (click)="removeInfowindow();">
 
                 <get-map-objects (markerManager)="setMarkerManager($event)" (map)="setMapManager($event)" (infoWindowManager)="setInfoWindowManager($event)">
-                    <sebm-google-map-marker  [iconUrl]="'http://www.altinova.bel.tr/images/menu/mahalle.png'">
+                    <sebm-google-map-marker >
                         <sebm-google-map-info-window #infoWindow>
                             <div #infoWindowDiv></div>
                         </sebm-google-map-info-window>

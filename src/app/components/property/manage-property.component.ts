@@ -624,41 +624,41 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 		if (this.property.PropertyType == '') {
 			this.isValidPropertyType = false;
-			$('.validation-modal-body').append('<p> - Property Type</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Property Type</p>');
 			isValidForm = false;
 		}
 
 		if (this.property.PropertyType != 'Room' && this.property.Bed == '') {
 			this.isValidBed = false;
-			$('.validation-modal-body').append('<p> - Beds</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Bedrooms</p>');
 			isValidForm = false;
 		}
 
 		if (this.property.Address == '') {
 			this.isValidAddress = false;
-			$('.validation-modal-body').append('<p> - Address</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Address</p>');
 			isValidForm = false;
 		}
 
 		if (model.MonthlyRent == '') {
-			$('.validation-modal-body').append('<p> - Price</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Monthly Rent</p>');
 			isValidForm = false;
 		}
 
 		if (model.Title == '') {
-			$('.validation-modal-body').append('<p> - Title</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Listing Title</p>');
 			isValidForm = false;
 		}
 
 		if (model.Phone == '' && model.IsPhoneOnly) {
 			this.isValidPhone = false;
-			$('.validation-modal-body').append('<p> - Phone</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Phone</p>');
 			isValidForm = false;
 		}
 
 		if ((model.Email == '' && model.IsEmailOnly)) {
 			this.isValidEmail = false;
-			$('.validation-modal-body').append('<p> - Email</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Email</p>');
 			isValidForm = false;
 		}
 
@@ -669,7 +669,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 		if (this.dropzoneUploadedFiles.length <= 0) {
 			this.isValidImages = false;
-			$('.validation-modal-body').append('<p> - Pictures</p>');
+			$('.validation-modal-body').append('<p class="text-danger"> * Pictures</p>');
 			isValidForm = false;
 		}
 

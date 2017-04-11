@@ -12,6 +12,8 @@ import { CommonAppService, PropertyService, ProfileService } from '../../service
 import { CoolLocalStorage } from 'angular2-cool-storage';
 import { ShareButtonsModule, ShareButton, ShareProvider } from "ng2-sharebuttons";
 import { Ng2PageScrollModule } from 'ng2-page-scroll/ng2-page-scroll';
+// import { MetadataService } from 'ng2-metadata';
+// import { MetaService } from 'ng2-meta';
 
 export enum Direction {UNKNOWN, NEXT, PREV}
 
@@ -71,6 +73,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 		public route: ActivatedRoute,
 		public title: Title,
 		// public metaDataService: MetadataService,
+		// public metaService: MetaService,
 		public router: Router,
 		public renderer: Renderer,
 		public elementRef: ElementRef,
@@ -143,11 +146,11 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 		            	console.log(' data ' + JSON.stringify(data));
 		            	this.property = Object.assign({}, data);
 		            	this.setShareParameters(this.property);
-						$("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
-						$("meta[property='og\\:title']").attr('content', this.property.Title);
-						$("meta[name='og\\:description']").attr('content', this.property.Description);
-						$("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
-		            	// this.setMetaData(this.property);
+						// $("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
+						// $("meta[property='og\\:title']").attr('content', this.property.Title);
+						// $("meta[name='og\\:description']").attr('content', this.property.Description);
+						// $("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
+		            	this.setMetaData(this.property);
 
 		            	Observable.of(true)
 					      .delay(2000)
@@ -256,8 +259,8 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 
 	public setMetaData(prop: any){
         // this.title.setTitle(this.commonAppService.getTitleForFullListing(prop));
-        // this.metaDataService.setTitle(this.commonAppService.getTitleForFullListing(prop));
-        // this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionForFullListing(prop));
+        // this.metaService.setTitle(this.commonAppService.getTitleForFullListing(prop));
+        // this.metaService.setTag('og:description', this.commonAppService.getDescriptionForFullListing(prop));
 
         // let tm = "" + new Date().getTime();
         // console.log('tm ' + tm);

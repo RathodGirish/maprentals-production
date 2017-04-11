@@ -14,6 +14,7 @@ import { SliderModule }  from '../custom/slider/slider.module';
 import { CarouselModule }  from '../custom/slider/carousel.module';
 import { SliderComponent }  from '../custom/slider/slider.component';
 import { CarouselComponent }  from '../custom/slider/carousel.component';
+// import { MetaModule } from 'ng2-meta';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { CarouselComponent }  from '../custom/slider/carousel.component';
 	      libraries: ['places']
 	    }),
 	    ShareButtonsModule.forRoot(),
+        // MetaModule.forRoot(),
         FormsModule, 
         ReactiveFormsModule
     ],
