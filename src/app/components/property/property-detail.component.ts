@@ -8,11 +8,12 @@ import { FormsModule, ReactiveFormsModule, FormControl  } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { AgmCoreModule, MapsAPILoader, NoOpMapsAPILoader, MouseEvent } from "angular2-google-maps/core";
 import { Property } from '../models/property';
-import { CommonAppService, PropertyService, ProfileService } from '../../services/index';
+import { CommonAppService, PropertyService, ProfileService, UniversalService } from '../../services/index';
+import { UniversalModel } from '../../components/models/universalmodel';
 import { CoolLocalStorage } from 'angular2-cool-storage';
 import { ShareButtonsModule, ShareButton, ShareProvider } from "ng2-sharebuttons";
 import { Ng2PageScrollModule } from 'ng2-page-scroll/ng2-page-scroll';
-// import { MetadataService } from 'ng2-metadata';
+import { MetadataService } from 'ng2-metadata';
 // import { MetaService } from 'ng2-meta';
 
 export enum Direction {UNKNOWN, NEXT, PREV}
@@ -22,6 +23,7 @@ export enum Direction {UNKNOWN, NEXT, PREV}
         PropertyService, 
         ProfileService,
         CommonAppService,
+		UniversalService,
         CoolLocalStorage,
         Ng2PageScrollModule
     ],
@@ -29,12 +31,14 @@ export enum Direction {UNKNOWN, NEXT, PREV}
     templateUrl: './property-detail.component.html'
 })
 
-export class PropertyDetailComponent implements OnInit, AfterViewInit{
+export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 	currentUser: any;
 	localStorage: CoolLocalStorage;
 	public loading: boolean = false;
 	public _success_msg: string = '';
 	public _fail_msg: string = '';
+	public NextPhotoInterval:number = 3000;
+	public noLoopSlides:boolean = false;
 
 	public tabActive: string = 'tabPic';
 
@@ -47,6 +51,9 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 
 	public emailUser: EmailUser;
 	public RecipientEmail : any = "";
+	public PropertyAddress : any = "";
+	public PropertyTitle : any = "";
+	public PropertyUrl : any = "";
 
 	public latitude: string;
   	public longitude: string;
@@ -61,6 +68,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
   	public isActiveToggle: boolean= false;
   	public isPropertyFound: boolean= true;
   	public currentPropertyCompany: string = "";
+	public propertyPictures: any[] = [];
 
   	fbButton;
   	fbShareTitle = '';
@@ -68,12 +76,17 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
   	fbShareImage = '';
 
     @ViewChild('fbBtnRef') fbBtnRef:ElementRef;
+	public currentRouteURL = "";
+
+	public universalModel: UniversalModel;
+	public subscriber: EventEmitter<UniversalModel>;
 
     constructor(
 		public route: ActivatedRoute,
 		public title: Title,
-		// public metaDataService: MetadataService,
+		public metaDataService: MetadataService,
 		// public metaService: MetaService,
+		public universalService: UniversalService,
 		public router: Router,
 		public renderer: Renderer,
 		public elementRef: ElementRef,
@@ -86,13 +99,38 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
     	this.localStorage = localStorage; 
 		this.propertyId = route.snapshot.params['Id'];
 
-		console.log(' route.snapshot.params ' + JSON.stringify(route.snapshot.params));
+		this.currentRouteURL = route.snapshot.params['city'] + '/' + route.snapshot.params['propertyType'] + '/' + route.snapshot.params['title'];
 
 		if(this.commonAppService.isUndefined(this.propertyId)){
 			this.propertyId = this.commonAppService.getPropertyIdFromTitle(route.snapshot.params['title']);
 		}
-		console.log(' this.propertyId ' + JSON.stringify(this.propertyId));
-		
+
+		let universalModel: UniversalModel = <UniversalModel> {
+                title: 'Builtvisible Homepage',
+				ogTitle: 'Builtvisible Homepage111',
+                description: 'The home page of Builtvisible, a digital marketing agency',
+				ogDescription: 'The home page of Builtvisible, a digital marketing agency1112',
+                canonical: 'https://builtvisible.com/',
+                publisher: 'https://plus.google.com/+Builtvisible'
+		};
+
+		this.universalModel = universalModel;
+
+		// Set the data for the service from the model
+		universalService.set(universalModel);
+		//console.log(' this.universalModel detail ' + JSON.stringify(this.universalModel));
+
+
+		let tm = "" + new Date().getTime();
+        // console.log('tm ' + tm);
+        // this.metaDataService.setTag('fb:app_id', "966242223397117");
+        // this.metaDataService.setTag('og:url', "http://maprentalsstaging.azurewebsites.net?fbrefresh=" + (tm + 5));
+		// this.metaDataService.setTag('og:description', "New decription");
+		// this.metaDataService.setTag('og:title', "New title");
+        // this.metaDataService.setTag('og:image', "https://maprental.azureedge.net/property-pictures/201704151344454207.jpg?t=" + (tm + 4));
+        // this.metaDataService.setTag('og:image:type', "image/jpeg");
+        // this.metaDataService.setTag('og:image:width', "3523");
+        // this.metaDataService.setTag('og:image:height', "2372");
 	}
 
 	ngAfterViewInit() {
@@ -109,6 +147,10 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 
 		// });
     }
+
+	public ngOnDestroy() { 
+		//this.subscriber.unsubscribe() 
+	}
 
 	ngOnInit() {
 		let THIS = this;
@@ -143,14 +185,17 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 	            	this.loading = false;
 	            	if(data){
 	            		THIS.isPropertyFound = true;
-		            	console.log(' data ' + JSON.stringify(data));
 		            	this.property = Object.assign({}, data);
 		            	this.setShareParameters(this.property);
 						// $("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
 						// $("meta[property='og\\:title']").attr('content', this.property.Title);
 						// $("meta[name='og\\:description']").attr('content', this.property.Description);
 						// $("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
-		            	this.setMetaData(this.property);
+		            	// this.setMetaData(this.property);
+
+						$('.property-description').html("<span>" + this.property.Description + "</span>");
+						
+						THIS.propertyPictures = THIS.commonAppService.getSortedPicturesList(this.property.Pictures);
 
 		            	Observable.of(true)
 					      .delay(2000)
@@ -192,7 +237,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 
 		            	if(this.property.IsImmediateAvailable == true || (!this.commonAppService.isUndefined(this.property.DateAvailable) && this.commonAppService.getDayDiffFromTwoDate(new Date(), new Date(this.property.DateAvailable)) <= 0) ){
 		            		this.availableDateText = "Available Now!";
-		            	} else if(!this.commonAppService.isUndefined(this.property.DateAvailable)){
+		            	} else if(!this.commonAppService.isUndefined(this.property.DateAvailable) && !(this.property.DateAvailable == 'NaN')){
 		            		
 		            		this.availableDateText = 'Available ' + this.commonAppService.getFormattedDateMD(this.commonAppService.getDateByTimestamp(this.property.DateAvailable));
 		            		//this.availableDateText = 'Available ' + this.commonAppService.getFormattedDateMD(this.property.DateAvailable);
@@ -213,7 +258,6 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 
 						this.profileService.getProfileById(this.property.UserId)
 				            .subscribe((userDetails: any) => {
-				            	console.log(' userDetails : ' + JSON.stringify(userDetails));
 				            	if(userDetails && userDetails.Company != ''){
 				            		this.currentPropertyCompany = userDetails.Company;
 				            	}
@@ -222,7 +266,10 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 				            	console.log(' Error while getProfileById : ' + JSON.stringify(error));
 				            });
 
-						this.RecipientEmail = (this.commonAppService.isUndefined(this.property.Email))? "" : this.property.Email;	 
+						this.RecipientEmail = (this.commonAppService.isUndefined(this.property.Email))? "" : this.property.Email;	
+						this.PropertyAddress = this.property.Address;
+						this.PropertyTitle = this.property.Title;
+						this.PropertyUrl = THIS.currentUser; 
 					} else {
 						THIS.isPropertyFound = false;
 					}         
@@ -239,6 +286,9 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 			"Name": "",
 			"From": "",
 			"Recipient": "",
+			"PropertyAddress": "",
+			"PropertyTitle": "",
+			"PropertyUrl": "",
 			"Contact": "",
 			"Subject": "",
 			"Body": ""
@@ -262,15 +312,15 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
         // this.metaService.setTitle(this.commonAppService.getTitleForFullListing(prop));
         // this.metaService.setTag('og:description', this.commonAppService.getDescriptionForFullListing(prop));
 
-        // let tm = "" + new Date().getTime();
-        // console.log('tm ' + tm);
-        // this.metaDataService.setTag('fb:app_id', "966242223397117");
-        // this.metaDataService.setTag('og:url', "http://maprentalsstaging.azurewebsites.net?fbrefresh=" + (tm + 5));
-        // this.metaDataService.setTag('og:image', prop.Pictures[1].Url + "?t=" + (tm + 4));
-        // this.metaDataService.setTag('og:image:type', "image/jpeg");
-        // this.metaDataService.setTag('og:image:width', "3523");
-        // this.metaDataService.setTag('og:image:height', "2372");
-        // this.metaDataService.setTag('image', prop.Pictures[1].Url);
+        let tm = "" + new Date().getTime();
+        console.log('tm ' + tm);
+        this.metaDataService.setTag('fb:app_id', "966242223397117");
+        this.metaDataService.setTag('og:url', "http://maprentalsstaging.azurewebsites.net?fbrefresh=" + (tm + 5));
+        this.metaDataService.setTag('og:image', prop.Pictures[1].Url + "?t=" + (tm + 4));
+        this.metaDataService.setTag('og:image:type', "image/jpeg");
+        this.metaDataService.setTag('og:image:width', "3523");
+        this.metaDataService.setTag('og:image:height', "2372");
+        this.metaDataService.setTag('image', prop.Pictures[1].Url);
 
         // this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
 	}
@@ -343,6 +393,10 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit{
 		event.preventDefault();
 		
 		model.Recipient = this.RecipientEmail;
+		model.PropertyAddress = this.PropertyAddress;
+		model.PropertyTitle = this.PropertyTitle;
+		model.PropertyUrl = this.PropertyUrl;
+
 		console.log('model ' + JSON.stringify(model) + ' isValid ' + isValid);
 		if(isValid && !this.commonAppService.isUndefined(model.Recipient)){
 			this.commonAppService.sendEmail(model)
@@ -383,6 +437,9 @@ export interface EmailUser {
 	"Name": "",
 	"From": "",
 	"Recipient": "",
+	"PropertyAddress": "",
+	"PropertyTitle": "",
+	"PropertyUrl": "",
 	"Contact": "",
 	"Subject": "",
 	"Body": ""

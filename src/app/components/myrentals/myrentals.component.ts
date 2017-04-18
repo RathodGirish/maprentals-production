@@ -59,10 +59,11 @@ export class MyrentalsComponent implements OnInit{
 	       	THIS.isReload = params['Reload'];
 	    });	
 
-		if(typeof(this.currentUser) != "undefined" && this.currentUser.Id != null){
+		if(!THIS.commonAppService.isUndefined(THIS.currentUser)){
 			this.loading = true;
 			this.propertyService.getAllPropertiesByUserId(this.currentUser.Id)
 	            .subscribe((data: any) => {
+
 	            	data.sort(function(a,b){
 	            		let parsed_date = new Date(b.DateCreated);
 	    				let relative_to = new Date(a.DateCreated);
@@ -78,7 +79,10 @@ export class MyrentalsComponent implements OnInit{
 	            	this.loading = false;
 	            });
 
-		} 
+		} else {
+			window.location.href = "/";
+		}
+		
 		this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 	}
 

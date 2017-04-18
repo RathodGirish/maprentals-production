@@ -172,7 +172,7 @@
                     </div>
 
                     <div class="col-sm-12">
-                        <div class="col-sm-12 pad0"><hr></div>
+                        <div class="col-sm-12 pad0"><hr class="mrg10"></div>
                     </div>
 
                     <div class="form-group">
@@ -272,8 +272,8 @@
 
                     <div class="col-xs-12 pad0">
                         <div class="form-group  mrgT10">
-                            <label class="col-sm-2 col-md-4 text-left padT7 required" for="Address">Address : </label>
-                            <div class="col-sm-10 col-md-8" id="addressValidateDiv">
+                            <label class="col-sm-3 col-md-3 text-left padT7 required padR0" for="Address">Address : </label>
+                            <div class="col-sm-9 col-md-9" id="addressValidateDiv">
                                 <input id="Address" name="Address" placeholder="Property Address" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #Address [formControl]="searchControl" value="{{address}}" (keyup)="updateAddress($event)">
 
                                 <small *ngIf="!isValidAddress" class="text-danger">
@@ -284,8 +284,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-xs-12 col-sm-4 required" for="MonthlyRent">Monthly Rent : </label>
-                        <div class="col-xs-6 col-sm-8">
+                        <label class="col-xs-12 col-sm-3 col-md-3 required padR0" for="MonthlyRent">Monthly Rent : </label>
+                        <div class="col-xs-6 col-sm-9 col-md-9">
                             <input class="form-control" type="text" id="MonthlyRent" name="MonthlyRent" placeholder="Price ($)" [ngModel]="property.MonthlyRent" #MonthlyRent="ngModel" required="" (keypress)="isNumberKey($event)">
                             <small [hidden]="MonthlyRent.valid || (MonthlyRent.pristine && !propertyForm.submitted)" class="text-danger">
                                 Please enter Monthly Rent
@@ -293,10 +293,10 @@
                         </div>
                     </div>
 
-                    <div class="col-xs-12 col-sm-12 pad0">
+                    <div class="col-xs-12 col-sm-12 col-md-12 pad0">
                         <div class="form-group">
-                            <label class="col-sm-2 col-md-4 text-left required" for="Title">Title : </label>
-                            <div class="col-sm-10 col-md-8">
+                            <label class="col-sm-3 col-md-3 text-left required padR0" for="Title">Title : </label>
+                            <div class="col-sm-9 col-md-9">
                                 <input type="text" class="form-control" id="Title" name="Title" placeholder="Title"  [ngModel]="property.Title" #Title="ngModel" required/>
                                 <small [hidden]="Title.valid || (Title.pristine && !propertyForm.submitted)" class="text-danger">
                                     Property Title is Required
@@ -304,22 +304,22 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 col-md-4 text-left" for="Description">Description : </label>
-                            <div class="col-sm-10 col-md-8">
-                                <textarea rows="3" (keyup)="updateDescription($event)" class="form-control" id="Description" name="Description" placeholder="Description" [ngModel]="property.Description" #Description="ngModel"></textarea>
+                            <label class="col-sm-3 col-md-3 text-left padR0" for="Description">Description : </label>
+                            <div class="col-sm-9 col-md-9">
+                                <textarea rows="3" (keyup)="updateDescription($event)" class="form-control txt-description" id="Description" name="Description" placeholder="Description" [ngModel]="property.Description" #Description="ngModel"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4" for="OwnerName">Name : </label>
-                        <div class="col-sm-5">
+                        <label class="col-sm-3 col-md-3 padR0" for="OwnerName">Name : </label>
+                        <div class="col-sm-6 col-md-6">
                             <input type="text" class="form-control" id="OwnerName" name="OwnerName" placeholder="Name" [ngModel]="property.OwnerName" #OwnerName="ngModel"/>
                         </div>
                     </div>
 
                     <div class="form-group" [hidden]="selectedPhoneOnly == true">
-                        <label class="col-xs-12 col-sm-4" for="Email">Email : </label>
-                        <div class="col-xs-8 col-sm-5">
+                        <label class="col-xs-12 col-sm-3 col-md-3 padR0" for="Email">Email : </label>
+                        <div class="col-xs-8 col-sm-6 col-sm-6">
                             <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" [ngModel]="property.Email" #Email="ngModel"  (keyup)="updateEmail($event)"/>
                             <small *ngIf="!isValidEmail" class="text-danger">
                                 Please enter Email and format should be john@doe.com.
@@ -332,8 +332,8 @@
                     </div>
 
                     <div class="form-group" [hidden]="selectedEmailOnly == true">
-                        <label class="col-xs-12 col-sm-4" for="Phone">Phone : </label>
-                        <div class="col-xs-8 col-sm-5">
+                        <label class="col-xs-12 col-sm-3 col-md-3 padR0" for="Phone">Phone : </label>
+                        <div class="col-xs-8 col-sm-6 col-sm-6">
                             <input type="text" class="form-control" id="Phone" name="Phone" placeholder="Phone Number" maxlength="10" [ngModel]="property.Phone" #Phone="ngModel" (keyup)="updatePhone($event)" />
                             <small *ngIf="!isValidPhone" class="text-danger">
                                 Please enter phone number
@@ -351,7 +351,7 @@
                     <div class="dropzone" id="dropzoneFileUpload">
                         <div class="dz-message" data-dz-message><span>Click/Drag images here to upload</span></div>
                         <div id="dropzone-drop-area" class="dropzone-drop-area">
-                            <div *ngIf="!fileDropped" class="centered noselect clickthrough">
+                            <div *ngIf="fileDropped" class="centered noselect clickthrough">
                                 <ng-content></ng-content>
                             </div>
                         </div>
@@ -406,30 +406,3 @@
         </div>
     </div>
 </div>
-<script>
-    $(function() {
-        $(".dropzone-drop-area").sortable({
-            items: '.dz-preview',
-            cursor: 'move',
-            opacity: 0.5,
-            containment: '#dropzoneFileUpload',
-            distance: 20,
-            tolerance: 'pointer',
-            stop: function () {
-
-                // var queue = dropzoneFileUpload.files;
-                // $('#dropzoneFileUpload .dz-preview .dz-filename [data-dz-name]').each(function (count, el) {           
-                //     var name = el.getAttribute('data-name');
-                //     queue.forEach(function(file) {
-                //        if (file.name === name) {
-                //             newQueue.push(file);
-                //        }
-                //     });
-                // });
-
-                // uploadzone.files = newQueue;
-
-            }
-        });
-    });
-</script>

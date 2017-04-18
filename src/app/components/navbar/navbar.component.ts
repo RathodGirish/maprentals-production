@@ -50,23 +50,18 @@ export class NavbarComponent implements OnInit {
     public accountService: AccountService,
     public commonAppService: CommonAppService) {
     this.localStorage = localStorage;
-    console.log(' currentUser ' + JSON.stringify(this.currentUser));
     this.isOpenLoginModal = route.snapshot.params['login'];
-    //console.log('navbar this.isOpenLoginModal ' + this.isOpenLoginModal);
   }
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem.menuType === MenuType.UNAUTH);
     this.userMenus = ROUTES.filter(menuItem => menuItem.menuType === MenuType.AUTH);
     this.brandMenu = ROUTES.filter(menuItem => menuItem.menuType === MenuType.BRAND)[0];
-    //this.currentUser = this.localStorage.getObject('currentUser');
 
     this.currentUser = this.commonAppService.getCurrentUser();
-    console.log(' this.commonAppService.getCurrentUser ' + JSON.stringify(this.commonAppService.getCurrentUser()));
     if (!this.commonAppService.isUndefined(this.currentUser)) {
       this.userMenuTitle = 'Hi, ' + this.currentUser.Email.substring(0, 8);
     }
-    console.log(' currentUser ' + JSON.stringify(this.currentUser));
   }
 
   public get menuIcon(): string {
@@ -89,7 +84,6 @@ export class NavbarComponent implements OnInit {
     this.isLoginByRentalLink = true;
     event.stopPropagation();
     this.isCollapsed = false;
-    console.log(' checkAuth call1 ' + this.currentUser);
     if (this.currentUser == null) {
       document.getElementById('maprentalsNavbarBtn').click();
       this.openModal('loginModalBtn');

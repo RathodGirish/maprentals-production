@@ -44,6 +44,10 @@ export class ProfileComponent implements OnInit{
 		this.initProfile();
 	    this.currentUser = this.localStorage.getObject('currentUser');
 	    console.log(' currentUser ' + JSON.stringify(this.currentUser));
+		if(this.commonAppService.isUndefined(this.currentUser)){
+			window.location.href = '/';
+			return;
+		}
 
 		if(typeof(this.currentUser) != "undefined" && this.currentUser.Id != null){
 			this.loading = true;

@@ -1,35 +1,52 @@
 <!doctype html>
 <html>
 <head>
-  	<meta charset="utf-8">
-  	<title>Maprentals</title>
-  	<base href="/">
+    <meta charset="utf-8">
+    <title>Maprentals</title>
+    <base href="/">
 
-  	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <!--<meta property="fb:app_id" content="966242223397117">
-    <meta property="og:title" content="test">
-    <meta property="og:description" content="test desc">
-    <meta property="og:image" content="https://maprental.azureedge.net/property-pictures/201704070557077907.jpg">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  	<link rel="icon" type="image/x-icon" href="favicon.ico">
-  
-	  <link rel="stylesheet" href="/assets/public/css/bootstrap.css">
+    <meta property="og:locale" [attr.content]="universalModel.ogLocale" />
+    <meta property="og:type" [attr.content]="universalModel.ogType" />
+    <meta property="og:title" [attr.content]="universalModel.ogTitle" />
+    <meta property="og:description" [attr.content]="UniversalModel.ogDescription" />
+    <meta property="og:url" [attr.content]="UniversalModel.ogUrl" />
+    <meta property="og:site_name" [attr.content]="UniversalModel.ogSite_name" />
+    <meta property="og:updated_time" [attr.content]="UniversalModel.ogUpdatedTime" />
+    <meta property="og:image" [attr.content]="UniversalModel.ogImage" />
+
+    <link rel="stylesheet" href="/assets/public/css/bootstrap.css">
     <link rel="stylesheet" href="/assets/public/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/public/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="/assets/public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/public/css/style.css">
     <link rel="stylesheet" href="/assets/public/css/index.css">
 
-    <link rel="stylesheet" href="/assets/public/css/style.css">
     <link rel="stylesheet" href="/assets/public/css/jquery-ui.css">
-    
-	  <script type="text/javascript" src="/assets/public/js/jquery.min.js"></script>
-	  <script type="text/javascript" src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-	  <script type="text/javascript" src="/assets/public/js/bootstrap.min.js"></script>
+        
+    <script type="text/javascript" src="/assets/public/js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/assets/public/js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script type="text/javascript" src="/assets/public/js/bootstrap.min.js"></script>
     <!-- <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDDzDhPdfZqovfLofbrBlOQircVk9F975M"></script> -->
     <!-- <script type="text/javascript" src="/assets/public/js/markerwithlabel.js"></script> -->
     <script type="text/javascript" src="/assets/public/js/hammer.min.js"></script>
 </head>
 <body>
   <maprental>Loading</maprental>
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-94002983-1', 'auto');  // staging
+      // ga('create', 'UA-93262825-1', 'auto');  // live
+                                              
+  </script>
+  <!--<header></header>-->
 </body>
+
 </html>

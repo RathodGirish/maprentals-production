@@ -4,4 +4,6 @@ export * from './property.service';
 export * from './profile.service';
 export * from './commonapp.service';
 export * from './upload-picture.service';
+export * from './meta.service';
+export * from './universal.service';
 export * from './google.analytics.events.service';

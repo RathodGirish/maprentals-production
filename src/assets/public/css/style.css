@@ -2273,10 +2273,10 @@ body {
 .navbar-static-top {
   margin: 0 0 0 180px;
 }
-.navbar.navbar-static-top a,
+/*.navbar.navbar-static-top a,
 .nav.navbar-nav li a {
   color: #9d9fa2;
-}
+}*/
 .header-link {
   padding: 18px 26px 17px 26px;
   font-size: 14px;

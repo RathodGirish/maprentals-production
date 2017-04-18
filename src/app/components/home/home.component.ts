@@ -9,14 +9,13 @@ import { MetadataService } from 'ng2-metadata';
 import { DatepickerModule } from 'ng2-bootstrap/datepicker';
 import { IMyOptions, IMyDateModel } from 'ngx-mydatepicker';
 import { GoogleMapsAPIWrapper, MarkerManager, AgmCoreModule, MapsAPILoader, NoOpMapsAPILoader, MouseEvent, InfoWindowManager, SebmGoogleMap, SebmGoogleMapMarker, SebmGoogleMapInfoWindow } from "angular2-google-maps/core";
-import { RouteConfig, RouteParams, RouterLink, ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoolLocalStorage } from 'angular2-cool-storage';
-import { GeneratedUrl } from 'angular2/src/router/rules/route_paths/route_path';
 
-import { PropertyService, CommonAppService } from '../../services/index';
+import { PropertyService, CommonAppService, UniversalService } from '../../services/index';
+import { UniversalModel } from '../../components/models/universalmodel';
 
 import { LoginModalComponent } from '../../components/popup-modals/loginModal.component';
 import { GlobalVariable } from '../../services/static-variable';
@@ -32,6 +31,7 @@ import * as $ from 'jquery';
     providers: [
         PropertyService,
         CommonAppService,
+        UniversalService,
         SebmGoogleMap,
         GoogleMapsAPIWrapper,
         MarkerManager,
@@ -61,6 +61,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public zoom: number = 5;
 
     removeMarker: SebmGoogleMapMarker;
+    public newMarkerFlag: string = "false";
 
     public _map: SebmGoogleMap = null;
     @Output('map') mapChanged: EventEmitter<SebmGoogleMap> = new EventEmitter<SebmGoogleMap>();
@@ -82,7 +83,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public limitListingCount: number = 200;
     public markers: MarkerObject[] = [];
     public clusters: Cluster[] = [];
-    previousMarkers: any[] = [];
+    public previousMarkers: any[] = [];
 
     public currentIconUrl: string = iconUrl;
     public resultCounter: number;
@@ -143,11 +144,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     @ViewChild('AvailableDate') AvailableDate: ElementRef;
 
     public currentRouteUrl = "/";
+    public universalModel: UniversalModel;
 
     constructor(
         public route: ActivatedRoute,
         public title: Title,
         public metaDataService: MetadataService,
+        public universalService: UniversalService,
         public router: Router,
         public renderer: Renderer,
         public elementRef: ElementRef,
@@ -199,13 +202,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.router.events.subscribe((url: any) => {
             THIS.currentRouteUrl = url;
             console.log(' THIS.currentRouteUrl ' + THIS.currentRouteUrl);
-            THIS.title.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
-            this.metaDataService.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
-            this.metaDataService.setTag('description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
-            this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
+            // THIS.title.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
+            // this.metaDataService.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
+            // this.metaDataService.setTag('description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
+            // this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
         });
         //this.metaDataService.setTag('description');
+        let universalModel: UniversalModel = <UniversalModel> {
+                title: 'Builtvisible Homepage',
+				ogTitle: 'Builtvisible Homepage111',
+                description: 'The home page of Builtvisible, a digital marketing agency',
+				ogDescription: 'The home page of Builtvisible, a digital marketing agency1112',
+                canonical: 'https://builtvisible.com/',
+                publisher: 'https://plus.google.com/+Builtvisible'
+		};
 
+		this.universalModel = universalModel;
+
+		// Set the data for the service from the model
+		universalService.set(universalModel);
 
         this.route.params.subscribe(params => {
             this.isOpenLoginModal = params['login'];
@@ -415,6 +430,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public callGetPropertiesByLatLng(lat: number, lng: number) {
         this.windowWidth = $(window).width().toString();
         this.windowHeight = $(window).height().toString();
+        console.log(' 1111 this.windowWidth ' + this.windowWidth);
+        console.log(' 1111 this.windowHeight ' + this.windowHeight);
+        this.setMapAndListSize(this.windowHeight);
         // this.limitListingCount = 1000;
         let THIS = this;
         this.propertyService.getAllPropertiesByGeoLatLong(lat, lng, this.limitListingCount)
@@ -438,7 +456,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 });
 
                 this.filterListing(data);
-
             },
             (error: any) => {
                 this.loading = false;
@@ -487,13 +504,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
             if (markers.hasOwnProperty(key)) {
                 let markerItem = markers[key];
 
-                let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(markerItem.DateListed), new Date());
+                let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(parseInt(markerItem.DateListed)), new Date());
 
                 this.currentMarker = new SebmGoogleMapMarker(this._markerManager);
                 
                 this.currentMarker.latitude = markerItem.Latitude;
                 this.currentMarker.longitude = markerItem.Longitude;
-                this.currentMarker.title = "";
+                this.currentMarker.title = markerItem.DateListed;
                 this.currentMarker.zIndex = parseInt(key);
                 this.currentMarker.opacity = 1;
                 this.currentMarker.visible = true;
@@ -519,6 +536,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                 this.currentMarker.iconUrl = GlobalVariable.PIN_RED_20;
                                 //if(parseInt(w) > 767){
                                 THIS.openInfowindow(markerItem, position);
+                                THIS.newMarkerFlag = "true";
+                                if(THIS.newMarkerFlag == "false"){
+                                    //setTimeout(() => {
+                                        // $('.gm-style-iw').next('div').find('img').click();
+                                        // THIS.removeInfowindow();
+                                   // }, 100);
+                                }
+                                
                                 //}
                             });
 
@@ -534,14 +559,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         // });
                         this._markerManager.createEventObservable('mouseout', this.currentMarker)
                             .subscribe((position: any) => {
-                                this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE_20;
+                                //this.currentMarker.iconUrl = GlobalVariable.PIN_PURPLE_20;
                                 console.log(' THIS.getIsInfowindowOpenValue ' + THIS.getIsInfowindowOpenValue());
                                 setTimeout(() => {
                                     if (THIS.getIsInfowindowOpenValue() == 'No') {
                                         this._infoWindowManager.close(THIS.currentInfowindow);
                                         THIS.changeMarkerColor(markerItem, 0, false);
+                                        THIS.newMarkerFlag = "false";
                                     }
-                                }, 500);
+                               }, 50);
                             });
                     }
                 }
@@ -651,8 +677,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 console.log(' mouseover call _infoWindowManager');
             });
 
+        
+        // setTimeout(() => {
         $('.gm-style-iw').next('div').find('img').click();
-        this.removeInfowindow();
+        // }, 100);
+        // this.removeInfowindow();
         this._infoWindowManager.open(THIS.currentInfowindow);
         console.log(' windowWidth ' + w);
     }
@@ -686,9 +715,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 tempMarkerArray.push(property);
             }
         });
-
-        console.log(' tempMarkerArray.length ' + tempMarkerArray.length);
-
         return tempMarkerArray.length + "";
     }
 
@@ -709,10 +735,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
             let thisBed = (thisMarkerItem.PropertyType == 'Room') ? '' : ((thisMarkerItem.Bed == 'Studio') ? 'Studio' : thisMarkerItem.Bed + 'br');
 
             let thisPropertyHTML = "<div class='col-xs-5 col-sm-5 text-right'>" +
-                "<h6 class='price text-white text-center'>" + thisProperty + "</h6>" +
+                "<h6 class='text-white text-center info_prop_type'>" + thisProperty + "</h6>" +
                 "</div>";
             let thisBedHTML = "<div class='col-xs-3 col-sm-3 text-right'>" +
-                "<h6 class='price text-white'>" + thisBed + "</h6>" +
+                "<h6 class='text-white info_bed'>" + thisBed + "</h6>" +
                 "</div>";
 
             let thisMonthlyRentHTML = "<div class='col-xs-4 col-sm-4'>" +
@@ -721,12 +747,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
             if(thisMarkerItem.PropertyType == 'Room'){
                  thisPropertyHTML = "<div class='col-xs-6 col-sm-6 text-right'>" +
-                "<h6 class='price text-white text-right'>" + thisProperty + "</h6>" +
+                "<h6 class='price text-white text-right info_prop_type'>" + thisProperty + "</h6>" +
                 "</div>"; 
 
                 thisBedHTML = "";    
                 thisMonthlyRentHTML = "<div class='col-xs-6 col-sm-6'>" +
-                "<h4 class='text-white'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
+                "<h4 class='text-white info_price'>$" + thisMarkerItem.MonthlyRent + "</h4>" +
                 "</div>";     
             } 
 
@@ -747,7 +773,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 "</span>" +
                 "</a>" +
                 "</div>";
-            if (new Number(THIS.thisMarkersArray.length) > parseInt(markerKey + 1)) {
+            console.log(' THIS.thisMarkersArray.length ' + THIS.thisMarkersArray.length);                
+            console.log(' markerKey ' + markerKey);                
+            if (THIS.thisMarkersArray.length > parseInt(markerKey + 1)) {
                 HTML += "<div class='col-xs-12 col-sm-12 pad0'>" +
                     "<div class='col-xs-12 col-sm-12 pad0 infowindowBreak'><hr></div>" +
                     "</div>";
@@ -821,8 +849,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         for (let markerKey in this.previousMarkers) {
             let preMarkerItem = this.previousMarkers[markerKey];
             if (prop.Latitude == preMarkerItem.latitude && prop.Longitude == preMarkerItem.longitude) {
-                let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(preMarkerItem.title), new Date());
-
+                let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(parseInt(preMarkerItem.title)), new Date());
+                
                 preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED_20 : ((DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20);
 
                 this._markerManager.updateIcon(preMarkerItem);
@@ -964,6 +992,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     removeInfowindow() {
         $('.gm-style-iw').parent().remove();
+        this.newMarkerFlag = "false";
     }
 
     updateResultCounter() {
@@ -1237,7 +1266,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             if (listedWithinValue != '' && this.commonAppService.isUndefined(thisDateListed)) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else if (listedWithinValue.length != '' && !this.commonAppService.isUndefined(thisDateListed)) {
+                            } else if (listedWithinValue != '' && !this.commonAppService.isUndefined(thisDateListed)) {
 
                                 if (listedWithinValue == 'Month' && DAYDIFF > 30) {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
@@ -1460,21 +1489,41 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log('event.target.innerHeight ' + event.target.innerHeight);
         this.windowHeight = (event.target.innerHeight);
         this.windowWidth = (event.target.innerWidth);
+        if(this.commonAppService.isUndefined(this.windowWidth) || this.commonAppService.isUndefined(this.windowHeight)){
+            this.windowWidth = $(window).width().toString();
+            this.windowHeight = $(window).height().toString();
+        }
         this.setMapAndListSize(this.windowHeight);
     }
 
     setMapAndListSize(height: any) {
         console.log(' setMapAndListSize ' + height);
         let HEIGHT = "";
+        HEIGHT = (height - 90) + 'px';
+        if (height >= 300) {
+            HEIGHT = (height - 70) + 'px';
+        }
+        if (height >= 500) {
+            HEIGHT = (height - 80) + 'px';
+        }
+        if (height >= 600) {
+            HEIGHT = (height - 110) + 'px';
+        }
+        if (height >= 640) {
+            HEIGHT = (height - 110) + 'px';
+        }
+        if (height >= 700) {
+            HEIGHT = (height - 110) + 'px';
+        } 
+        if (height >= 800) {
+            HEIGHT = (height - 100) + 'px';
+        }
+        if (height >= 880) {
+            HEIGHT = (height - 110) + 'px';
+        } 
         if (height >= 1000) {
             HEIGHT = (height - 290) + 'px';
-        } else if (height >= 900) {
-            HEIGHT = (height - 255) + 'px';
-        } else if (height >= 700) {
-            HEIGHT = (height - 135) + 'px';
-        } else {
-            HEIGHT = (height - 125) + 'px';
-        }
+        } 
 
         console.log(' after setMapAndListSize ' + HEIGHT);
         $('#searchPropertyListing').css({
@@ -1483,15 +1532,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
         $('#rentalsItems').css({
             'height': HEIGHT
         });
-        // $('#googlemap').css({
-        //     'height': HEIGHT
-        // });
+        $('#googlemap').css({
+            'height': HEIGHT
+        });
         $('#morefilter').css({
             'height': HEIGHT
         });
 
         $('#matchingList').css({
-            'bottom': (height * 5 / 100) + 'px'
+            'bottom': (height * 2 / 100) + 'px',
+            'left': (height * 2 / 100) + 'px'
         });
     }
 

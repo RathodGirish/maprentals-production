@@ -10,7 +10,7 @@ import {CarouselComponent, Direction} from  './carousel.component';
     selector: 'slide',
     templateUrl: './slider.component.html'
 })
-export class SliderComponent{
+export class SliderComponent implements OnInit, OnDestroy{
 	@Input() public index:number;
     @Input() public direction:Direction;
 
@@ -29,5 +29,6 @@ export class SliderComponent{
     }
 
     public ngOnDestroy() {
+        this.carousel.removeSlide(this);
     }
 }

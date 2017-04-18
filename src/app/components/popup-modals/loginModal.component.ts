@@ -40,12 +40,9 @@ export class LoginModalComponent implements OnInit {
         public commonAppService: CommonAppService,
         @Inject(Renderer) public renderer: Renderer) {
         this.localStorage = localStorage; 
-        console.log(' constructor call '); 
     }
 
     putCookie(key: string, value: Object){
-        console.log(' key ' + JSON.stringify(key));
-        console.log(' value ' + JSON.stringify(value));
         this.localStorage.setObject(key, value);
         //return this.cookieService.putObject(key, value);
     }
@@ -80,7 +77,6 @@ export class LoginModalComponent implements OnInit {
 
 	login(event: any, model: User, isValid: boolean) {
 		event.preventDefault();
-		console.log('model, isValid ' + model, isValid);
 		if(isValid){
 	        this.accountService.login(model.email, model.password)
 	            .subscribe(data => {

@@ -1,7 +1,7 @@
 /**
  * Manage Property Component.
  */
-import { Component, ViewChild, NgModule, OnInit, Output, AfterViewInit, EventEmitter, OnDestroy, ElementRef, NgZone, Directive, Renderer } from '@angular/core';
+import { Component, ViewChild, NgModule, OnInit, Output, AfterViewInit, EventEmitter, OnDestroy, NgZone, Directive, Renderer, ElementRef, Inject  } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -22,6 +22,8 @@ import { CoolLocalStorage } from 'angular2-cool-storage';
 
 let Dropzone = require('../../../../node_modules/dropzone/dist/min/dropzone-amd-module.min.js');
 
+declare var jQuery: any;
+
 @Component({
 	providers: [
 		PropertyService,
@@ -38,6 +40,10 @@ let Dropzone = require('../../../../node_modules/dropzone/dist/min/dropzone-amd-
 
 export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy {
 
+	public listBoxers: Array<string> = ['Sugar Ray Robinson', 'Muhammad Ali', 'George Foreman', 'Joe Frazier', 'Jake LaMotta', 'Joe Louis', 'Jack Dempsey', 'Rocky Marciano', 'Mike Tyson', 'Oscar De La Hoya'];
+
+	 listTeamOne: Array<string> = [];
+    listTeamTwo: Array<string> = [];
 	@Output() filesUploading: EventEmitter<File[]> = new EventEmitter<File[]>();
 
 	public property: Property;
@@ -60,14 +66,16 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 	public dropzone: any;
 	public dropzoneUploadedFiles: any[] = [];
+	public dropzoneUploadedFilesQueue: any[] = [];
 	public selectedPropertyType: string = "";
 	public selectedAgreement: string = "";
 	public selectedEmailOnly: boolean = false;
 	public selectedPhoneOnly: boolean = false;
 
-	isActive: boolean = true;
-	isActiveValue: string = 'No';
-	isImmediateAvailable: boolean = false;
+	public isActive: boolean = true;
+	public isActiveValue: string = 'No';
+	public isImmediateAvailable: boolean = false;
+	public isAvailableDateChanged: boolean = false;
 	public isReload: any = "false";
 
 	@ViewChild('isActiveToggle') isActiveToggle: ElementRef;
@@ -99,6 +107,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	public popoverActiveInactiveHtml = "Activation is FREE! <br><br>ACTIVE: Shows your listing to tenants. <br><br> INACTIVE: Hides your listing from tenants, and saves it to your dashboard for future use. IE. Next time unit is vacant.";
 
 	public popoverMapHtml = "Wrong address showing? Move the pin to correct location.";
+	public elementRef: ElementRef;
 
 	constructor(
 		public route: ActivatedRoute,
@@ -111,8 +120,10 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		public mapsAPILoader: MapsAPILoader,
 		public ng2ImgToolsService: Ng2ImgToolsService,
 		public ngZone: NgZone,
-		localStorage: CoolLocalStorage) {
+		localStorage: CoolLocalStorage,
+		@Inject(ElementRef) elementRef: ElementRef) {
 		this.localStorage = localStorage;
+		this.elementRef = elementRef;
 
 	}
 
@@ -120,11 +131,14 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		let THIS = this;
 		THIS.propertyId = THIS.route.snapshot.params['id'];
 		THIS.currentUser = this.localStorage.getObject('currentUser');
+		if(THIS.commonAppService.isUndefined(THIS.currentUser)){
+			window.location.href = '/';
+			return;
+		}
 		THIS.initProperty();
 		THIS.route.params.subscribe(params => {
 			THIS.isReload = params['Reload'];
 		});
-		console.log(' THIS.propertyId : ' + JSON.stringify(THIS.propertyId));
 		this.profileService.getProfileById(this.currentUser.Id)
 			.subscribe((userDetails: any) => {
 				if (userDetails && userDetails.Company != '') {
@@ -136,8 +150,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			(error: any) => {
 				console.log(' Error while getProfileById : ' + JSON.stringify(error));
 			});
-		//this.route.params.subscribe(params => {
-		//this.propertyId = params['Id'];
 		if (typeof (this.propertyId) != "undefined" && this.propertyId != "new") {
 
 			this.isEdit = true;
@@ -145,9 +157,12 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			this.loading = true;
 			this.propertyService.getProperyById(this.propertyId)
 				.subscribe((data: any) => {
-
-					console.log(' data ' + JSON.stringify(data));
-					this.property = Object.assign({}, data);
+					THIS.property = Object.assign({}, data);
+					if(THIS.commonAppService.isUndefined(this.property) || THIS.property.UserId != THIS.currentUser.Id){
+						window.location.href = '/';
+						return;
+					}
+					
 					this.initPictures(this.property.Pictures);
 					this.selectedPropertyType = this.property.PropertyType;
 
@@ -167,7 +182,10 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 					this.selectedEmailOnly = this.property.IsEmailOnly;
 					this.selectedPhoneOnly = this.property.IsPhoneOnly;
 					this.property.UserId = this.currentUser.Id;
-					this.property.Smoking = (this.property.Smoking) ? "true" : "false";
+					if(this.property.Smoking != null){
+						this.property.Smoking = (this.property.Smoking) ? "true" : "false";
+					}
+					
 					this.htmlDescription = this.property.Description;
 
 					this.setMapPosition({ 'latitude': this.property.Latitude, 'longitude': this.property.Longitude, 'address': this.property.Address });
@@ -195,9 +213,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 					if (this.commonAppService.isUndefined(this.property.Amenities)) {
 						this.property.Amenities = [];
 					}
-
-
-
 					this.loading = false;
 				},
 				(error: any) => {
@@ -287,11 +302,34 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			});
 		});
 
+		jQuery(this.elementRef.nativeElement).find('.dropzone-drop-area').sortable({
+			items: '.dz-preview',
+            cursor: 'move',
+            opacity: 0.5,
+            containment: '#dropzoneFileUpload',
+            distance: 20,
+            tolerance: 'pointer',
+            stop: function () {
 
+				THIS.dropzoneUploadedFilesQueue = [];
+                $('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
+                    let Name = el.getAttribute('id');
+					console.log(' Name ' + Name + ' count ' + count);
+                	THIS.dropzoneUploadedFiles.forEach(function(file) {
+						console.log(' file ' + JSON.stringify(file));
+                       if (file.Name === Name) {
+							file.Index = count + 1;
+                        	THIS.dropzoneUploadedFilesQueue.push(file);
+                       } 
+                    });
+                });
+				console.log(' THIS.dropzoneUploadedFilesQueue ' + JSON.stringify(THIS.dropzoneUploadedFilesQueue));
+            }
+		});
 	}
 	public initPictures(Pictures: any[]) {
 		let _thisDropzoneFiles = this.dropzoneUploadedFiles;
-
+		Pictures = this.commonAppService.getSortedPicturesList(Pictures);
 		for (let index in Pictures) {
 			let _thisPicture = Pictures[index];
 
@@ -324,6 +362,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 				console.log(' inner _thisDropzoneUploadedFiles ' + JSON.stringify(_thisDropzoneUploadedFiles));
 			});
 			mockFile.previewElement.appendChild(removeButton);
+			mockFile.previewElement.id = _thisPicture.Name;
 			this.dropzoneUploadedFiles = _thisDropzoneUploadedFiles;
 		}
 	}
@@ -544,7 +583,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	}
 
 	changeIsActive() {
-		console.log(' this.isActive  ' + this.isActive);
 		this.isActive = !this.isActive;
 		this.isActiveValue = (this.isActive) ? 'Yes' : 'No';
 		this.property.IsActive = this.isActive;
@@ -568,8 +606,9 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		console.log(' event.jsdate ' + event.jsdate);
 		let selectedDate = ((event.jsdate != null) ? event.jsdate.toString() : "");
 		console.log(' selectedDate ' + selectedDate);
-		this.property.IsImmediateAvailable = (selectedDate != '') ? false : this.property.IsImmediateAvailable;
+		this.property.IsImmediateAvailable = (selectedDate != '') ? false : true;
 		this.property.DateAvailable = (selectedDate != '') ? new Date(selectedDate).toString() : "";
+		this.isAvailableDateChanged = true;
 	}
 
 	updateDescription(event: any) {
@@ -611,8 +650,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		console.log('this.property ' + JSON.stringify(this.property));
 
 		let THIS = this;
-		delete this.property['Pictures'];
-		this.property.Pictures = this.dropzoneUploadedFiles;
 		//this.property.Smoking = (this.property.Smoking == "true")? "true": "false";
 
 		this.property.Bed = (this.property.PropertyType == 'Room') ? '' : this.property.Bed;
@@ -667,6 +704,25 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 		this.property.Description = this.htmlDescription;
 
+		if(this.dropzoneUploadedFilesQueue.length != 0){
+			this.dropzoneUploadedFiles = this.dropzoneUploadedFilesQueue;
+		} else {
+			
+			$('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
+				let Name = el.getAttribute('id');
+				console.log(' Name ' + Name + ' count ' + count);
+				THIS.dropzoneUploadedFiles.forEach(function(file, index) {
+					console.log(' file ' + JSON.stringify(file) + 'index ' + index);
+					if (file.Name === Name) {
+						THIS.dropzoneUploadedFiles[index].Index = count + 1;
+					} 
+				});
+			});
+		}
+
+		delete this.property['Pictures'];
+		this.property.Pictures = this.dropzoneUploadedFiles;
+
 		if (this.dropzoneUploadedFiles.length <= 0) {
 			this.isValidImages = false;
 			$('.validation-modal-body').append('<p class="text-danger"> * Pictures</p>');
@@ -689,9 +745,10 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 				}
 			}
 
-			if (model.IsImmediateAvailable == false) {
+			if (model.IsImmediateAvailable == false && this.property.DateAvailable != '' && (this.isEdit == false || this.isAvailableDateChanged == true)) {
 				let dt = new Date(finalObject['DateAvailable']);
 				finalObject['DateAvailable'] = new Date(dt).getTime().toString();
+				this.isAvailableDateChanged == false;
 				//finalObject['DateAvailable'] = this.commonAppService.getFormattedDate(new Date(finalObject['DateAvailable']).toUTCString());		
 			}
 
@@ -759,7 +816,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			parallelUploads: 20,
 			hiddenInputContainer: '#dropzone-drop-area',
 			dictDefaultMessage: "Click/Drag images here to upload",
-			maxFiles: 10,
 			acceptedFiles: 'image/*',
 			clickable: '#dropzone-drop-area',
 			previewsContainer: '#dropzone-drop-area',
@@ -767,14 +823,14 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		});
 		this.dropzone.autoDiscover = true;
 
-
 		this.dropzone.on('addedfile', (file: any) => {
 			console.info(' ng2ImgToolsService file.size ' + JSON.stringify(file.size));
 			THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
 				if (typeof result.name !== 'undefined' && typeof result.size !== 'undefined' && typeof result.type !== 'undefined') {
-					console.info(' result.size ' + JSON.stringify(result.size));
+					console.info(' result.name ' + JSON.stringify(result.name));
 					let loadingButton = Dropzone.createElement("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>");
 					file.previewElement.appendChild(loadingButton);
+					// file.previewElement.find('.dz-details').addClass('test');
 
 					this.uploadPictureService.uploadPicture(result)
 						.subscribe((data: any) => {
@@ -786,12 +842,12 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 									"Name": data[0].name,
 									"Url": data[0].url
 								});
-								file.Url = data[0].Url;
+								file.Url = data[0].url;
 								this.isValidImages = true;
-
+								file.previewElement.id = data[0].name;
 								console.log('this.dropzoneUploadedFiles2' + JSON.stringify(this.dropzoneUploadedFiles) + ' file.Url ' + file.Url);
 								//dropzoneUploadedFiles.push(file);
-								let removeButton = Dropzone.createElement("<a href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
+								let removeButton = Dropzone.createElement("<a id='" + data[0].name + "' href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
 								let _thisDropzone = this.dropzone;
 
 								let mockFileUrl = file.Url;

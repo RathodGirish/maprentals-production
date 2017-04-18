@@ -290,7 +290,7 @@
                     </sebm-google-map-marker>
                 </get-map-objects>
 
-                </sebm-google-map>
+            </sebm-google-map>
 
                 <!-- <sebm-google-map 
                 id="googleMap" 
@@ -342,10 +342,10 @@
                                     <img src="{{prop.PicUrl}}" class="blockImg thumbnail">
                                 </div>
                             </div>
-                            <div class="col-xs-8 col-sm-5 col-md-8">
+                            <div class="col-xs-8 col-sm-5 col-md-8 padL5-xs">
                                 <p class="price text-blue font-monsterrat-regular">${{prop.MonthlyRent}}</p>
-                                <p class="address">{{prop.Title}}</p>
-                                <p class="type">
+                                <p class="title underline text-blue font-montserrat-regular">{{prop.Title}}</p>
+                                <!--<p class="type">
                                     <span *ngIf="prop.PropertyType != 'Room'">  
                                         {{prop.PropertyType}} 
                                     </span>
@@ -354,9 +354,9 @@
                                     <span *ngIf="prop.PropertyType == 'Room'">  
                                         Room Rental
                                     </span>
-                                </p>
-                                <!-- <p class="phone text-left" *ngIf="prop.DateCreated != null">{{prop.DateCreated}}</p> -->
-                                <p class="listedDate text-left" *ngIf="prop.DateListed != null && prop.DateListed != ''">
+                                </p>-->
+                                <p class="address font-montserrat-regular" *ngIf="prop.Address != null">{{prop.Address}}</p> 
+                                <p class="listedDate font-montserrat-regular" *ngIf="prop.DateListed != null && prop.DateListed != ''">
                                     {{commonAppService.getFormattedDateFB(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}
                                     <!-- {{commonAppService.getFormattedDateFB(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}} -->
                                 </p>

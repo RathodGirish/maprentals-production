@@ -16,12 +16,10 @@ export class CommonAppService {
 	constructor(public http: Http,
 		localStorage: CoolLocalStorage){
 		this.localStorage = localStorage;  
-		console.log(' CommonService call');
 	}
 
 	getCurrentUser(){
 		//this.currentUser = this.localStorage.getObject('currentUser');
-		console.log(' in CommonService ' + this.localStorage.getObject('currentUser'));
 		if(!this.isUndefined(this.localStorage.getObject('currentUser'))) {
 			return this.localStorage.getObject('currentUser');
 		} else if(!this.isUndefined(this.currentUser)) {
@@ -437,6 +435,27 @@ export class CommonAppService {
 
     	return DESCRIPTION;
     }
+
+	getSortedPicturesList(Pictures: any){
+		let THIS = this;
+		let picsList: any[] = [];
+		if(Pictures.length == 0){
+			return picsList;
+		} else {
+			$.each(Pictures, function (i, pics) {
+				if(THIS.isUndefined(pics.Index) || pics.Index == 0){
+					picsList.push(pics); 
+				} else {
+					$.each(Pictures, function (j, pics2) {
+						if((i + 1) == pics2.Index){
+							picsList.push(pics2); 
+						}
+					});
+				}
+			});
+			return picsList;
+		}
+	}
 }
 
 interface Wrapped<T> {
@@ -444,6 +463,6 @@ interface Wrapped<T> {
 }
 
 class NumberWrapper {
-    constructor(private value: number) {}
+    constructor(public value: number) {}
     valueOf(): number { return this.value; }
 }
