@@ -12,6 +12,7 @@ import { NavbarModule }  from './components/navbar/navbar.module';
 import { HeaderModule }  from './components/header/header.module';
 // import { UniversalModule } from 'angular2-universal/node';
 import { MetadataModule } from 'ng2-metadata';
+import { MetaGuard, MetaModule, MetaLoader, MetaStaticLoader, PageTitlePositioning } from '@nglibs/meta';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -25,6 +26,7 @@ import { AppRoutingModule } from './app-routing.module';
         NavbarModule,
         // UniversalModule,
         HeaderModule,
+        MetaModule.forRoot(),
         MetadataModule.forRoot()
     ],
     bootstrap: [AppComponent],

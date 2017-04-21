@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public longitude: number = -97.13837439999998;
     public zoom: number = 5;
 
-    removeMarker: SebmGoogleMapMarker;
+    public removeMarker: SebmGoogleMapMarker;
     public newMarkerFlag: string = "false";
 
     public _map: SebmGoogleMap = null;
@@ -167,8 +167,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         public ngZone: NgZone,
         localStorage: CoolLocalStorage
     ) {
+         this.localStorage = localStorage;
+        
+    }
 
+    public ngOnInit() {
         let THIS = this;
+        THIS.currentUser = this.localStorage.getObject('currentUser');
 
         this.initFilterQueryObject();
         this.paramCityName = this.route.snapshot.params['city'];
@@ -192,7 +197,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.watchedPropertyTypeItems = res;
         });
 
-        this.localStorage = localStorage;
+       
         $(window).trigger('resize');
 
         // this.currentUser = localStorage.getObject('currentUser');
@@ -202,10 +207,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.router.events.subscribe((url: any) => {
             THIS.currentRouteUrl = url;
             console.log(' THIS.currentRouteUrl ' + THIS.currentRouteUrl);
-            // THIS.title.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
-            // this.metaDataService.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
-            // this.metaDataService.setTag('description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
-            // this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
+            THIS.title.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
+            this.metaDataService.setTitle(this.commonAppService.getTitleByUrl(THIS.currentRouteUrl));
+            this.metaDataService.setTag('description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
+            this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
         });
         //this.metaDataService.setTag('description');
         let universalModel: UniversalModel = <UniversalModel> {
@@ -220,7 +225,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		this.universalModel = universalModel;
 
 		// Set the data for the service from the model
-		universalService.set(universalModel);
+		this.universalService.set(universalModel);
 
         this.route.params.subscribe(params => {
             this.isOpenLoginModal = params['login'];
@@ -232,10 +237,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 }, 2000);
             }
         });
-        // this.renderer.invokeElementMethod(this.homeContainer.nativeElement, 'resiz', []);
 
-        // this.storageMap = this.localStorage.getObject('storageMap');
-        // this.storageFilters = this.localStorage.getObject('storageFilters');
+        this.storageMap = this.localStorage.getObject('storageMap');
+        this.storageFilters = this.localStorage.getObject('storageFilters');
 
         if (!this.commonAppService.isUndefined(this.storageFilters)) {
             console.log(' this.storageFilters ' + JSON.stringify(this.storageFilters));
@@ -393,11 +397,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log('this.longitude ' + JSON.stringify(this.longitude));
     }
 
-    public ngOnInit() {
-        let THIS = this;
-        THIS.currentUser = this.localStorage.getObject('currentUser');
-    }
-
     ngAfterViewInit() {
         //this.setMapAndListSize(window.screen.height);
     }
@@ -410,10 +409,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
             Bed: [],
             Bath: [],
             Keywords: "",
-            Pet: "",
+            Pet: [],
             Smoking: "",
             ListedWithin: "",
-            DateAvailable: ""
+            DateAvailable: "",
+            ViewType: "Map"
         }
     }
 
@@ -430,15 +430,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public callGetPropertiesByLatLng(lat: number, lng: number) {
         this.windowWidth = $(window).width().toString();
         this.windowHeight = $(window).height().toString();
-        console.log(' 1111 this.windowWidth ' + this.windowWidth);
-        console.log(' 1111 this.windowHeight ' + this.windowHeight);
         this.setMapAndListSize(this.windowHeight);
         // this.limitListingCount = 1000;
         let THIS = this;
+        // this.propertyService.getAllProperties()
         this.propertyService.getAllPropertiesByGeoLatLong(lat, lng, this.limitListingCount)
             .subscribe((data: any) => {
                 this.loading = false;
-                console.log(' TOTAL FETCH DATA ' + JSON.stringify(data.length));
+                console.log(' TOTAL FETCH DATA ' + JSON.stringify(data));
                 data.sort(function (a, b) {
                     let parsed_date = new Date(parseInt(b.DateListed));
                     let relative_to = new Date(parseInt(a.DateListed));
@@ -451,9 +450,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 data.map((property: any, index: any) => {
 
                     if (property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount && property.Pictures.length > 0) {
+                        console.log(' property.IsImmediateAvailable '+ property.IsImmediateAvailable);
+                        property.Address = this.commonAppService.formateAddress(property.Address);
                         this.allFullProperties.push(property);
                     }
                 });
+                
 
                 this.filterListing(data);
             },
@@ -822,6 +824,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     propertyDetails(event: any, Id: any) {
+        console.log(' test this.filterQueryObject ' + JSON.stringify(this.filterQueryObject));
+        this.filterQueryObject.ViewType =  (this.isMapView == true) ? "Map" : "List";
         this.localStorage.setObject('storageFilters', this.filterQueryObject);
         this.localStorage.setObject('storageMap', this.storageMap);
 
@@ -874,11 +878,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     setFilterFromStorage(defaultFilters: any) {
         let THIS = this;
-        console.log(' defaultFilters.Min ' + JSON.stringify(defaultFilters.Min));
-
         for (var key in defaultFilters) {
             if (defaultFilters.hasOwnProperty(key)) {
-                // console.log(' final defaultFilters[key] ' + defaultFilters[key] + ' key  : ' + key);
                 if (key == 'PropertyType') {
                     let PropertyTypeArray = ['Apartment', 'House', 'Room', 'Other'];
 
@@ -886,18 +887,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         if (defaultFilters[key].indexOf(typeVal) >= 0) {
                             THIS._propertyTypeItems.push({ label: typeVal, value: typeVal, selected: true, checked: true });
                         } else {
-                            console.log('THIS._propertyTypeItems  ' + THIS._propertyTypeItems);
                             THIS._propertyTypeItems.push({ label: typeVal, value: typeVal });
                         }
                     });
+
+                    $.each(defaultFilters[key], function (i, val) {
+                        $("input[name=propertyType][data-val='" + val + "']").prop('checked', true);
+                    });
+                }
+
+                if (key == 'ListedWithin') {
+                    $("input[name=listedWithin][data-val='" + defaultFilters[key] + "']").prop('checked', true);
                 }
 
                 if (key == 'Min') {
-                    $('#minFilter').val(defaultFilters[key]);
+                    $('.minFilter').val(defaultFilters[key]);
                 }
 
                 if (key == 'Max') {
-                    $('#maxFilter').val(defaultFilters[key]);
+                    $('.maxFilter').val(defaultFilters[key]);
                 }
 
                 if (key == 'Bed') {
@@ -907,7 +915,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         if (defaultFilters[key].indexOf(typeVal) >= 0) {
                             THIS._beds.push({ label: typeVal, value: typeVal, selected: true, checked: true });
                         } else {
-                            console.log('THIS._beds  ' + THIS._beds);
                             THIS._beds.push({ label: typeVal, value: typeVal });
                         }
                     });
@@ -922,7 +929,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 }
 
                 if (key == 'Keywords') {
-                    $('#Keywords').val(defaultFilters[key]);
+                    $('.keywordsFilter').val(defaultFilters[key]);
                 }
 
                 if (key == 'ListedWithin') {
@@ -955,6 +962,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     $.each(defaultFilters[key], function (i, val) {
                         $("input[name=amenities][data-val='" + val + "']").prop('checked', true);
                     });
+                }
+
+                if (key == 'ViewType') {
+                    
+                    setTimeout(() => {
+                        this.toggleMapListViewText = defaultFilters[key];   
+                        this.isMapView = (defaultFilters[key] == 'List')? false: true;
+                    }, 1000);
                 }
             }
         }
@@ -1053,7 +1068,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     propAvailableDateSelected(event: any) {
-
         this.filterQueryObject.DateAvailable = ((event.target.checked == true) ? new Date().toString() : "");
         this.filterListing(this.allFullProperties);
     }
@@ -1104,15 +1118,60 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public Pet: string[] = [];
-    propPetChange(event: any) {
-        // if(event.target.checked == true){
-        //     this.Pet.push(event.target.value);
-        // } else {
-        //     this.Pet.splice(this.Pet.indexOf(event.target.value), 1);
-        // }
-        // console.log(' this.Pet ' + JSON.stringify(this.Pet));
-        // this.filterQueryObject.Pet = this.Pet;
-        // this.filterListing(this.allFullProperties);
+    propPetChange(event: any, element: any, flag: boolean, field: any) {
+        let thisElementValue = element.value;
+		if (field == 'Pet') {
+			let THIS = this;
+			$('input[name="Pet"]').each(function () {
+				let thisPetValue = $(this).val();
+				if (flag && thisElementValue == 'No' && thisElementValue != thisPetValue) {
+					$("input[name=Pet][data-val='Cats']").prop('checked', false);
+					$("input[name=Pet][data-val='Dogs']").prop('checked', false);
+					$("input[name=Pet][data-val='Any']").prop('checked', false);
+                    
+                    THIS.Pet.splice(THIS.Pet.indexOf('Cats'), 1);
+					THIS.Pet.splice(THIS.Pet.indexOf('Dogs'), 1);
+					THIS.Pet.splice(THIS.Pet.indexOf('Any'), 1);
+
+					if (THIS.Pet.indexOf('No') <= -1) {
+						THIS.Pet.push('No');
+					}
+				} else if (flag && thisElementValue == 'Any' && thisElementValue != thisPetValue) {
+					$("input[name=Pet][data-val='Cats']").prop('checked', false);
+					$("input[name=Pet][data-val='Dogs']").prop('checked', false);
+					$("input[name=Pet][data-val='No']").prop('checked', false);
+
+                    THIS.Pet.splice(THIS.Pet.indexOf('Cats'), 1);
+					THIS.Pet.splice(THIS.Pet.indexOf('Dogs'), 1);
+					THIS.Pet.splice(THIS.Pet.indexOf('No'), 1);
+					if (THIS.Pet.indexOf('Any') <= -1) {
+						THIS.Pet.push('Any');
+					}
+				} else if (flag && (thisElementValue == 'Cats' || thisElementValue == 'Dogs')) {
+					$("input[name=Pet][data-val='No']").prop('checked', false);
+					$("input[name=Pet][data-val='Any']").prop('checked', false);
+
+                    if (THIS.Pet.indexOf('No') != -1) {
+						THIS.Pet.splice(THIS.Pet.indexOf('No'), 1);
+					}
+					if (THIS.Pet.indexOf('Any') != -1) {
+						THIS.Pet.splice(THIS.Pet.indexOf('Any'), 1);
+					}
+
+					if (thisElementValue == 'Cats' && THIS.Pet.indexOf('Cats') == -1) {
+						THIS.Pet.push('Cats');
+					}
+					if (thisElementValue == 'Dogs' && THIS.Pet.indexOf('Dogs') == -1) {
+						THIS.Pet.push('Dogs');
+					}
+				} else if (!flag && thisPetValue == thisElementValue) {
+                    THIS.Pet.splice(THIS.Pet.indexOf(thisPetValue), 1);
+				}
+			});
+            console.log(' THIS.Pet ' + THIS.Pet);
+            this.filterQueryObject.Pet = THIS.Pet;
+            this.filterListing(this.allFullProperties);
+		} 
     }
 
     public Smoking: string = "";
@@ -1221,37 +1280,58 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                         if (filterkey == 'DateAvailable') {
                             let dateAvailableValue = this.filterQueryObject[filterkey];
-
+                            console.log(' rentalItem.DateAvailable ' + rentalItem.DateAvailable + ' rentalItem.IsImmediateAvailable ' + rentalItem.IsImmediateAvailable);
+                            console.log(' dateAvailableValue ' + dateAvailableValue + ' rentalItem.MonthlyRent ' + rentalItem.MonthlyRent);
                             let DAYDIFF = null;
                             let DAYDIFF1 = null;
-                            if (!this.commonAppService.isUndefined(dateAvailableValue) && !this.commonAppService.isUndefined(rentalItem.DateAvailable)) {
-                                DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date(rentalItem.DateAvailable));
+                            if (!this.commonAppService.isUndefined(dateAvailableValue) && !isNaN(parseInt(rentalItem.DateAvailable))) {
+                                DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date(parseInt(rentalItem.DateAvailable)));
                             }
                             if (!this.commonAppService.isUndefined(dateAvailableValue)) {
                                 DAYDIFF1 = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date());
                             }
 
-                            if (this.commonAppService.isUndefined(dateAvailableValue)) {
-
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) && DAYDIFF1 > 0 && rentalItem.IsImmediateAvailable == false && DAYDIFF > 0) {
+                            
+                            if (!this.commonAppService.isUndefined(dateAvailableValue) && isNaN(parseInt(rentalItem.DateAvailable)) && ( rentalItem.IsImmediateAvailable == null)) {
+                                console.log(' 1111DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && DAYDIFF1 <= 0 && rentalItem.IsImmediateAvailable == true && DAYDIFF == null) {
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (parseInt(DAYDIFF1) == 0) && (rentalItem.IsImmediateAvailable == false)) {
+                                console.log(' 2222DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!this.commonAppService.isUndefined(rentalItem.DateAvailable)) && DAYDIFF1 < 0 && DAYDIFF < 0 && rentalItem.IsImmediateAvailable == false) {
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (rentalItem.IsImmediateAvailable == false) && (DAYDIFF <= 0 || DAYDIFF == null) ) {
+                                console.log(' 3333DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
+                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                keepGoing = false;
+                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (rentalItem.IsImmediateAvailable == true) &&  DAYDIFF == null && (parseInt(DAYDIFF1) != 0)) {
+                                console.log('4444 DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             }
+                            
+                            // else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!isNaN(parseInt(rentalItem.DateAvailable))) && DAYDIFF1 > 0 && rentalItem.IsImmediateAvailable == false && DAYDIFF > 0) {
+                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                            //     keepGoing = false;
+                            // } else if (!this.commonAppService.isUndefined(dateAvailableValue) && DAYDIFF1 <= 0 && rentalItem.IsImmediateAvailable == true && DAYDIFF == null) {
+                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                            //     keepGoing = false;
+                            // } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!isNaN(parseInt(rentalItem.DateAvailable))) && DAYDIFF1 < 0 && DAYDIFF < 0 && rentalItem.IsImmediateAvailable == false) {
+                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                            //     keepGoing = false;
+                            // }
                         }
 
                         if (filterkey == 'Keywords') {
                             let keywords = this.filterQueryObject[filterkey];
 
-                            if (keywords != '' && (this.commonAppService.isUndefined(rentalItem.Title))) {
+                            if (keywords != '' && (this.commonAppService.isUndefined(rentalItem.Title) || this.commonAppService.isUndefined(rentalItem.Address))) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
-                            } else if (keywords != '' && (!this.commonAppService.isUndefined(rentalItem.Title)) && (rentalItem.Title.toLowerCase().indexOf(keywords.toLowerCase()) < 0)) {
+                            } else if (keywords != '' && 
+                                (!this.commonAppService.isUndefined(rentalItem.Title)) && 
+                                (!this.commonAppService.isUndefined(rentalItem.Address)) && 
+                                ((rentalItem.Title.toLowerCase().indexOf(keywords.toLowerCase()) < 0) && (rentalItem.Address.toLowerCase().indexOf(keywords.toLowerCase()) < 0))) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             }
@@ -1261,7 +1341,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             let listedWithinValue = this.filterQueryObject[filterkey];
                             let thisDateListed = rentalItem.DateListed;
                             // 
-                            let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(thisDateListed), new Date());
+                            let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(parseInt(thisDateListed)), new Date());
 
                             if (listedWithinValue != '' && this.commonAppService.isUndefined(thisDateListed)) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
@@ -1282,45 +1362,70 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         }
 
                         if (filterkey == 'Bath') {
-                            var bathsValue = this.filterQueryObject[filterkey];
+                            let bathsValue = this.filterQueryObject[filterkey];
+                            let bathsNumber = parseInt(rentalItem.Bath);
+                            if(this.commonAppService.isUndefined(rentalItem.Bath) && bathsValue.length > 0){
+                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                keepGoing = false;
+                            } else {
+                                if (bathsValue.length >= 3 && !this.commonAppService.isUndefined(bathsNumber)) {
 
-                            var bathsNumber = parseFloat(rentalItem.Bath);
-
-                            if (bathsValue.length >= 3 && !this.commonAppService.isUndefined(bathsNumber)) {
-
-                            } else if (bathsValue.length == 2 && !this.commonAppService.isUndefined(bathsNumber)) {
-                                if (bathsValue.indexOf('1') == -1 && bathsNumber <= 1) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
-                                } else if (bathsValue.indexOf('2') == -1 && (bathsNumber > 1 || bathsNumber <= 2)) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
-                                } else if (bathsValue.indexOf('3+') == -1 && bathsNumber > 2) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
-                                }
-                            } else if (bathsValue.length == 1 && !this.commonAppService.isUndefined(bathsNumber)) {
-                                if (bathsValue.indexOf('1') != -1 && bathsNumber > 1) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
-                                } else if (bathsValue.indexOf('2') != -1 && (bathsNumber <= 1 || bathsNumber > 2)) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
-                                } else if (bathsValue.indexOf('3+') != -1 && bathsNumber <= 2) {
-                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                    keepGoing = false;
+                                } else if (bathsValue.length == 2 && !this.commonAppService.isUndefined(bathsNumber)) {
+                                    if (bathsValue.indexOf('1') == -1 && bathsNumber <= 1) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if (bathsValue.indexOf('2') == -1 && (bathsNumber > 1 || bathsNumber <= 2)) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if (bathsValue.indexOf('3+') == -1 && bathsNumber > 2) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
+                                } else if (bathsValue.length == 1 && !this.commonAppService.isUndefined(bathsNumber)) {
+                                    if (bathsValue.indexOf('1') != -1 && bathsNumber > 1) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if (bathsValue.indexOf('2') != -1 && (bathsNumber <= 1 || bathsNumber > 2)) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if (bathsValue.indexOf('3+') != -1 && bathsNumber <= 2) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
                                 }
                             }
                         }
 
                         if (filterkey == 'Pet') {
                             let petsValue = this.filterQueryObject[filterkey];
-                            //let petsArray = this.commonAppService.getArrayFromString(rentalItem.Pet);
-                            //console.log(' petsArray ' + petsArray);
-                            // if (petsValue.length > 0 && !this.commonAppService.isUndefined(rentalItem.Pet) && petsValue.indexOf(rentalItem.Pet) == -1) {
-                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                            //     keepGoing = false;
-                            // }
+                            let petsArrayDB = rentalItem.Pet;
+                            if(petsArrayDB.length <= 2 && petsValue.length > 0){
+                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                keepGoing = false;
+                            } else {
+                                if(petsValue.indexOf('No') != -1){
+                                    if (petsArrayDB.indexOf('Any') != -1 || petsArrayDB.indexOf('Dogs') != -1 || petsArrayDB.indexOf('Cats') != -1) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
+                                } else if(petsValue.indexOf('Any') != -1){
+                                    if (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Dogs') != -1 || petsArrayDB.indexOf('Cats') != -1) {
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
+                                } else if(petsValue.indexOf('Cats') != -1 || petsValue.indexOf('Dogs') != -1){
+                                    if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') != -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1 || petsArrayDB.indexOf('Dogs') != -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if(petsValue.indexOf('Dogs') != -1 && petsValue.indexOf('Cats') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1 || petsArrayDB.indexOf('Cats') != -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
+                                }
+                            }
                         }
 
                         if (filterkey == 'Smoking') {
@@ -1348,8 +1453,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             Id: property.Id + "",
                             PicUrl: property.Pictures[0].Url,
                             Bed: property.Bed,
+                            Bath: property.Bath,
+                            Pet: property.Pet,
                             MonthlyRent: property.MonthlyRent,
                             PropertyType: property.PropertyType,
+                            DateAvailable: property.DateAvailable,
+                            IsImmediateAvailable: property.IsImmediateAvailable,
                             DateCreated: property.DateCreated,
                             DateListed: property.DateListed,
                             Title: property.Title,
@@ -1554,13 +1663,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     openModal(ButtonId: string) {
-        console.log(' -----ButtonId ' + ButtonId);
         document.getElementById(ButtonId).click();
     }
 
     toggleMapListView() {
         this.isMapView = !this.isMapView;
         this.toggleMapListViewText = (this.isMapView == true) ? "List" : "Map";
+        this.filterQueryObject.ViewType =  (this.isMapView == true) ? "Map" : "List";
     }
 
     getWindowWidth() {
@@ -1582,9 +1691,13 @@ export interface MarkerObject {
     Id: string;
     PicUrl: string;
     Bed: string;
+    Bath: string;
+    Pet: string;
     MonthlyRent: string;
     PropertyType: string;
     DateCreated: string;
+    DateAvailable: string;
+    IsImmediateAvailable: boolean;
     DateListed: string;
     Title: string;
     Address: string;
@@ -1598,10 +1711,11 @@ export interface FilterQueryObject {
     Bed: string[];
     Keywords: string;
     Bath: string[];
-    Pet: string;
+    Pet: string[];
     Smoking: string;
     ListedWithin: string;
     DateAvailable: string;
+    ViewType: string;
 }
 
 export interface Cluster {

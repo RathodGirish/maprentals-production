@@ -11,7 +11,7 @@
 <div class="propertyListTopSec hidden-sm hidden-md hidden-lg">
   <a href="/" class="pull-left backToListButton">
     <button class="backToList btn btn-default">
-      <i class="glyphicon glyphicon-menu-left"></i> Back to Map
+      <i class="glyphicon glyphicon-menu-left gi-3x"></i> Results
     </button>
   </a>
   <a pageScroll href="{{currentRouteURL}}#contactSection" class="pull-left goToContactButton">
@@ -255,8 +255,8 @@
                   </div>
                   <div *ngIf="property.Email != null || property.Phone != null" class="col-xs-12 col-sm-12 col-md-4 pad10-xs" id="contactSection">
 
-                      <p ng-bind="email_success_msg" class="{{email_success_msg != '' ? 'mrgT10': ''}} text-success clearfix">{{email_success_msg}}</p>
-                      <p ng-bind="email_fail_msg" class="{{email_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{email_fail_msg}}</p>
+                      <!--<p ng-bind="email_success_msg" class="{{email_success_msg != '' ? 'mrgT10': ''}} text-success clearfix">{{email_success_msg}}</p>
+                      <p ng-bind="email_fail_msg" class="{{email_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{email_fail_msg}}</p>-->
                       <fieldset class="scheduler-border">
                         <legend class="scheduler-border">
                            Contact
@@ -303,7 +303,7 @@
                                </div>
                             </div>
                             <div class="form-group" *ngIf="property.Phone != '' && property.IsEmailOnly == false && property.IsPhoneOnly == true">
-                               <div class="col-xs-6 col-sm-7 col-md-7">
+                               <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                                   <b>PHONE CALLS ONLY!</b>
                                 </div>
                             </div>
@@ -343,3 +343,27 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
+       [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header clearfix">
+                <div class="col-sm-12 pad0">
+                    <button type="button" (click)="hideModal()" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                </div>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="app-modal-body">
+                    <div>
+                        <p ng-bind="email_success_msg" class="{{email_success_msg != '' ? 'mrgT10': ''}} text-success clearfix">{{email_success_msg}}</p>
+                        <p ng-bind="email_fail_msg" class="{{email_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{email_fail_msg}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="hideModal()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

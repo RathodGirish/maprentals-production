@@ -63,7 +63,6 @@ export class MyrentalsComponent implements OnInit{
 			this.loading = true;
 			this.propertyService.getAllPropertiesByUserId(this.currentUser.Id)
 	            .subscribe((data: any) => {
-
 	            	data.sort(function(a,b){
 	            		let parsed_date = new Date(b.DateCreated);
 	    				let relative_to = new Date(a.DateCreated);

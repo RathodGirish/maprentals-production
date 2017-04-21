@@ -44,6 +44,8 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 
 	public email_success_msg: string = '';
 	public email_fail_msg: string = '';
+	public visible = false;
+	public visibleAnimate = false;
 
 	public property: Property;
 	public propertyId: string;
@@ -99,7 +101,8 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
     	this.localStorage = localStorage; 
 		this.propertyId = route.snapshot.params['Id'];
 
-		this.currentRouteURL = route.snapshot.params['city'] + '/' + route.snapshot.params['propertyType'] + '/' + route.snapshot.params['title'];
+		this.currentRouteURL =  route.snapshot.params['city'] + '/' + route.snapshot.params['propertyType'] + '/' + route.snapshot.params['title'];
+		console.log(' window.location  ' + window.location );
 
 		if(this.commonAppService.isUndefined(this.propertyId)){
 			this.propertyId = this.commonAppService.getPropertyIdFromTitle(route.snapshot.params['title']);
@@ -175,7 +178,6 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 		// $("head").append("<meta property='og:image:width' content='100' />");
 
 		// $("head").append("<meta property='og:image:height' content='110' />");
-
 		
 
 		if(typeof(this.propertyId) != "undefined" && this.propertyId != "new"){
@@ -193,7 +195,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 						// $("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
 		            	// this.setMetaData(this.property);
 
-						$('.property-description').html("<span>" + this.property.Description + "</span>");
+						$('.property-description').html("<p>" + this.property.Description + "</p>");
 						
 						THIS.propertyPictures = THIS.commonAppService.getSortedPicturesList(this.property.Pictures);
 
@@ -269,7 +271,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 						this.RecipientEmail = (this.commonAppService.isUndefined(this.property.Email))? "" : this.property.Email;	
 						this.PropertyAddress = this.property.Address;
 						this.PropertyTitle = this.property.Title;
-						this.PropertyUrl = THIS.currentUser; 
+						this.PropertyUrl = window.location.href; 
 					} else {
 						THIS.isPropertyFound = false;
 					}         
@@ -346,7 +348,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
         //this.restartTimer();
     }
 
-    isActive(url: string) {
+    public isActive(url: string) {
         return url === this.property.Pictures[0].Url;
     }
 
@@ -389,7 +391,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 	    }
 	}
 
-	sendEmail(event: any, model: any, isValid: boolean) {
+	public sendEmail(event: any, model: any, isValid: boolean) {
 		event.preventDefault();
 		
 		model.Recipient = this.RecipientEmail;
@@ -399,21 +401,24 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 
 		console.log('model ' + JSON.stringify(model) + ' isValid ' + isValid);
 		if(isValid && !this.commonAppService.isUndefined(model.Recipient)){
+			this.loading = true;
 			this.commonAppService.sendEmail(model)
 	            .subscribe((data: any) => {
 	            	this.loading = false;
 	            	this.email_success_msg = data;
 	            	this.email_fail_msg = '';
+					this.openModal();
 	            },
 	            (error: any) => {
 	            	this.loading = false;
 	            	console.log(' Error while sendEmail : ' + JSON.stringify(error));
 	            	this.email_fail_msg = error;
+					this.openModal();
 	            });
 	    }
 	}
 
-	activeDeactiveProperty(prop: any){
+	public activeDeactiveProperty(prop: any){
 		this.loading = true;
 	    prop.IsActive = !prop.IsActive;
 	    this.propertyService.activeDeactivePropertyById(prop.Id, prop.IsActive)
@@ -428,8 +433,18 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
             });
 	}
 
-	goTo(location: string): void {
+	public goTo(location: string): void {
 	    window.location.hash = location;
+	}
+
+	public openModal(){
+	    this.visible = true;
+	  	setTimeout(() => this.visibleAnimate = true);
+	}
+
+	public hideModal(): void {
+	  	this.visibleAnimate = false;
+	  	setTimeout(() => this.visible = false, 300);
 	}
 }
 

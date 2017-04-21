@@ -6,7 +6,6 @@ import {Injectable, Pipe, PipeTransform} from '@angular/core';
 @Injectable()
 export class CustomFilter implements PipeTransform {
   transform(datas: any[], args: string): any {
-    console.log('args ' + args);
     if (typeof args[0] == 'undefined' || args.length == 0) {
       return datas;
     } else {

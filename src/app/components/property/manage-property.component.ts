@@ -158,6 +158,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			this.propertyService.getProperyById(this.propertyId)
 				.subscribe((data: any) => {
 					THIS.property = Object.assign({}, data);
+					console.log('THIS.property ' + JSON.stringify(THIS.property));
 					if(THIS.commonAppService.isUndefined(this.property) || THIS.property.UserId != THIS.currentUser.Id){
 						window.location.href = '/';
 						return;
@@ -522,7 +523,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			console.log(' this.property[field] ' + this.property[field]);
 
 		} else {
-			console.log(' changeCheckboxArray else ');
 			if (!flag) {
 				this.property[field].splice(this.property[field].indexOf(thisElementValue), 1);
 			} else if (this.property[field].indexOf(element.value) <= -1) {
@@ -830,7 +830,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 					console.info(' result.name ' + JSON.stringify(result.name));
 					let loadingButton = Dropzone.createElement("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>");
 					file.previewElement.appendChild(loadingButton);
-					// file.previewElement.find('.dz-details').addClass('test');
 
 					this.uploadPictureService.uploadPicture(result)
 						.subscribe((data: any) => {

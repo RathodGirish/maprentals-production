@@ -7,14 +7,18 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <meta property="og:locale" [attr.content]="universalModel.ogLocale" />
+    <!--<meta property="og:locale" [attr.content]="universalModel.ogLocale" />
     <meta property="og:type" [attr.content]="universalModel.ogType" />
     <meta property="og:title" [attr.content]="universalModel.ogTitle" />
     <meta property="og:description" [attr.content]="UniversalModel.ogDescription" />
     <meta property="og:url" [attr.content]="UniversalModel.ogUrl" />
     <meta property="og:site_name" [attr.content]="UniversalModel.ogSite_name" />
     <meta property="og:updated_time" [attr.content]="UniversalModel.ogUpdatedTime" />
-    <meta property="og:image" [attr.content]="UniversalModel.ogImage" />
+    <meta property="og:image" [attr.content]="UniversalModel.ogImage" />-->
+    <meta name="fragment" content="!">
+    <meta name="description" content="{{ data.meta.title }}">
+    <meta name="og:description" content="{{ data.meta.description }}">
+    <meta name="title" content="{{ data.meta.description }}">
 
     <link rel="stylesheet" href="/assets/public/css/bootstrap.css">
     <link rel="stylesheet" href="/assets/public/css/bootstrap.min.css">

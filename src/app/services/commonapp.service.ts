@@ -18,7 +18,7 @@ export class CommonAppService {
 		this.localStorage = localStorage;  
 	}
 
-	getCurrentUser(){
+	public getCurrentUser(){
 		//this.currentUser = this.localStorage.getObject('currentUser');
 		if(!this.isUndefined(this.localStorage.getObject('currentUser'))) {
 			return this.localStorage.getObject('currentUser');
@@ -28,19 +28,19 @@ export class CommonAppService {
 		return null;
 	}
 
-	setCurrentUser(user: any){
+	public setCurrentUser(user: any){
 		//this.currentUser = this.localStorage.getObject('currentUser');
 		this.currentUser = user;
 	}
 
-	mergeObjects(obj1: any, obj2: any, callback: any){
+	public mergeObjects(obj1: any, obj2: any, callback: any){
 	    var obj3 = {};
 	    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
 	    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
 	    callback(obj3);
 	}
 
-	getFormattedAddress(place: any){
+	public getFormattedAddress(place: any){
 	    let street_number = "",
 	        name = "",
 	        address = "",
@@ -85,21 +85,25 @@ export class CommonAppService {
 	    return formattedAddress;
 	}
 
-	formateAddress(address: any){
-		if (address != null && address.match(/,/g).length >= 3) { 
-		    address = address.replace(',', '');
+	public formateAddress(address: any){
+		if(!this.isUndefined(address)){
+			if (address != null && address.match(/,/g).length >= 3) { 
+				address = address.replace(',', '');
+			}
+			let array = address.split(' ');
+			let newAddress = "";
+			for (let i = array.length - 1;  0 <= i; i--) {
+				if(newAddress.indexOf(array[i]) < 0){
+					newAddress = array[i] + " " + newAddress;	
+				}
+			}
+			return newAddress;
+		} else {
+			return "";
 		}
-		let array = address.split(' ');
-		let newAddress = "";
-		for (let i = array.length - 1;  0 <= i; i--) {
-		  	if(newAddress.indexOf(array[i]) < 0){
-		  		newAddress = array[i] + " " + newAddress;	
-		  	}
-		}
-		return newAddress;
 	}
 
-	getCityFromAddress(address: any){
+	public getCityFromAddress(address: any){
 		if (address != null) { 
 		    let arr: any[] = address.split(',');
 		    return arr[arr.length-2].replace(/ /g,'');
@@ -107,7 +111,7 @@ export class CommonAppService {
 		return "";
 	}
 
-	getStreetAndCityFromAddress(address: any){
+	public getStreetAndCityFromAddress(address: any){
 		if (address != null) { 
 		    let arr: any[] = address.split(',');
 		    return (arr[arr.length-2] + ', ' +  arr[arr.length-3]);
@@ -115,7 +119,7 @@ export class CommonAppService {
 		return "";
 	} 
 
-	getStreetFromAddress(address: any){
+	public getStreetFromAddress(address: any){
 		if (address != null) { 
 		    let arr: any[] = address.split(',');
 		    return (arr[0] + arr[1]);
@@ -123,11 +127,11 @@ export class CommonAppService {
 		return "";
 	}
 
-	convertUrlString(string: any){
+	public convertUrlString(string: any){
 		return string.replace(/[^A-Z0-9]+/ig, "-").toLowerCase();
 	}
 
-	getFullFormattedDate(date: any){
+	public getFullFormattedDate(date: any){
 		let dt= new Date(date);
 	   	return (dt.getFullYear() + '-' + ('0' + (dt.getMonth()+1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2)) + ' ' + 
     		('00' + dt.getHours()).slice(-2) + ':' + 
@@ -135,12 +139,12 @@ export class CommonAppService {
     		('00' + dt.getSeconds()).slice(-2);
 	}
 
-	getFormattedDate(date: any){
+	public getFormattedDate(date: any){
 		let dt= new Date(date);
 	   	return (dt.getFullYear() + '-' + ('0' + (dt.getMonth()+1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2));
 	}
 
-	getFormattedDateMD(date: any){
+	public getFormattedDateMD(date: any){
 		let dt= new Date(date);
 		let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -148,7 +152,7 @@ export class CommonAppService {
 	   	return (monthNames[dt.getMonth()] + ' ' + ('' + dt.getDate()).slice(-2));
 	}
 
-	getFormattedDateMDY(date: any){
+	public getFormattedDateMDY(date: any){
 		let dt= new Date(date);
 		let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	   	return (monthNames[dt.getMonth()] + ' ' + ('0' + dt.getDate()).slice(-2) + ', ' + dt.getFullYear());
@@ -156,7 +160,7 @@ export class CommonAppService {
 	   	//return (('0' + (dt.getMonth()+1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2)+ '-' + dt.getFullYear());
 	}
 
-	getFormattedPhoneNumber(phone: any){
+	public getFormattedPhoneNumber(phone: any){
 		if(this.isUndefined(phone)){
  			return "";
 		} else {
@@ -238,7 +242,7 @@ export class CommonAppService {
 	    return r;	
 	}
 
-	convertTimeAMPM(dt) {
+	public convertTimeAMPM(dt) {
         let date = '';
         if (dt) {
             let c_date = new Date(dt);
@@ -251,12 +255,12 @@ export class CommonAppService {
         return date;
     }
  
-    getDayDiffFromTwoDate(firstDate: any, secondDate: any) {
+    public getDayDiffFromTwoDate(firstDate: any, secondDate: any) {
         let dayDiff = (secondDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
         return dayDiff;
     }
 
-	sendEmail(emailUser: any) {
+	public sendEmail(emailUser: any) {
         let body = JSON.stringify(emailUser);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
@@ -269,7 +273,7 @@ export class CommonAppService {
     }
 
     //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
-    calDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    public calDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
       	let R = 6371; // km
       	let dLat = this.toRad(lat2-lat1);
       	let dLon = this.toRad(lon2-lon1);
@@ -284,11 +288,11 @@ export class CommonAppService {
     }
 
     // Converts numeric degrees to radians
-    toRad(Value: any) {
+    public toRad(Value: any) {
         return Value * Math.PI / 180;
     }
 
-    isUndefined(obj: any){
+    public isUndefined(obj: any){
     	if(typeof obj == 'undefined' || obj == null || obj == ''){
     		return true;
     	} else {
@@ -296,7 +300,7 @@ export class CommonAppService {
     	}
     }
 
-    getSelectedFromMultiselect(object: any){
+    public getSelectedFromMultiselect(object: any){
     	let array: string[] = [];
 
     	for (let key in object) {
@@ -308,7 +312,7 @@ export class CommonAppService {
         return array;
     }
 
-    getArrayFromString(object: string){
+    public getArrayFromString(object: string){
         let array: string[] = [];
 
         let items = object.slice(1, -1).split(',');
@@ -320,7 +324,7 @@ export class CommonAppService {
         return array;
     }
 
-    isNumberKey(event: any){
+    public isNumberKey(event: any){
         const pattern = /[0-9\+\-\ ]/;
         let inputChar = String.fromCharCode(event.charCode);
         if (!pattern.test(inputChar)) {
@@ -328,13 +332,13 @@ export class CommonAppService {
         }
     }
 
-    getVisitorLocationDetails(callback: any){
+    public getVisitorLocationDetails(callback: any){
     	$.get("https://ip-api.com/json", function(response) {
             callback(response);
         }, "jsonp");
     }
 
-    getPropertyTypeFromParam(type: any){
+    public getPropertyTypeFromParam(type: any){
     	if(type == "apartments-for-rent"){
     		return "Apartment";
     	} if(type == "houses-for-rent"){
@@ -348,7 +352,7 @@ export class CommonAppService {
     	}
     }
 
-    getParamFromPropertyType(type: any){
+    public getParamFromPropertyType(type: any){
     	if(type == "Apartment"){
     		return "apartments-for-rent";
     	} if(type == "House"){
@@ -360,12 +364,12 @@ export class CommonAppService {
     	}
     }
 
-    getPropertyIdFromTitle(listingTitle: any){
+    public getPropertyIdFromTitle(listingTitle: any){
     	let titleArray = listingTitle.split('-');
     	return titleArray[titleArray.length-1];
     }
 
-    getTitleByUrl(url: any){
+    public getTitleByUrl(url: any){
     	let urlArray = url.urlAfterRedirects.split("/");
     	let city = this.capitalizeFirstLetter(urlArray[1]);
 		console.log(' 111 city ' + city);
@@ -387,7 +391,7 @@ export class CommonAppService {
     	}
     }
 
-    getDescriptionByUrl(url: any){
+    public getDescriptionByUrl(url: any){
     	let urlArray = url.urlAfterRedirects.split("/");
     	let city = this.capitalizeFirstLetter(urlArray[1]);
     	if(urlArray.length == 2 && urlArray[1] == ""){
@@ -407,15 +411,15 @@ export class CommonAppService {
     	}
     }
 
-    capitalizeFirstLetter(string: any){
+    public capitalizeFirstLetter(string: any){
     	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
 
-    getPropertyDetailsUrl(Address, PropertyType, Title, Id){
+    public getPropertyDetailsUrl(Address, PropertyType, Title, Id){
     	return "/" + this.convertUrlString(this.getCityFromAddress(Address)) + "/" + this.getParamFromPropertyType(PropertyType) + "/" + this.convertUrlString(Title) + "-" + Id;
     }
     
-    getTitleForFullListing(prop: any){
+    public getTitleForFullListing(prop: any){
     	let TITLE = "";
     	TITLE += this.getCityFromAddress(prop.Address) + " ";
     	TITLE += prop.PropertyType + " For Rent: ";
@@ -426,7 +430,7 @@ export class CommonAppService {
     	return TITLE;
     }
 
-    getDescriptionForFullListing(prop: any){
+    public getDescriptionForFullListing(prop: any){
     	let DESCRIPTION = "";
     	DESCRIPTION += prop.PropertyType + " Rental: ";
     	DESCRIPTION += this.getCityFromAddress(prop.Address) + ": ";
@@ -436,7 +440,7 @@ export class CommonAppService {
     	return DESCRIPTION;
     }
 
-	getSortedPicturesList(Pictures: any){
+	public getSortedPicturesList(Pictures: any){
 		let THIS = this;
 		let picsList: any[] = [];
 		if(Pictures.length == 0){

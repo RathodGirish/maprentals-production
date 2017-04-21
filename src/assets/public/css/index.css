@@ -316,7 +316,7 @@ li {
     bottom: 35px;
     color: #fff;
     left: 20px;
-    z-index: 0;
+    z-index: 3;
     padding: 10px;
     font-weight: bold !important;
     border-radius: 5px;
@@ -381,9 +381,6 @@ li {
   font-size: 12px !important;
 }*/
 
-.backToList .glyphicon {
-    font-size: 12px !important;
-}
 .item-block #property-slider img {
     /*width: auto;
     height: 350px;
@@ -1645,6 +1642,10 @@ input::-webkit-inner-spin-button {
 .borderless th {
     border: none !important;
 }
+.gi-2x{font-size: 16px;}
+.gi-3x{font-size: 14px;}
+.gi-4x{font-size: 12px;}
+.gi-5x{font-size: 10px;}
 .mrg0 {
     margin: 0px !important;
 }
@@ -2099,6 +2100,7 @@ width: 55px;*/
 .carousel-indicators {
     bottom: -3px;
     margin-bottom: 1px;
+    height: 20px;
 }
 .carousel-indicators li,
 .carousel-indicators .active {
@@ -2508,6 +2510,14 @@ multiselect .dropdown-menu > li > a i {
         top: 60px;
         /*overflow: hidden;*/
     }
+
+    #matchingList{
+        position: fixed;
+        bottom: 1px !important;
+        left: 1px !important;
+        border-radius: 0px;
+        padding: 3px 8px 2px;
+    }
     .block .blockImg {
         height: 120px;
         width: 100%;
@@ -2526,26 +2536,27 @@ multiselect .dropdown-menu > li > a i {
         /*height: 177px;
         width: auto;*/
 
-        height: auto;
+        height: 100%;
         margin: auto !important;
-        max-height: 205px;
+        max-height: 250px;
         object-fit: cover;
         object-position: center center;
-        width: auto;
+        width: 100%;
     }
     /*.carousel-inner>.item{
         max-height: : 250px;
     }*/
     .carousel-item .item{
-        height: 205px;
+        height: 250px;
     }
     .backToList {
         /*left: 30%;*/
         position: absolute;
         /*margin-top: 8px;*/
-        padding: 0px 10px;
+        padding: 0px 18px;
         background-color: #30215C;
         height: 34px;
+        font-size: 18px;
     }
     .propertyListTopSec{
         top: 12px;
@@ -2637,7 +2648,7 @@ multiselect .dropdown-menu > li > a i {
     }
 
     #propertyDetailMapDiv sebm-google-map{
-        height: 205px;
+        height: 250px;
     }
 
     .ngxmdp .headertodaybtn{
@@ -2721,8 +2732,8 @@ multiselect .dropdown-menu > li > a i {
         height: 90% !important;
     }
     #matchingList {
-        bottom: 5%;
-        padding: 7px;
+        /*bottom: 5%;*/
+        /*padding: 7px;*/
     }
     #matchingList span,
     #matchingList h6 {
