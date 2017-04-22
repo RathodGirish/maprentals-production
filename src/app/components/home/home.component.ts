@@ -1279,47 +1279,46 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         }
 
                         if (filterkey == 'DateAvailable') {
+
                             let dateAvailableValue = this.filterQueryObject[filterkey];
-                            console.log(' rentalItem.DateAvailable ' + rentalItem.DateAvailable + ' rentalItem.IsImmediateAvailable ' + rentalItem.IsImmediateAvailable);
+                            console.log(' ------------------------------------------------- \n rentalItem.DateAvailable ' + rentalItem.DateAvailable + ' rentalItem.IsImmediateAvailable ' + rentalItem.IsImmediateAvailable);
                             console.log(' dateAvailableValue ' + dateAvailableValue + ' rentalItem.MonthlyRent ' + rentalItem.MonthlyRent);
                             let DAYDIFF = null;
-                            let DAYDIFF1 = null;
+                            let TODAYDAYDIFF = null;
                             if (!this.commonAppService.isUndefined(dateAvailableValue) && !isNaN(parseInt(rentalItem.DateAvailable))) {
                                 DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date(parseInt(rentalItem.DateAvailable)));
                             }
                             if (!this.commonAppService.isUndefined(dateAvailableValue)) {
-                                DAYDIFF1 = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date());
+                                TODAYDAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(dateAvailableValue), new Date());
                             }
 
+                            let floorValToday = Math.floor(TODAYDAYDIFF);
+                            let floorVal = Math.floor(DAYDIFF);
+                            console.log(' test ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' Math.sign(3) ' + Math.sign(TODAYDAYDIFF) +   ' floorVal ' + floorVal + ' floorValToday ' + floorValToday);
                             
-                            if (!this.commonAppService.isUndefined(dateAvailableValue) && isNaN(parseInt(rentalItem.DateAvailable)) && ( rentalItem.IsImmediateAvailable == null)) {
-                                console.log(' 1111DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
-                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                keepGoing = false;
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (parseInt(DAYDIFF1) == 0) && (rentalItem.IsImmediateAvailable == false)) {
-                                console.log(' 2222DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
-                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                keepGoing = false;
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (rentalItem.IsImmediateAvailable == false) && (DAYDIFF <= 0 || DAYDIFF == null) ) {
-                                console.log(' 3333DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
-                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                keepGoing = false;
-                            } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (rentalItem.IsImmediateAvailable == true) &&  DAYDIFF == null && (parseInt(DAYDIFF1) != 0)) {
-                                console.log('4444 DAYDIFF ' + DAYDIFF + ' DAYDIFF1 ' + parseInt(DAYDIFF1));
-                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                keepGoing = false;
+                            if(!this.commonAppService.isUndefined(dateAvailableValue)){
+                                if (isNaN(parseInt(rentalItem.DateAvailable)) && ( rentalItem.IsImmediateAvailable == null)) {
+                                    console.log(' 11111DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
+                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                    keepGoing = false;
+                                } else if ((parseInt(TODAYDAYDIFF) < 0) && (rentalItem.IsImmediateAvailable == false) && (TODAYDAYDIFF > DAYDIFF)) {
+                                    console.log(' 222DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
+                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                    keepGoing = false;
+                                } else if ((rentalItem.IsImmediateAvailable == false) && (DAYDIFF >= 1 || DAYDIFF == null)) {
+                                    console.log(' 33333DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
+                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                    keepGoing = false;
+                                } else if ((rentalItem.IsImmediateAvailable == true) &&  DAYDIFF == null && (parseFloat(TODAYDAYDIFF) < 0 || parseFloat(TODAYDAYDIFF) >= 1) && (TODAYDAYDIFF > DAYDIFF)) {
+                                    console.log(' 4444DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' parseFloat(TODAYDAYDIFF) > 0 ' + (parseFloat(TODAYDAYDIFF) < 0) + ' parseFloat(TODAYDAYDIFF) >= 1 ' + (parseFloat(TODAYDAYDIFF) >= 1));
+                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                    keepGoing = false;
+                                } else if(floorValToday == 0 && !isNaN(parseInt(rentalItem.DateAvailable)) && (rentalItem.IsImmediateAvailable == false)){
+                                    console.log(' 8888DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' parseFloat(TODAYDAYDIFF) > 0 ');
+                                    filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                    keepGoing = false;
+                                }   
                             }
-                            
-                            // else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!isNaN(parseInt(rentalItem.DateAvailable))) && DAYDIFF1 > 0 && rentalItem.IsImmediateAvailable == false && DAYDIFF > 0) {
-                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                            //     keepGoing = false;
-                            // } else if (!this.commonAppService.isUndefined(dateAvailableValue) && DAYDIFF1 <= 0 && rentalItem.IsImmediateAvailable == true && DAYDIFF == null) {
-                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                            //     keepGoing = false;
-                            // } else if (!this.commonAppService.isUndefined(dateAvailableValue) && (!isNaN(parseInt(rentalItem.DateAvailable))) && DAYDIFF1 < 0 && DAYDIFF < 0 && rentalItem.IsImmediateAvailable == false) {
-                            //     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                            //     keepGoing = false;
-                            // }
                         }
 
                         if (filterkey == 'Keywords') {
@@ -1413,14 +1412,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                         filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                         keepGoing = false;
                                     }
+                                } else if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') != -1){
+                                    if((petsArrayDB.indexOf('No') != -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if((petsArrayDB.indexOf('Cats') != -1) && (petsArrayDB.indexOf('Dogs') == -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    } else if((petsArrayDB.indexOf('Dogs') != -1) && (petsArrayDB.indexOf('Cats') == -1)){
+                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
+                                        keepGoing = false;
+                                    }
                                 } else if(petsValue.indexOf('Cats') != -1 || petsValue.indexOf('Dogs') != -1){
-                                    if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') != -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1)){
+                                    if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Dogs') != -1)){
                                         filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                         keepGoing = false;
-                                    } else if(petsValue.indexOf('Cats') != -1 && petsValue.indexOf('Dogs') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1 || petsArrayDB.indexOf('Dogs') != -1)){
-                                        filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
-                                        keepGoing = false;
-                                    } else if(petsValue.indexOf('Dogs') != -1 && petsValue.indexOf('Cats') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Any') != -1 || petsArrayDB.indexOf('Cats') != -1)){
+                                    } else if(petsValue.indexOf('Dogs') != -1 && petsValue.indexOf('Cats') == -1 && (petsArrayDB.indexOf('No') != -1 || petsArrayDB.indexOf('Cats') != -1)){
                                         filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                         keepGoing = false;
                                     }
