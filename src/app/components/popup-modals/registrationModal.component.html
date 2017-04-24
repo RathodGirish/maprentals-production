@@ -12,44 +12,43 @@
             <p ng-bind="registration_success_msg" class="{{registration_success_msg != '' ? 'mrgT10': ''}} text-success clearfix">{{registration_success_msg}}</p>
             <p ng-bind="registration_fail_msg" class="{{registration_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{registration_fail_msg}}</p>
           </div>
-          <form id="regitrationForm" #regitrationForm="ngForm" novalidate (ngSubmit)="registration($event, regitrationForm.value, regitrationForm.valid)">
+          <form [formGroup]="registrationForm" (ngSubmit)="submitRegistration($event, registrationForm.value, registrationForm.valid)" novalidate>
             <table cellpadding="0" cellspacing="0" class="table borderless" border="0">
               <tr>
                 <td>
                   <div class="form-group">
-                    <input type="email" class="form-control" name="email" [ngModel]="user.email" 
-                      required  #email="ngModel" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$" placeholder="Email">
-                    <small [hidden]="email.valid || (email.pristine && !regitrationForm.submitted)" class="text-danger">
-                      Email is required and format should be <i>john@doe.com</i>.
-                    </small>
+                    <input type="email" class="form-control" placeholder="Email" formControlName="email" name="email">
+                    <div class="form-text error">
+                      <small *ngIf="registrationForm.controls.email.hasError('required')" class="text-danger">Email is required.</small>
+                      <small *ngIf="registrationForm.controls.email.hasError('invalidEmail')" class="text-danger">Email is invalid format should be <i>john@doe.com</i></small>
+                    </div>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="form-group">
-                    <input type="password" class="form-control" name="password" [ngModel]="user.password" 
-                      required validateEqual="confirmPassword" reverse="true" #password="ngModel" minlength="6" placeholder="Password">
-                    <small [hidden]="password.valid || (password.pristine && !regitrationForm.submitted)" class="text-danger">
-                      Password is required
-                    </small>
+                    <input type="password" class="form-control" placeholder="Password" minlength='6' formControlName="password" name="password">
+                    <div class='form-text error'>
+                      <small *ngIf="registrationForm.controls.password.hasError('required')" class="text-danger">Password is required.</small>
+                      <small *ngIf="registrationForm.controls.password.hasError('minlength')" class="text-danger">Password isn't long enough.</small>
+                    </div>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <div class="form-group">
-                    <input type="password" class="form-control" name="confirmPassword" [ngModel]="user.confirmPassword" 
-                      required validateEqual="password" reverse="false" #confirmPassword="ngModel"  placeholder="Confirm Password">
-                    <small [hidden]="confirmPassword.valid || (confirmPassword.pristine && !regitrationForm.submitted)" class="text-danger">
-                      Password mismatch
-                    </small>
+                    <input type="password" class="form-control" placeholder="Confirm Password" formControlName="confirmPassword" name="confirmPassword">
+                    <div class='form-text error'>
+                      <small *ngIf="registrationForm.hasError('mismatchedPasswords')" class="text-danger">Passwords do not match.</small>
+                    </div>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td colspan="2" align="center">
-                    <button type="submit" name="btnregister" class="btn btn-green btn-default">Sign Up</button>
+                    <button class='btn btn-primary' type='submit' [disabled]='!registrationForm.valid'>Sign Up</button>
                 </td>
               </tr>
               <tr>

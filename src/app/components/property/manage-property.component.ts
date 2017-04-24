@@ -42,7 +42,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 	public listBoxers: Array<string> = ['Sugar Ray Robinson', 'Muhammad Ali', 'George Foreman', 'Joe Frazier', 'Jake LaMotta', 'Joe Louis', 'Jack Dempsey', 'Rocky Marciano', 'Mike Tyson', 'Oscar De La Hoya'];
 
-	 listTeamOne: Array<string> = [];
+	listTeamOne: Array<string> = [];
     listTeamTwo: Array<string> = [];
 	@Output() filesUploading: EventEmitter<File[]> = new EventEmitter<File[]>();
 
@@ -62,6 +62,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	public isValidEmail: boolean = true;
 	public isValidPhone: boolean = true;
 	public isCalendarMouseHover: boolean = false;
+	public imageUploadingFlag = false;
 	public htmlDescription: any = "";
 
 	public dropzone: any;
@@ -303,32 +304,36 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			});
 		});
 
-		jQuery(this.elementRef.nativeElement).find('.dropzone-drop-area').sortable({
-			items: '.dz-preview',
-            cursor: 'move',
-            opacity: 0.5,
-            containment: '#dropzoneFileUpload',
-            distance: 20,
-            tolerance: 'pointer',
-            stop: function () {
+		if(THIS.imageUploadingFlag == false){
+			jQuery(this.elementRef.nativeElement).find('.dropzone-drop-area').sortable({
+				items: '.dz-preview',
+				cursor: 'move',
+				opacity: 0.5,
+				containment: '#dropzoneFileUpload',
+				distance: 20,
+				tolerance: 'pointer',
+				stop: function () {
 
-				THIS.dropzoneUploadedFilesQueue = [];
-                $('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
-                    let Name = el.getAttribute('id');
-					console.log(' Name ' + Name + ' count ' + count);
-                	THIS.dropzoneUploadedFiles.forEach(function(file) {
-						console.log(' file ' + JSON.stringify(file));
-                       if (file.Name === Name) {
-							file.Index = count + 1;
-                        	THIS.dropzoneUploadedFilesQueue.push(file);
-                       } 
-                    });
-                });
-				console.log(' THIS.dropzoneUploadedFilesQueue ' + JSON.stringify(THIS.dropzoneUploadedFilesQueue));
-            }
-		});
+					THIS.dropzoneUploadedFilesQueue = [];
+					$('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
+						let Name = el.getAttribute('id');
+						console.log(' Name ' + Name + ' count ' + count);
+						THIS.dropzoneUploadedFiles.forEach(function(file) {
+							console.log(' file ' + JSON.stringify(file));
+						if (file.Name === Name) {
+								file.Index = count + 1;
+								THIS.dropzoneUploadedFilesQueue.push(file);
+						} 
+						});
+					});
+					console.log(' THIS.dropzoneUploadedFilesQueue ' + JSON.stringify(THIS.dropzoneUploadedFilesQueue));
+				}
+			});
+		}
 	}
+
 	public initPictures(Pictures: any[]) {
+		let THIS = this;
 		let _thisDropzoneFiles = this.dropzoneUploadedFiles;
 		Pictures = this.commonAppService.getSortedPicturesList(Pictures);
 		for (let index in Pictures) {
@@ -361,6 +366,9 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 					}
 				}
 				console.log(' inner _thisDropzoneUploadedFiles ' + JSON.stringify(_thisDropzoneUploadedFiles));
+				if(THIS.dropzoneUploadedFiles.length <= 0){
+					THIS.isValidImages = false;
+				}
 			});
 			mockFile.previewElement.appendChild(removeButton);
 			mockFile.previewElement.id = _thisPicture.Name;
@@ -368,7 +376,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 	}
 
-	updateLocation(event: any) {
+	public updateLocation(event: any) {
 		let newLat = event.coords.lat;
 		let newLng = event.coords.lng;
 		let latlng = new google.maps.LatLng(newLat, newLng);
@@ -401,7 +409,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 	}
 
-	mapBoundsChanged(bounds: any) {
+	public mapBoundsChanged(bounds: any) {
 		//console.log(' mapBoundsChanged call ');
 		// if(!this.commonAppService.isUndefined(bounds)){
 
@@ -413,7 +421,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		// }
 	}
 
-	mapIdle(bounds: any) {
+	public mapIdle(bounds: any) {
 		//console.log(' mapIdle call ');
 		// if(!this.commonAppService.isUndefined(bounds)){
 		//        let center = bounds.getCenter();
@@ -423,7 +431,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		//    }
 	}
 
-	mapCenterChanged(event: any) {
+	public mapCenterChanged(event: any) {
 		//console.log(' mapCenterChanged call ');
 	}
 
@@ -582,13 +590,13 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 	}
 
-	changeIsActive() {
+	public changeIsActive() {
 		this.isActive = !this.isActive;
 		this.isActiveValue = (this.isActive) ? 'Yes' : 'No';
 		this.property.IsActive = this.isActive;
 	}
 
-	changeIsImmediateAvailable() {
+	public changeIsImmediateAvailable() {
 		if (!this.commonAppService.isUndefined(this.property.IsImmediateAvailable)) {
 			this.property.IsImmediateAvailable = !this.property.IsImmediateAvailable;
 		}
@@ -602,27 +610,25 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		console.log(' this.property.DateAvailable ' + this.property.DateAvailable);
 	}
 
-	propAvailableDateChange(event: IMyDateModel) {
-		console.log(' event.jsdate ' + event.jsdate);
+	public propAvailableDateChange(event: IMyDateModel) {
 		let selectedDate = ((event.jsdate != null) ? event.jsdate.toString() : "");
-		console.log(' selectedDate ' + selectedDate);
 		this.property.IsImmediateAvailable = (selectedDate != '') ? false : true;
 		this.property.DateAvailable = (selectedDate != '') ? new Date(selectedDate).toString() : "";
 		this.isAvailableDateChanged = true;
 	}
 
-	updateDescription(event: any) {
+	public updateDescription(event: any) {
 		this.htmlDescription = event.target.value.replace(/\n/g, '<br>');
 	}
 
-	updateAddress(event: any) {
+	public updateAddress(event: any) {
 		if (event.target.value == '') {
 			this.setMapPosition({ 'latitude': 49.895136, 'longitude': -97.13837439999998, 'address': '' });
 			this.isValidAddress = false;
 		}
 	}
 
-	updatePhone(event: any) {
+	public updatePhone(event: any) {
 		this.property.Phone = event.target.value;
 
 		if (event.target.value == '') {
@@ -633,7 +639,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		console.log(' updatePhone event.target.value ' + event.target.value);
 	}
 
-	updateEmail(event: any) {
+	public updateEmail(event: any) {
 		this.property.Email = event.target.value;
 		let pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$";
 
@@ -644,7 +650,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 	}
 
-	manageProperty(event: any, model: Property, isValidForm: boolean) {
+	public manageProperty(event: any, model: Property, isValidForm: boolean) {
 		event.preventDefault();
 		console.log('model,  ' + JSON.stringify(model) + '  isValidForm ' + isValidForm);
 		console.log('this.property ' + JSON.stringify(this.property));
@@ -704,7 +710,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 		this.property.Description = this.htmlDescription;
 
-		if(this.dropzoneUploadedFilesQueue.length != 0){
+		if(this.dropzoneUploadedFilesQueue.length != 0 && this.dropzoneUploadedFilesQueue.length == this.dropzoneUploadedFiles.length){
 			this.dropzoneUploadedFiles = this.dropzoneUploadedFilesQueue;
 		} else {
 			
@@ -785,7 +791,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 	}
 
-	mergeObjects(obj1: any, obj2: any, callback: any) {
+	public mergeObjects(obj1: any, obj2: any, callback: any) {
 		var obj3 = {};
 		for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
 		for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
@@ -799,7 +805,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		return false;
 	}
 
-	ngAfterViewInit() {
+	public ngAfterViewInit() {
 		let THIS = this;
 		if (this.isReload == "true") {
 			console.log(' this.isReload ' + this.isReload);
@@ -825,6 +831,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 		this.dropzone.on('addedfile', (file: any) => {
 			console.info(' ng2ImgToolsService file.size ' + JSON.stringify(file.size));
+			THIS.imageUploadingFlag = true;
 			THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
 				if (typeof result.name !== 'undefined' && typeof result.size !== 'undefined' && typeof result.type !== 'undefined') {
 					console.info(' result.name ' + JSON.stringify(result.name));
@@ -855,16 +862,11 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 									e.preventDefault();
 									e.stopPropagation();
 									_thisDropzone.removeFile(file);
-									console.log('mockFileUrl' + JSON.stringify(mockFileUrl));
-									//dropzoneFiles.remove(mockFile);
 									console.log('THIS.dropzoneUploadedFiles next' + JSON.stringify(THIS.dropzoneUploadedFiles));
 
 									for (let obj of THIS.dropzoneUploadedFiles) {
-										console.log('obj.Url' + JSON.stringify(obj.Url));
-										console.log('mockFileUrl' + JSON.stringify(mockFileUrl));
 										if (obj.Url == mockFileUrl) {
 											THIS.dropzoneUploadedFiles.splice(this.dropzoneUploadedFiles.indexOf(obj), 1);
-											//this.dropzoneUploadedFiles.remove(obj);   
 										}
 									}
 
@@ -872,10 +874,13 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 									THIS.dropzoneUploadedFiles = (typeof this.dropzoneUploadedFiles == 'undefined') ? [] : this.dropzoneUploadedFiles;
 									console.log('THIS.dropzoneUploadedFiles' + JSON.stringify(THIS.dropzoneUploadedFiles));
-
+									if(THIS.dropzoneUploadedFiles.length <= 0){
+										THIS.isValidImages = false;
+									}
 								});
 								file.previewElement.appendChild(removeButton);
 								loadingButton.remove();
+								THIS.checkUploadingFlag();
 							}
 						},
 						(error: any) => {
@@ -917,7 +922,14 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		this.dropzone.disable();
 	}
 
-	isNumberKey(event: any) {
+	public checkUploadingFlag(){
+		let isUploading = $('#dropzoneFileUpload .dropzone-drop-area').find('.dz-preview button.uploadingBtnSpinner').length;
+		if(isUploading == 0){
+			this.imageUploadingFlag = false;
+		}
+	}
+
+	public isNumberKey(event: any) {
 		const pattern = /[0-9\+\-\ ]/;
 		let inputChar = String.fromCharCode(event.charCode);
 		if (!pattern.test(inputChar)) {

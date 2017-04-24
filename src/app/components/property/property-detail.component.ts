@@ -167,7 +167,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 
 		// $("head").append("<meta property='fb:app_id' content='966242223397117' />");
 
-		// $("head").append("<meta property='og:url' content='http://maprentalstest.azurewebsites.net' />");
+		// $("head").append("<meta property='og:url' content='http://maprentalsstaging.azurewebsites.net' />");
 
 		// $("head").append("<meta property='og:description' content='test descriptions' />");
 
@@ -189,12 +189,12 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 	            		THIS.isPropertyFound = true;
 		            	this.property = Object.assign({}, data);
 		            	this.setShareParameters(this.property);
-						// $("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
-						// $("meta[property='og\\:title']").attr('content', this.property.Title);
-						// $("meta[name='og\\:description']").attr('content', this.property.Description);
-						// $("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
+						$("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
+						$("meta[property='og\\:title']").attr('content', this.property.Title);
+						$("meta[name='og\\:description']").attr('content', this.property.Description);
+						$("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
 		            	// this.setMetaData(this.property);
-
+						// $(window).prerenderReady = true;
 						$('.property-description').html("<p>" + this.property.Description + "</p>");
 						
 						THIS.propertyPictures = THIS.commonAppService.getSortedPicturesList(this.property.Pictures);

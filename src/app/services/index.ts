@@ -7,3 +7,4 @@ export * from './upload-picture.service';
 export * from './meta.service';
 export * from './universal.service';
 export * from './google.analytics.events.service';
+export * from './validator';

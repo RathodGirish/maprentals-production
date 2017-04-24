@@ -40,7 +40,8 @@
               <tr>
                 <td colspan="2" align="center">
                   <div class="form-group">
-                    <button type="submit" name="btnlogin" id="" class="btn btn-default" id="btnlogin1">Sign in</button>
+                    <button class='btn btn-default' type='submit' [disabled]='!loginForm.valid' name="btnlogin">Sign in</button>
+                    <!--<button type="submit" name="btnlogin" id="" class="btn btn-default" id="btnlogin1">Sign in</button>-->
                   </div>
                 </td>
               </tr>
