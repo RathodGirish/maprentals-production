@@ -1,4 +1,7 @@
-<div id="cover" *ngIf="loading==true"></div>
+<!--<div id="cover" *ngIf="loading==true"></div>-->
+<div class="overlay" *ngIf="loading==true">
+  <div class="overlay-loader" *ngIf="loading==true"></div>
+</div>
 <section class="container mrgT15" id="profileSection">
     <div class="row">
         <div class="pad0">

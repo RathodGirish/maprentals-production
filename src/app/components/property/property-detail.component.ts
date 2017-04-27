@@ -185,6 +185,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 			this.propertyService.getProperyById(this.propertyId)
 	            .subscribe((data: any) => {
 	            	this.loading = false;
+					console.log(' prop ' + JSON.stringify(data));
 	            	if(data){
 	            		THIS.isPropertyFound = true;
 		            	this.property = Object.assign({}, data);
@@ -193,7 +194,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 						$("meta[property='og\\:title']").attr('content', this.property.Title);
 						$("meta[name='og\\:description']").attr('content', this.property.Description);
 						$("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
-		            	// this.setMetaData(this.property);
+		            	//this.setMetaData(this.property);
 						// $(window).prerenderReady = true;
 						$('.property-description').html("<p>" + this.property.Description + "</p>");
 						
@@ -310,19 +311,19 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 	}
 
 	public setMetaData(prop: any){
-        // this.title.setTitle(this.commonAppService.getTitleForFullListing(prop));
-        // this.metaService.setTitle(this.commonAppService.getTitleForFullListing(prop));
+        this.title.setTitle(this.commonAppService.getTitleForFullListing(prop));
+        this.metaDataService.setTitle(this.commonAppService.getTitleForFullListing(prop));
         // this.metaService.setTag('og:description', this.commonAppService.getDescriptionForFullListing(prop));
 
         let tm = "" + new Date().getTime();
         console.log('tm ' + tm);
         this.metaDataService.setTag('fb:app_id', "966242223397117");
         this.metaDataService.setTag('og:url', "http://maprentalsstaging.azurewebsites.net?fbrefresh=" + (tm + 5));
-        this.metaDataService.setTag('og:image', prop.Pictures[1].Url + "?t=" + (tm + 4));
+        this.metaDataService.setTag('og:image', prop.Pictures[0].Url + "?t=" + (tm + 4));
         this.metaDataService.setTag('og:image:type', "image/jpeg");
         this.metaDataService.setTag('og:image:width', "3523");
         this.metaDataService.setTag('og:image:height', "2372");
-        this.metaDataService.setTag('image', prop.Pictures[1].Url);
+        this.metaDataService.setTag('image', prop.Pictures[0].Url);
 
         // this.metaDataService.setTag('og:description', this.commonAppService.getDescriptionByUrl(THIS.currentRouteUrl));
 	}

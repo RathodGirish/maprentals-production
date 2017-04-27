@@ -40,11 +40,10 @@ export class AppComponent implements AfterViewInit {
 				ogTitle: 'Builtvisible Homepage111',
                 description: 'The home page of Builtvisible, a digital marketing agency',
 				ogDescription: 'The home page of Builtvisible, a digital marketing agency1112',
-                canonical: 'https://builtvisible.com/',
-                publisher: 'https://plus.google.com/+Builtvisible'
+				
 		};
 
-		this.universalModel = universalModel;
+		// this.universalModel = universalModel;
 
 		// Set the data for the service from the model
 		universalService.set(universalModel);

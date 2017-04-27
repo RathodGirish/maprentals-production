@@ -494,6 +494,35 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return false;
     }
 
+    public checkMarkerVisible(lat: number, lng: number) {
+        let lat1 = this.currentBounds.getSouthWest().lat();
+        let lng1 = this.currentBounds.getSouthWest().lng();
+        let lat2 = this.currentBounds.getNorthEast().lat();
+        let lng2 = this.currentBounds.getNorthEast().lng();
+
+        // let isExists: boolean = this.currentBounds.contains( new google.maps.LatLng(lat, lng) );
+        // //console.log(' isExists ' + isExists);
+        // return isExists;
+        if ((lat >= lat1 && lat <= lat2) && (lng >= lng1 && lng <= lng2)) {
+            // return this.currentBounds.contains({'lat': lat, 'lng': lng});
+            return true;
+        }
+        return false;
+    }
+
+    public checkMarkerWithFilters(lat: number, lng: number) {
+        
+        for (let key in this.markers) {
+            if (this.markers.hasOwnProperty(key)) {
+                let markerFilterItem = this.markers[key];
+                if (markerFilterItem.Latitude == lat && markerFilterItem.Longitude == lng) {
+                    return true;
+                }
+            }
+        }
+        return false;;
+    }
+
     public currentMarker: SebmGoogleMapMarker;
     public currentInfowindow = new SebmGoogleMapInfoWindow(this._infoWindowManager, this.infoWindowDiv);
     public previousOpenedMarker: any;
@@ -520,7 +549,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 let markerLabel = this.getMarkerLabel(markerItem);
                 this.currentMarker.label = (markerLabel == "1"? "": markerLabel); 
 
-                this.currentMarker.iconUrl = (DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
+                this.currentMarker.iconUrl = (DAYDIFF > 0.5) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
 
                 let flag: boolean = this.checkMarkerVisible(markerItem.Latitude, markerItem.Longitude);
 
@@ -708,8 +737,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         for (let markerKey in currentPreMarkersList) {
             if (currentPreMarkersList.hasOwnProperty(markerKey)) {
                 let removeMarkerItem = currentPreMarkersList[markerKey];
-                let flag: boolean = this.checkMarkerVisible(removeMarkerItem.Latitude, removeMarkerItem.Longitude);
-                if (flag == false) {
+                let removeflag: boolean = this.checkMarkerVisible(removeMarkerItem.latitude, removeMarkerItem.longitude);
+                let filterflag: boolean = this.checkMarkerWithFilters(removeMarkerItem.latitude, removeMarkerItem.longitude);
+                if (!removeflag || !filterflag) {
                     this._markerManager.deleteMarker(removeMarkerItem);
                     this.previousMarkers.splice(this.previousMarkers.indexOf(removeMarkerItem), 1);
                 }
@@ -846,21 +876,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public changeMarkerColor(prop: any, index: any, flag: boolean) {
         let THIS = this;
         let isWindowOpen = $('.gm-style-iw').next('div').find('img').length;
-        console.log(' this.isInfowindowOpen ' + this.isInfowindowOpen + '  flag ' + flag + ' this.previousOpenedMarker' + JSON.stringify( THIS.previousOpenedMarker) + ' flag ' + !THIS.commonAppService.isUndefined(THIS.previousOpenedMarker));
 
         for (let markerKey in this.previousMarkers) {
             let preMarkerItem = this.previousMarkers[markerKey];
             if (prop.Latitude == preMarkerItem.latitude && prop.Longitude == preMarkerItem.longitude) {
                 let DAYDIFF = this.commonAppService.getDayDiffFromTwoDate(new Date(parseInt(preMarkerItem.title)), new Date());
                 
-                preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED_20 : ((DAYDIFF > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20);
+                preMarkerItem.iconUrl = (flag == true) ? GlobalVariable.PIN_RED_20 : ((DAYDIFF > 0.5) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20);
                 this._markerManager.updateIcon(preMarkerItem);
             }
 
             if(!THIS.commonAppService.isUndefined(THIS.previousOpenedMarker) && THIS.previousOpenedMarker.Latitude == preMarkerItem.latitude && THIS.previousOpenedMarker.Longitude == preMarkerItem.longitude && parseInt(THIS.getWindowWidth()) <= 767){
                 
                 let DAYDIFF2 = this.commonAppService.getDayDiffFromTwoDate(new Date(parseInt(preMarkerItem.title)), new Date());
-                preMarkerItem.iconUrl = (DAYDIFF2 > 2) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
+                preMarkerItem.iconUrl = (DAYDIFF2 > 0.5) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
                 this._markerManager.updateIcon(preMarkerItem);
             }
         }
@@ -1329,13 +1358,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         if (filterkey == 'Keywords') {
                             let keywords = this.filterQueryObject[filterkey];
 
-                            if (keywords != '' && (this.commonAppService.isUndefined(rentalItem.Title) || this.commonAppService.isUndefined(rentalItem.Address))) {
+                            if (keywords != '' && (this.commonAppService.isUndefined(rentalItem.Title) || this.commonAppService.isUndefined(rentalItem.Address) || this.commonAppService.isUndefined(rentalItem.Description))) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             } else if (keywords != '' && 
                                 (!this.commonAppService.isUndefined(rentalItem.Title)) && 
                                 (!this.commonAppService.isUndefined(rentalItem.Address)) && 
-                                ((rentalItem.Title.toLowerCase().indexOf(keywords.toLowerCase()) < 0) && (rentalItem.Address.toLowerCase().indexOf(keywords.toLowerCase()) < 0))) {
+                                (!this.commonAppService.isUndefined(rentalItem.Description)) && 
+                                ((rentalItem.Title.toLowerCase().indexOf(keywords.toLowerCase()) < 0) && (rentalItem.Description.toLowerCase().indexOf(keywords.toLowerCase()) < 0) && (rentalItem.Address.toLowerCase().indexOf(keywords.toLowerCase()) < 0))) {
                                 filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                 keepGoing = false;
                             }
@@ -1571,22 +1601,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let lat = this.centerBounds.lat();
         let lng = this.centerBounds.lng();
         //this.callGetPropertiesByLatLng(lat, lng);
-    }
-
-    public checkMarkerVisible(lat: number, lng: number) {
-        let lat1 = this.currentBounds.getSouthWest().lat();
-        let lng1 = this.currentBounds.getSouthWest().lng();
-        let lat2 = this.currentBounds.getNorthEast().lat();
-        let lng2 = this.currentBounds.getNorthEast().lng();
-
-        // let isExists: boolean = this.currentBounds.contains( new google.maps.LatLng(lat, lng) );
-        // //console.log(' isExists ' + isExists);
-        // return isExists;
-        if ((lat >= lat1 && lat <= lat2) && (lng >= lng1 && lng <= lng2)) {
-            // return this.currentBounds.contains({'lat': lat, 'lng': lng});
-            return true;
-        }
-        return false;
     }
 
     public limitListingCountUpdate(currentZoom: number) {

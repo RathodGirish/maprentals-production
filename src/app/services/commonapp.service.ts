@@ -250,8 +250,10 @@ export class CommonAppService {
             let min = (c_date.getMinutes()<10?'0':'') + c_date.getMinutes();
             
             let type = (hrs <= 12) ? " AM" : " PM";
-            date = ((+hrs % 12) || hrs) + ":" + min + type;
+			let hour = ((+hrs % 12) || hrs);
+            date = ((hour == 0)? "12":hour) + ":" + min + type;
         }
+		
         return date;
     }
  

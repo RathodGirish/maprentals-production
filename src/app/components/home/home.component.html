@@ -1,4 +1,9 @@
-<div id="cover" *ngIf="loading==true"></div>
+<!--<div id="cover" *ngIf="loading==true"></div>-->
+<div class="overlay" *ngIf="loading==true">
+  <div class="overlay-loader" *ngIf="loading==true"></div>
+</div>
+
+
 <div class="form-group has-feedback search-top">
     <input name="SearchTop" id="SearchTop" placeholder="Search by Address or City" autocorrect="off" autocapitalize="off" spellcheck="off"
         type="text" class="form-control" #SearchTop [formControl]="searchControl">
@@ -299,33 +304,6 @@
 
             </sebm-google-map>
 
-                <!-- <sebm-google-map 
-                id="googleMap" 
-                #googleMap 
-                [latitude]="latitude" 
-                [longitude]="longitude" 
-                [scrollwheel]="true" 
-                [zoom]="zoom" 
-                [zoomControl]="true" 
-                (mapClick)="mapClicked()"            
-                (centerChange)="mapCenterChanged($event)"
-                (boundsChange)="mapBoundsChanged($event)"
-                (zoomChange)="mapZoomChange($event)"
-                (idle)="mapIdle($event, infoWindow)" 
-                (click)="removeInfowindow();">
-
-                <custom-map-marker
-                    *ngFor="let cluster of clusters; let i = index"
-                    [markersInCluster]="cluster.markers"
-                    [addressId]="cluster.address_id"
-                    [lat]="cluster.coordinates.lat"
-                    [lng]="cluster.coordinates.lng"
-                    [label]="cluster.price.raw"
-                    [isViewed]="true">
-                </custom-map-marker>
-
-            </sebm-google-map> -->
-
         </div>
 
         <div *ngIf="markers.length >= 0" #matchingList id="matchingList" class="text-left font-monsterrat" [class.hidden-xs]="isMapView == false1"><span> {{markers.length}} Results </span></div>
@@ -341,7 +319,10 @@
             <div #rentalsItems id="rentalsItems" class="pad0" *ngIf="markers.length > 0">
                 <div *ngFor="let prop of markers; let i = index;">
                     <div *ngIf="prop.PicUrl != ''">
-                        <a href="/{{this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(prop.Address))}}/{{this.commonAppService.getParamFromPropertyType(prop.PropertyType)}}/{{this.commonAppService.convertUrlString(prop.Title)}}-{{prop.Id}}"
+                        <!--<a href="/{{this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(prop.Address))}}/{{this.commonAppService.getParamFromPropertyType(prop.PropertyType)}}/{{this.commonAppService.convertUrlString(prop.Title)}}-{{prop.Id}}"
+                            class="row block list_rental_block thumbnail" (mouseenter)="changeMarkerColor(prop, i, true)" (mouseleave)="changeMarkerColor(prop, i, false)"
+                            (click)="propertyDetails($event, prop.Id)">-->
+                         <a href="javascript:void(0)"
                             class="row block list_rental_block thumbnail" (mouseenter)="changeMarkerColor(prop, i, true)" (mouseleave)="changeMarkerColor(prop, i, false)"
                             (click)="propertyDetails($event, prop.Id)">
                             <div class="col-xs-4 col-sm-2 col-md-4 pad0">
@@ -352,16 +333,6 @@
                             <div class="col-xs-8 col-sm-5 col-md-8 padL5-xs">
                                 <p class="price text-blue font-monsterrat-regular">${{prop.MonthlyRent}}</p>
                                 <p class="title underline text-blue font-montserrat-regular">{{prop.Title}}</p>
-                                <!--<p class="type">
-                                    <span *ngIf="prop.PropertyType != 'Room'">  
-                                        {{prop.PropertyType}} 
-                                    </span>
-                                    <span *ngIf="prop.PropertyType != 'Room'">      {{prop.Bed}}br
-                                    </span>
-                                    <span *ngIf="prop.PropertyType == 'Room'">  
-                                        Room Rental
-                                    </span>
-                                </p>-->
                                 <p class="address font-montserrat-regular" *ngIf="prop.Address != null">{{commonAppService.formateAddress(prop.Address)}}</p> 
                                 <p class="listedDate font-montserrat-regular" *ngIf="prop.DateListed != null && prop.DateListed != ''">
                                     {{commonAppService.getFormattedDateFB(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}

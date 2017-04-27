@@ -1,5 +1,8 @@
 
-<div id="cover" *ngIf="loading==true"></div>
+<!--<div id="cover" *ngIf="loading==true"></div>-->
+<div class="overlay" *ngIf="loading==true">
+  <div class="overlay-loader" *ngIf="loading==true"></div>
+</div>
 <div class="managePropertyTopSec hidden-sm">
     <h2 class="col-lg-12 col-md-12 col-sm-12 col-xs-12 col-md-12 text-center">List your rental for FREE!</h2>
 </div>
