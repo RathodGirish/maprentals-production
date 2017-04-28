@@ -676,8 +676,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
             THIS.changeMarkerColor(markerItem, 0, false);
         });
 
-        $(document).on('click', 'a.list_rental_inforwindow', function () {
-            THIS.propertyDetails(this, markerItem.Id);
+        $(document).on('click', 'a.list_rental_inforwindow', function (event) {
+            THIS.propertyDetails(event, markerItem.Id);
         });
 
         node.addEventListener("mouseover", function (e: any) {
@@ -801,7 +801,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             HTML += "<div class='list_rental_inforwindow_div'></div>";
             HTML += "<div id='' class='col-xs-12 col-sm-12 col-md-12 pad0' >" +
                 "<button class='closeWindowButton btn btn-danger hidden-sm  hidden-md  hidden-lg'>X</button>" +
-                "<a href='/" + this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) + "/" + this.commonAppService.getParamFromPropertyType(thisProperty) + "/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='" + thisMarkerItem.Id + "' class='list_rental_inforwindow' id='markerItem.Id' >" +
+                "<a href='/" + this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) + "/" + this.commonAppService.getParamFromPropertyType(thisProperty) + "/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='" + thisMarkerItem.Id + "' class='list_rental_inforwindow' id='markerItem.Id'>" +
                 "<div class='col-xs-12 col-sm-12 pad0'>" +
                 "<div class='item'>" +
                 "<img src='" + thisMarkerItem.PicUrl + "' alt='' class='infowindow-property-pic thumbnail'>" +
@@ -849,26 +849,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     public propertyDetails(event: any, Id: any) {
         console.log(' test this.filterQueryObject ' + JSON.stringify(this.filterQueryObject));
+        event.preventDefault();
         this.filterQueryObject.ViewType =  (this.isMapView == true) ? "Map" : "List";
         this.localStorage.setObject('storageFilters', this.filterQueryObject);
         this.localStorage.setObject('storageMap', this.storageMap);
+        this.loading = true;
 
         this.propertyService.updatePropertyViewsCount(Id)
             .subscribe((data: any) => {
                 this.loading = false;
                 console.log(' data ' + JSON.stringify(data));
-                //event.stopPropagation();
-                // this.router.navigate( [
-                //     'propertyDetails', { Id: Id}
-                // ]);
+                this.propertyService.getProperyById(Id)
+	            .subscribe((property: any) => {
+                    if(!this.commonAppService.isUndefined(property)){
+                        window.location.href = this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(property.Address)) + "/" + this.commonAppService.getParamFromPropertyType(property.PropertyType) + "/" + this.commonAppService.convertUrlString(property.Title) + "-" + property.Id;
+                    }
+                })
             },
             (error: any) => {
                 this.loading = false;
                 console.log(' Error while updateProfile : ' + JSON.stringify(error));
-                // event.stopPropagation();
-                // this.router.navigate( [
-                //     'propertyDetails', { Id: Id}
-                // ]);
             });
 
     }
@@ -1315,8 +1315,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         if (filterkey == 'DateAvailable') {
 
                             let dateAvailableValue = this.filterQueryObject[filterkey];
-                            console.log(' ------------------------------------------------- \n rentalItem.DateAvailable ' + rentalItem.DateAvailable + ' rentalItem.IsImmediateAvailable ' + rentalItem.IsImmediateAvailable);
-                            console.log(' dateAvailableValue ' + dateAvailableValue + ' rentalItem.MonthlyRent ' + rentalItem.MonthlyRent);
                             let DAYDIFF = null;
                             let TODAYDAYDIFF = null;
                             if (!this.commonAppService.isUndefined(dateAvailableValue) && !isNaN(parseInt(rentalItem.DateAvailable))) {
@@ -1328,27 +1326,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                             let floorValToday = Math.floor(TODAYDAYDIFF);
                             let floorVal = Math.floor(DAYDIFF);
-                            console.log(' test ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' Math.sign(3) ' + Math.sign(TODAYDAYDIFF) +   ' floorVal ' + floorVal + ' floorValToday ' + floorValToday);
                             
                             if(!this.commonAppService.isUndefined(dateAvailableValue)){
                                 if (isNaN(parseInt(rentalItem.DateAvailable)) && ( rentalItem.IsImmediateAvailable == null)) {
-                                    console.log(' 11111DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 } else if ((parseInt(TODAYDAYDIFF) <= 0 && Math.sign(TODAYDAYDIFF) != -1) && (rentalItem.IsImmediateAvailable == false) && (TODAYDAYDIFF > DAYDIFF)) {
-                                    console.log(' 222DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 } else if ((rentalItem.IsImmediateAvailable == false) && (DAYDIFF >= 1 || DAYDIFF == null)) {
-                                    console.log(' 33333DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF);
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 } else if ((rentalItem.IsImmediateAvailable == true) &&  DAYDIFF == null && (parseFloat(TODAYDAYDIFF) < 0 || parseFloat(TODAYDAYDIFF) >= 1) && (TODAYDAYDIFF > DAYDIFF)) {
-                                    console.log(' 4444DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' parseFloat(TODAYDAYDIFF) > 0 ' + (parseFloat(TODAYDAYDIFF) < 0) + ' parseFloat(TODAYDAYDIFF) >= 1 ' + (parseFloat(TODAYDAYDIFF) >= 1));
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 } else if(floorValToday == 0 && !isNaN(parseInt(rentalItem.DateAvailable)) && (rentalItem.IsImmediateAvailable == false)){
-                                    console.log(' 8888DAYDIFF ' + DAYDIFF + '   |  TODAYDAYDIFF ' + TODAYDAYDIFF + ' parseFloat(TODAYDAYDIFF) > 0 ');
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 }   

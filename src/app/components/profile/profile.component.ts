@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit{
 	    }
 	}
 
-	updateProfile(event: any, model: Profile, isValid: boolean) {
+	public updateProfile(event: any, model: Profile, isValid: boolean) {
 		event.preventDefault();
 		
 		model.Id = this.profile.Id;
@@ -115,6 +115,7 @@ export class ProfileComponent implements OnInit{
 		            	this._fail_msg = "Fail to update Password " + error;
 		            	console.log(' Error while updatePassword : ' + JSON.stringify(error));
 		            	this.loadingBtnSpinner = "<span>Save</span>";
+						this.reloadPage();
 		            });
 			} else {
 				this.updateProfileFunction(model);
@@ -122,24 +123,73 @@ export class ProfileComponent implements OnInit{
 	    }
 	}
 
-	updateProfileFunction(modelDate: any){
-		this.profileService.updateProfile(modelDate)
-            .subscribe((data: any) => {
-            	this.loading = false;
-            	console.log(' data ' + JSON.stringify(data));
-            	this._success_msg = "Profile Updated Successfully";
-            	this.loadingBtnSpinner = "<span>Save</span>";
-            	//this.router.navigate([this.returnUrl]);
-            },
-            (error: any) => {
-            	this.loading = false;
-            	this._fail_msg = "Fail to update Profile " + error;
-            	console.log(' Error while updateProfile : ' + JSON.stringify(error));
-            	this.loadingBtnSpinner = "<span>Save</span>";
-            });
+	public updateProfileFunction(modelData: any){
+		let THIS = this;
+		console.log('modelData ' + JSON.stringify(modelData));
+		THIS.getProfileByEmail(modelData, function(canUpdateProfile){
+			console.log('canUpdateProfile ' + canUpdateProfile);
+			if(canUpdateProfile){
+				THIS.profileService.updateProfile(modelData)
+					.subscribe((data: any) => {
+						THIS.loading = false;
+						console.log(' data ' + JSON.stringify(data));
+						THIS._success_msg = "Profile Updated Successfully";
+						THIS._fail_msg = "";
+						THIS.loadingBtnSpinner = "<span>Save</span>";
+						if(THIS.profile.Email != modelData.Email){
+							THIS.localStorage.removeItem('currentUser');
+							THIS.currentUser.Email = modelData.Email;
+							THIS.localStorage.setObject('currentUser', THIS.currentUser);
+						}
+						THIS.reloadPage();
+						//THIS.router.navigate([THIS.returnUrl]);
+					},
+					(error: any) => {
+						THIS.loading = false;
+						THIS._fail_msg = "Fail to update Profile " + error;
+						console.log(' Error while updateProfile : ' + JSON.stringify(error));
+						THIS.loadingBtnSpinner = "<span>Save</span>";
+						THIS.reloadPage();
+					});
+			} else {
+				THIS._success_msg = "";
+				THIS._fail_msg = "Email Already Exists. Please try with different.";
+				THIS.loadingBtnSpinner = "<span>Save</span>";
+				THIS.reloadPage();
+			}
+		});
+		
 	}
 
-	openModal(){
+	public getProfileByEmail(modelData: any, callback: any){
+		let THIS = this;
+		if(THIS.profile.Email == modelData.Email){
+			callback(true);
+		} else {
+			THIS.profileService.getProfileByEmail(modelData.Email)
+				.subscribe((data: any) => {
+					THIS.loading = false;
+					console.log(' data ' + JSON.stringify(data));
+					if(THIS.commonAppService.isUndefined(data)){
+						callback(true);
+					} else {
+						callback(false);
+					}
+				},
+				(error: any) => {
+					THIS.loading = false;
+					callback(false);
+				});
+		}
+	}
+
+	public reloadPage(){
+		setTimeout(() => {
+			window.location.href = '/profile';
+		}, 2000);
+	}
+
+	public openModal(){
 	    this.visible = true;
 	  	setTimeout(() => this.visibleAnimate = true);
 	}

@@ -18,6 +18,14 @@ export class ProfileService {
             });
     }
 
+    getProfileByEmail(Email: any) {
+        return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_PROFILE_BY_EMAILID + '?email=' + Email)
+            .map((data: any) => {
+                data.json();
+                return data.json();
+            });
+    }
+
     updateProfile(profile: any) {
         let body = JSON.stringify(profile);
         let headers = new Headers({ 'Content-Type': 'application/json' });

@@ -16,6 +16,7 @@ export const GlobalVariable = Object.freeze({
     UPDATE_PROFILE: '/api/User/UpdateProfile',
     UPDATE_PASSWORD: '/api/Account/ChangePassword',
     GET_PROFILE_BY_ID: '/api/User/GetProfileById',
+    GET_PROFILE_BY_EMAILID: '/api/User/GetUserByEmail',
 
     SEND_EMAIL: '/api/User/SendEmail',
 

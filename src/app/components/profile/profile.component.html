@@ -18,7 +18,7 @@
                 <!-- End panel heading -->
                 <!-- Panel body -->
                 <div class="panel-body">
-                    <form class="form-horizontal" id="updateProfileForm" #updateProfileForm="ngForm" novalidate (ngSubmit)="updateProfile($event, updateProfileForm.value, updateProfileForm.valid)">
+                    <form class="form-horizontal" #updateProfileForm="ngForm"  id="updateProfileForm" #updateProfileForm="ngForm" novalidate (ngSubmit)="updateProfile($event, updateProfileForm.value, updateProfileForm.valid)">
                         <div class="container-fluid">
                             <hr>
                             <p id="update_profile_success_result" class="text-success text-center"></p>
@@ -61,7 +61,11 @@
                                     <div class="form-group">
                                         <label for="Email" class="col-md-3 control-label">Email:</label>
                                         <div class="col-md-8">
-                                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Email"  [ngModel]="profile.Email" #Email="ngModel" readonly="" />
+                                            <input type="email" class="form-control" id="Email" name="Email" [ngModel]="profile.Email" required #Email="ngModel" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"  placeholder="Email">
+
+                                            <small [hidden]="Email.valid || (Email.pristine && !updateProfileForm.submitted)" class="text-danger">
+                                                Email is required and format should be john@doe.com.
+                                            </small>
                                         </div>
                                     </div>
 
@@ -76,7 +80,7 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label"></label>
                                             <div class="col-md-8">
-                                              <button type="submit" name="btnregister" id="btnUpdateProfile" class="btn btn-default" innerHTML="{{loadingBtnSpinner}}"></button> 
+                                              <button type="submit" name="btnregister" [disabled]='!updateProfileForm.valid' id="btnUpdateProfile" class="btn btn-default" innerHTML="{{loadingBtnSpinner}}"></button> 
                                             </div>
                                         </div>
                                     <!-- </div> -->
