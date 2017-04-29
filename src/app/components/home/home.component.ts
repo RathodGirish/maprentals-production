@@ -437,7 +437,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.propertyService.getAllPropertiesByGeoLatLong(lat, lng, this.limitListingCount)
             .subscribe((data: any) => {
                 this.loading = false;
-                console.log(' TOTAL FETCH DATA ' + JSON.stringify(data));
+                console.log(' TOTAL FETCH DATA ' + JSON.stringify(data.length));
                 data.sort(function (a, b) {
                     let parsed_date = new Date(parseInt(b.DateListed));
                     let relative_to = new Date(parseInt(a.DateListed));
@@ -450,7 +450,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 data.map((property: any, index: any) => {
 
                     if (property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount && property.Pictures.length > 0) {
-                        console.log(' property.IsImmediateAvailable '+ property.IsImmediateAvailable);
                         property.Address = this.commonAppService.formateAddress(property.Address);
                         this.allFullProperties.push(property);
                     }
@@ -853,23 +852,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.filterQueryObject.ViewType =  (this.isMapView == true) ? "Map" : "List";
         this.localStorage.setObject('storageFilters', this.filterQueryObject);
         this.localStorage.setObject('storageMap', this.storageMap);
-        this.loading = true;
+        this.propertyService.getProperyById(Id)
+            .subscribe((property: any) => {
+                if(!this.commonAppService.isUndefined(property)){
+                    window.location.href = this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(property.Address)) + "/" + this.commonAppService.getParamFromPropertyType(property.PropertyType) + "/" + this.commonAppService.convertUrlString(property.Title) + "-" + property.Id;
+                }
+            })
 
-        this.propertyService.updatePropertyViewsCount(Id)
-            .subscribe((data: any) => {
-                this.loading = false;
-                console.log(' data ' + JSON.stringify(data));
-                this.propertyService.getProperyById(Id)
-	            .subscribe((property: any) => {
-                    if(!this.commonAppService.isUndefined(property)){
-                        window.location.href = this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(property.Address)) + "/" + this.commonAppService.getParamFromPropertyType(property.PropertyType) + "/" + this.commonAppService.convertUrlString(property.Title) + "-" + property.Id;
-                    }
-                })
-            },
-            (error: any) => {
-                this.loading = false;
-                console.log(' Error while updateProfile : ' + JSON.stringify(error));
-            });
+        // this.loading = true;
+        // this.propertyService.updatePropertyViewsCount(Id)
+        //     .subscribe((data: any) => {
+        //         this.loading = false;
+        //         console.log(' data ' + JSON.stringify(data));
+        //         this.propertyService.getProperyById(Id)
+	    //         .subscribe((property: any) => {
+        //             if(!this.commonAppService.isUndefined(property)){
+        //                 window.location.href = this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(property.Address)) + "/" + this.commonAppService.getParamFromPropertyType(property.PropertyType) + "/" + this.commonAppService.convertUrlString(property.Title) + "-" + property.Id;
+        //             }
+        //         })
+        //     },
+        //     (error: any) => {
+        //         this.loading = false;
+        //         console.log(' Error while updateProfile : ' + JSON.stringify(error));
+        //     });
 
     }
 

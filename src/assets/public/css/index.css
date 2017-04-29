@@ -2392,7 +2392,7 @@ multiselect .dropdown-menu > li > a i {
 }
 @media screen and (max-width: 767px) and (min-width: 0px) {
     .pad0-xs{
-        padding: 0px;
+        padding: 0px !important;
     }
     .pad5-xs{
         padding: 5px;
@@ -2643,6 +2643,16 @@ multiselect .dropdown-menu > li > a i {
 
     .myrentalsTopSec h4{
         color: #fff !important;
+    }
+
+    .action-div .btn{
+        padding: 8px 2px !important;
+        font-size: 11px !important;
+        margin-right: 2px !important;
+    }
+
+    .action-div .bump-btn{
+        width: 78px !important;
     }
 
     .activateDiv {

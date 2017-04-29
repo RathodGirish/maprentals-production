@@ -9,15 +9,15 @@
 </div>
 <section class="container mrgT5" id="myRentalsSection">
     <div id="myRentalList" class="col-sm-12 col-md-12 pad5-xs">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" *ngIf="_fail_msg != '' || _success_msg != ''">
-            <p ng-bind="_success_msg" class="{{_success_msg != '' ? 'mrgT10': ''}} text-success clearfix col-sm-12">{{_success_msg}}</p>
-            <p ng-bind="_fail_msg" class="{{_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix">{{_fail_msg}}</p>
-        </div>
         <div class="col-lg-12 mrgB5 pad0">
             <div class="col-lg-push-4 col-lg-4 pad0 form-group has-feedback myrental-search">
                 <input  type="text" class="text-align-center form-control blue-border" placeholder="Search" [(ngModel)]="Search">
                 <span class="glyphicon glyphicon-search form-control-feedback"></span>
             </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pad0" *ngIf="_fail_msg != '' || _success_msg != ''">
+            <p ng-bind="_success_msg" class="{{_success_msg != '' ? 'mrgT10': ''}} text-success clearfix col-sm-12 pad0">{{_success_msg}}</p>
+            <p ng-bind="_fail_msg" class="{{_fail_msg != '' ? 'mrgT10': ''}} text-danger clearfix pad0">{{_fail_msg}}</p>
         </div>
         <div class="wrapper table-responsive hidden-xs">
             
@@ -72,9 +72,13 @@
                             <a href="javascript:void(0)">{{commonAppService.getFormattedDateMDY(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}</a>
                         </td>
                         <td class="col-sm-2" style="min-width: 140px;">
-                            <a class='btn btn-success' (click)="editProperty($event, prop)" href='javascript:void(0)' target='_self'><i class='glyphicon glyphicon-pencil'></i></a>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 action-div pad5">
+                                <a class='btn btn-success mrgT5 col-sm-3 col-md-3 col-lg-3' (click)="editProperty($event, prop)" href='javascript:void(0)' target='_self'><i class='glyphicon glyphicon-pencil'></i></a>
 
-                            <a class='btn btn-danger' (click)="deleteProperty($event, prop)" href='javascript:void(0)'><i class='glyphicon glyphicon-trash'></i></a>
+                                <a class='btn btn-danger mrgT5 col-sm-3 col-md-3 col-lg-3' (click)="deleteProperty($event, prop)" href='javascript:void(0)'><i class='glyphicon glyphicon-trash'></i></a>
+
+                                <a class='btn btn-default mrgT5 col-sm-6 col-md-6 col-lg-6' (click)="freeBumpedProperty(prop)" href='javascript:void(0)'><span>FREE Bump</span></a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -114,10 +118,11 @@
 
                     <a class="col-xs-12 pad0 mrgB10 lightgray-text" href="javascript:void(0)">Listed: {{commonAppService.getFormattedDateMDY(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}</a>
 
-                    <div class="col-xs-12 pad0">
-                        <span class='btn btn-success' (click)="editProperty($event, prop)"><i class='glyphicon glyphicon-pencil'></i></span>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 action-div pad0-xs pad5">
+                        <span class='btn btn-success col-xs-3' (click)="editProperty($event, prop)"><i class='glyphicon glyphicon-pencil'></i></span>
 
-                        <span class='btn btn-danger' (click)="deleteProperty($event, prop)"><i class='glyphicon glyphicon-trash'></i></span>
+                        <span class='btn btn-danger col-xs-3' (click)="deleteProperty($event, prop)"><i class='glyphicon glyphicon-trash'></i></span>
+                        <span class='btn btn-default col-xs-5 bump-btn' (click)="freeBumpedProperty($event, prop)">FREE Bump</span>
                     </div>
                 </div>
             </div>

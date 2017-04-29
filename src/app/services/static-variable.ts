@@ -8,6 +8,7 @@ export const GlobalVariable = Object.freeze({
     ADD_PROPERTY: '/api/Property/AddProperty',
     UPDATE_PROPERTY: '/api/Property/UpdateProperty',
     UPDATE_PROPERTY_VIEWS_COUNT: '/api/Property/UpdatePropertyViews',
+    FREE_BUMPED_PROPERTY_BY_ID: '/api/Property/FreeBumpPropertyById',
     DEACTIVE_PROPERTY_BY_ID: '/api/Property/DeActivate',
     ACTIVE_PROPERTY_BY_ID: '/api/Property/Activate',
     DELETE_PROPERTY_BY_ID: '/api/Property/Delete',

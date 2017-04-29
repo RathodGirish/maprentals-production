@@ -11,7 +11,7 @@ export class PropertyService {
     constructor(public http: Http) {
     }
 
-    getAllProperties() {
+    public getAllProperties() {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_ALL_PROPERTY)
             .map((data: any) => {
                 data.json();
@@ -19,7 +19,7 @@ export class PropertyService {
             });
     }
 
-    getAllPropertiesByLatLong(lat: any, long: any, limit: number) {
+    public getAllPropertiesByLatLong(lat: any, long: any, limit: number) {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_ALL_PROPERTY_BY_LAT_LONG + '?latitude= ' + lat + '&longitude=' + long + '&limit=' + limit)
             .map((data: any) => {
                 data.json();
@@ -27,7 +27,7 @@ export class PropertyService {
             });
     }
 
-    getAllPropertiesByLatLong2(lat1: any, lat2: any, long1: any, long2: any, limit: number) {
+    public getAllPropertiesByLatLong2(lat1: any, lat2: any, long1: any, long2: any, limit: number) {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_ALL_PROPERTY_BY_LAT_LONG2 + '?lat1= ' + lat1 + '&lat2='+ lat2 + '&long1='+ long1 + '&long2='+ long2 + '&limit=' + limit)
             .map((data: any) => {
                 data.json();
@@ -35,7 +35,7 @@ export class PropertyService {
             });
     }
 
-    getAllPropertiesByGeoLatLong(lat: any, long: any, limit: number) {
+    public getAllPropertiesByGeoLatLong(lat: any, long: any, limit: number) {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_ALL_PROPERTY_BY_GEO_LAT_LONG + '?latitude= ' + lat + '&longitude='+ long + '&limit=' + limit)
             .map((data: any) => {
                 data.json();
@@ -43,7 +43,7 @@ export class PropertyService {
             });
     }
 
-    getProperyById(Id: string) {
+    public getProperyById(Id: string) {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_PROPERTY_BY_ID + '/' + Id)
             .map((data: any) => {
                 data.json();
@@ -51,7 +51,7 @@ export class PropertyService {
             });
     }
 
-    getAllPropertiesByUserId(Id: number) {
+    public getAllPropertiesByUserId(Id: number) {
         return this.http.get(GlobalVariable.BASE_API_URL + GlobalVariable.GET_PROPERTY_BY_USERID + '?userId=' + Id)
             .map((data: any) => {
                 data.json();
@@ -59,7 +59,7 @@ export class PropertyService {
             });
     }
 
-    addProperty(property: any) {
+    public addProperty(property: any) {
         let body = JSON.stringify(property);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
@@ -71,7 +71,7 @@ export class PropertyService {
             }); 
     }
 
-    updateProperty(property: any) {
+    public updateProperty(property: any) {
         let body = JSON.stringify(property);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
@@ -83,7 +83,7 @@ export class PropertyService {
             });
     }
 
-    activeDeactivePropertyById(Id: number, status: boolean){
+    public activeDeactivePropertyById(Id: number, status: boolean){
         let ActiveDeactiveUrl = (status == true)? GlobalVariable.ACTIVE_PROPERTY_BY_ID : GlobalVariable.DEACTIVE_PROPERTY_BY_ID;
         let body = {};
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -97,7 +97,7 @@ export class PropertyService {
             });
     }
 
-    deletePropertyById(Id: number){
+    public deletePropertyById(Id: number){
         let body = {};
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
@@ -109,12 +109,26 @@ export class PropertyService {
             });
     }
 
-    updatePropertyViewsCount(Id: any) {
+    public updatePropertyViewsCount(Id: any) {
         let body = {};
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
 
         return this.http.post(GlobalVariable.BASE_API_URL + GlobalVariable.UPDATE_PROPERTY_VIEWS_COUNT + '/' + Id, body, options)
+            .map((data: any) => {
+                data.json();
+                return data.json();
+            });
+    }
+
+    public freeBumpPropertyById(Id: any) {
+        let dt = (new Date().toUTCString());
+        let timeStamp = new Date(dt).getTime().toString();
+        let body = {};
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.post(GlobalVariable.BASE_API_URL + GlobalVariable.FREE_BUMPED_PROPERTY_BY_ID + '/' + Id + '?timeStamp=' + timeStamp, body, options)
             .map((data: any) => {
                 data.json();
                 return data.json();

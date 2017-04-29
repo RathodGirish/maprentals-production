@@ -189,6 +189,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 	            	if(data){
 	            		THIS.isPropertyFound = true;
 		            	this.property = Object.assign({}, data);
+						THIS.increaseViewCount();
 		            	this.setShareParameters(this.property);
 						$("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
 						$("meta[property='og\\:title']").attr('content', this.property.Title);
@@ -304,6 +305,17 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 	    });
 
 		
+	}
+
+	public increaseViewCount(){
+
+		this.propertyService.updatePropertyViewsCount(this.property.Id)
+            .subscribe((data: any) => {
+                console.log(' updatePropertyViewsCount ' + JSON.stringify(data));
+            },
+            (error: any) => {
+                console.log(' Error while updatePropertyViewsCount : ' + JSON.stringify(error));
+            });
 	}
 
 	public setShareParameters(property: any){

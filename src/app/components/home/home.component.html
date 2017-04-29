@@ -312,10 +312,6 @@
             [style.height]="windowHeight">
             <p *ngIf="loading == true">Loading.....</p>
 
-            <p *ngIf="markers.length <= 0 && loading == false" class="text-blue mrgT10">
-                <b>Not enough search results? Broaden your search by zooming out on the map, or reducing filters.</b>
-            </p>
-
             <div #rentalsItems id="rentalsItems" class="pad0" *ngIf="markers.length > 0">
                 <div *ngFor="let prop of markers; let i = index;">
                     <div *ngIf="prop.PicUrl != ''">
@@ -342,6 +338,10 @@
                     </div>
                 </div>
             </div>
+            
+            <p class="text-blue mrgT10">
+                <b>Not enough search results? Broaden your search by zooming out on the map, or reducing filters.</b>
+            </p>
         </div>
     </div>
 </section>

@@ -51,7 +51,7 @@ export class MyrentalsComponent implements OnInit{
   	}
   	
 
-	ngOnInit() {
+	public ngOnInit() {
 		let THIS = this;
 	    this.currentUser = this.localStorage.getObject('currentUser');
 	    console.log(' currentUser ' + JSON.stringify(this.currentUser));
@@ -86,7 +86,7 @@ export class MyrentalsComponent implements OnInit{
 	}
 
 
-    ngAfterViewInit() {
+    public ngAfterViewInit() {
         if(this.isReload == "true"){
 	   		console.log(' this.isReload ' + this.isReload);
 	   		window.location.href = "/myrentals";
@@ -94,7 +94,7 @@ export class MyrentalsComponent implements OnInit{
 	   	}
     }
 
-	editProperty(event: any, prop: any){
+	public editProperty(event: any, prop: any){
         event.stopPropagation();
         if(!this.commonAppService.isUndefined(prop.Id)){
         	window.location.href = "manageProperty/" + prop.Id;
@@ -104,7 +104,7 @@ export class MyrentalsComponent implements OnInit{
         }
     }
 
-    propertyDetails(event: any, prop: any){
+    public propertyDetails(event: any, prop: any){
         event.stopPropagation();
         window.location.href = this.commonAppService.getPropertyDetailsUrl(prop.Address, prop.PropertyType, prop.Title, prop.Id); 
         // if(!this.commonAppService.isUndefined(prop.Id)){
@@ -114,7 +114,7 @@ export class MyrentalsComponent implements OnInit{
         // }
     }
 
-    deleteProperty(event: any, prop: any){
+    public deleteProperty(event: any, prop: any){
         event.stopPropagation();
         console.log(' deleteProperty ' + JSON.stringify(prop));
         this.openModal('deleteAlertModalBtn');
@@ -125,7 +125,7 @@ export class MyrentalsComponent implements OnInit{
         this.deleteModalTitle = prop.Title;
     }
 
-    openModal(ButtonId: string){
+    public openModal(ButtonId: string){
     	console.log(' ButtonId ' + ButtonId);
 	    this.visible = true;
 	  	setTimeout(() => this.visibleAnimate = true);
@@ -136,7 +136,7 @@ export class MyrentalsComponent implements OnInit{
 	  	setTimeout(() => this.visible = false, 300);
 	}
 
-	activeDeactiveProperty(prop: any){
+	public activeDeactiveProperty(prop: any){
 		this.loading = true;
 	    prop.IsActive = !prop.IsActive;
 	    this.propertyService.activeDeactivePropertyById(prop.Id, prop.IsActive)
@@ -152,7 +152,7 @@ export class MyrentalsComponent implements OnInit{
             });
 	}
 
-	activeDeActivateProperty(){
+	public activeDeActivateProperty(){
 		console.log(' this.prop ' + JSON.stringify(this.prop));
 		if(!this.commonAppService.isUndefined(this.prop)){
 			this.activeDeactiveProperty(this.prop);	
@@ -160,8 +160,7 @@ export class MyrentalsComponent implements OnInit{
 		this.hideModal();
 	}
 
-	setIsDeletedTrueProperty(){
-		console.log(' this.prop ' + JSON.stringify(this.prop));
+	public setIsDeletedTrueProperty(){
 		this.loading = true;
 	    if(!this.commonAppService.isUndefined(this.prop)){
 			this.propertyService.deletePropertyById(this.prop.Id)
@@ -180,10 +179,21 @@ export class MyrentalsComponent implements OnInit{
 		this.hideModal();
 	}
 
-	updateData(value: any) {
-		console.log('event value'+ value);
-		// this.userFilter.Title = value;
-		// this.userFilter.Address = value;
-		// this.userFilter.MonthlyRent = value;
-    }
+	public freeBumpedProperty(event: any, prop: any){
+		event.stopPropagation();
+		this.loading = true;
+		console.log(' prop ' + JSON.stringify(prop));
+	    this.propertyService.freeBumpPropertyById(prop.Id)
+            .subscribe((data:any) => {
+            	console.log(' freeBumpedProperty ' + JSON.stringify(data));
+            	this._success_msg = data;
+            	this.loading = false;
+            },
+            (error: any) => {
+            	console.log(' Error while freeBumpedProperty : ' + JSON.stringify(error));
+            	this._fail_msg = error;
+            	this.loading = false;
+            });
+	}
+
 }
