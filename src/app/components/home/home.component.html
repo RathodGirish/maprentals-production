@@ -334,14 +334,16 @@
                                     {{commonAppService.getFormattedDateFB(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}
                                 </p>
                             </div>
-                            </a>
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <p class="text-blue mrgT10">
-                <b>Not enough search results? Broaden your search by zooming out on the map, or reducing filters.</b>
-            </p>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-lg-12 clearfix pad0">
+                <p class="text-blue mrgT10" *ngIf="loading == false">
+                    <b>Not enough search results? Broaden your search by zooming out on the map, or reducing filters.</b>
+                </p>
+            </div>
         </div>
     </div>
 </section>

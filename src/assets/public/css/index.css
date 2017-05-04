@@ -1385,7 +1385,7 @@ div.pac-container {
 }
 #dropzoneFileUpload {
     cursor: pointer;
-    padding: 2px 5px !important;
+    padding: 5px 5px !important;
     margin-bottom: 0px;
 }
 .dropzone .dz-preview {
@@ -1743,7 +1743,7 @@ input::-webkit-inner-spin-button {
     margin-bottom: 5px !important;
 }
 .mrgB10 {
-    margin-bottom: 5px !important;
+    margin-bottom: 10px !important;
 }
 .mrgT0 {
     margin-top: 0px !important;
@@ -1789,6 +1789,9 @@ input::-webkit-inner-spin-button {
 }
 .wd50 {
     width: 50px !important;
+}
+.wd80 {
+    width: 80px !important;
 }
 .wd100 {
     width: 100px !important;
@@ -2395,19 +2398,25 @@ multiselect .dropdown-menu > li > a i {
         padding: 0px !important;
     }
     .pad5-xs{
-        padding: 5px;
+        padding: 5px !important;
     }
     .pad10-xs{
-        padding: 10px;
+        padding: 10px !important;
     }
     .padT0-xs{
-        padding-top: 0px;
+        padding-top: 0px !important;
+    }
+    .padB0-xs{
+        padding-bottom: 0px !important;
     }
     .padL5-xs{
         padding: 1px 0px 1px 15px;
     }
-    .mrg0-xs{
-        margin: 0px;
+    .mrgB0-xs{
+        margin-bottom: 0px !important;
+    }
+    .mrgT0-xs{
+        margin-top: 0px !important;
     }
     .collapse.in {
         margin-top: 0px;
@@ -2749,7 +2758,7 @@ multiselect .dropdown-menu > li > a i {
     #morefilter input[type=radio] + label,
     input[type=checkbox] + label {
         margin: 1px;
-        padding: 6px 16px;
+        padding: 6px 10px;
         font-size: 12px;
     }
 
@@ -2810,10 +2819,6 @@ multiselect .dropdown-menu > li > a i {
     #googlemaps,
     #googlemap {
         height: 90% !important;
-    }
-    #matchingList {
-        /*bottom: 5%;*/
-        /*padding: 7px;*/
     }
     #matchingList span,
     #matchingList h6 {
@@ -2879,6 +2884,14 @@ multiselect .dropdown-menu > li > a i {
     }
     
 }
-@media screen and (max-width: 400px) and (min-width: 0px) {
-    
+
+@media screen and (max-width: 360px) and (min-width: 0px) {
+
+    #morefilter input[type=radio] + label,
+    .amenitiesDiv  input[type=checkbox] + label,
+    .rentIncludesDiv input[type=checkbox] + label {
+        margin: 1px;
+        padding: 6px 6px;
+        font-size: 12px;
+    }  
 }

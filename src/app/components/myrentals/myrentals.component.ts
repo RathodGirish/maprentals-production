@@ -71,6 +71,7 @@ export class MyrentalsComponent implements OnInit{
 						return flag;
 					});
 	            	this.myrentals = data;
+					console.log(' myrentals ' + JSON.stringify(this.myrentals));
 	            	this.loading = false;
 	            },
 	            (error: any) => {

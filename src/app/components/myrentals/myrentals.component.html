@@ -53,7 +53,7 @@
                             </div>
                         </td>
                         <td class="cursor-pointer" (click)="propertyDetails($event, prop)">
-                            <a href="javascript:void(0)" ><img src="{{prop.Picture}}" class="table-thumb thumbnail"></a>
+                            <a href="javascript:void(0)" ><img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb thumbnail"></a>
                         </td>
                         <td class="cursor-pointer" (click)="propertyDetails($event, prop)">
                             <a href="javascript:void(0)">{{commonAppService.formateAddress(prop.Address)}}</a>
@@ -77,7 +77,7 @@
 
                                 <a class='btn btn-danger mrgT5 col-sm-3 col-md-3 col-lg-3' (click)="deleteProperty($event, prop)" href='javascript:void(0)'><i class='glyphicon glyphicon-trash'></i></a>
 
-                                <a class='btn btn-default mrgT5 col-sm-6 col-md-6 col-lg-6' (click)="freeBumpedProperty(prop)" href='javascript:void(0)'><span>FREE Bump</span></a>
+                                <!--<a class='btn btn-default mrgT5 col-sm-6 col-md-6 col-lg-6' (click)="freeBumpedProperty(prop)" href='javascript:void(0)'><span>FREE Bump</span></a>-->
                             </div>
                         </td>
                     </tr>
@@ -89,7 +89,7 @@
                 <div class="pad5-xs col-xs-5">
                     <div class='cursor-pointer col-xs-12 col-sm-10 col-md-10 pad0' >
                         <!--<a href="javascript:void(0)" >-->
-                            <img src="{{prop.Picture}}" class="table-thumb img-responsive">
+                            <img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb img-responsive">
                         <!--</a>-->
                     </div>
                     <div class='col-xs-12 col-sm-10 col-md-10 mrgT5 pad0' >
@@ -122,7 +122,7 @@
                         <span class='btn btn-success col-xs-3' (click)="editProperty($event, prop)"><i class='glyphicon glyphicon-pencil'></i></span>
 
                         <span class='btn btn-danger col-xs-3' (click)="deleteProperty($event, prop)"><i class='glyphicon glyphicon-trash'></i></span>
-                        <span class='btn btn-default col-xs-5 bump-btn' (click)="freeBumpedProperty($event, prop)">FREE Bump</span>
+                        <!--<span class='btn btn-default col-xs-5 bump-btn' (click)="freeBumpedProperty($event, prop)">FREE Bump</span>-->
                     </div>
                 </div>
             </div>

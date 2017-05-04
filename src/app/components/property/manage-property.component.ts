@@ -58,6 +58,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	public isValidPropertyType: boolean = true;
 	public isValidBed: boolean = true;
 	public isValidImages: boolean = true;
+	public validImageTypeCount = 0;
 	public isValidAddress: boolean = true;
 	public isValidEmail: boolean = true;
 	public isValidPhone: boolean = true;
@@ -92,6 +93,9 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	@ViewChild("Address")
 	public searchElementRef: ElementRef;
 
+	@ViewChild("dropzone-drop-area")
+	public dropzoneElementRef: ElementRef;
+
 	/*---- Datetime picker ----*/
 	public placeholder = "Date";
 	public myDatePickerOptions: IMyOptions = {
@@ -102,6 +106,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 	public visible = false;
 	public visibleAnimate = false;
+	public showOnMap = false;
+	public showOnMapText = 'Show on map';
 
 	public DateAvailable: Object = {};
 
@@ -216,6 +222,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 						this.property.Amenities = [];
 					}
 					this.loading = false;
+					
 				},
 				(error: any) => {
 					console.log(' Error while getProperyById : ' + JSON.stringify(error));
@@ -330,6 +337,11 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 				}
 			});
 		}
+
+		// $(window).trigger('resize');
+		// window.dispatchEvent(new Event('resize'));
+		// google.maps.event.trigger(this.map, 'resize');
+		
 	}
 
 	public initPictures(Pictures: any[]) {
@@ -345,7 +357,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 				"Id": _thisPicture.Id,
 				"PropertyId": _thisPicture.PropertyId,
 				"Name": _thisPicture.Name,
-				"Url": _thisPicture.Url
+				"Url": _thisPicture.Url,
+				"ThumbnailUrl": _thisPicture.thumbUrl
 			});
 
 			let mockFile: any = new File([], _thisPicture.Name);
@@ -827,70 +840,76 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			previewsContainer: '#dropzone-drop-area',
 			previewTemplate: '<div class="dz-preview dz-file-preview"><div class="dz-details"><img data-dz-thumbnail/></div></div>'
 		});
-		this.dropzone.autoDiscover = true;
+		this.dropzone.autoDiscover = false;
 
 		this.dropzone.on('addedfile', (file: any) => {
-			console.info(' ng2ImgToolsService file.size ' + JSON.stringify(file.size));
-			THIS.imageUploadingFlag = true;
-			THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
-				if (typeof result.name !== 'undefined' && typeof result.size !== 'undefined' && typeof result.type !== 'undefined') {
-					console.info(' result.name ' + JSON.stringify(result.name));
-					let loadingButton = Dropzone.createElement("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>");
-					file.previewElement.appendChild(loadingButton);
+			THIS.validImageTypeCount = 0;
+			if (file.type == "image/jpeg" || file.type == "image/png") {
+				
+				console.info(' ng2ImgToolsService file.size ' + JSON.stringify(file.size) + ' \ file.type' + file.type);
+				THIS.imageUploadingFlag = true;
+				let loadingButton = Dropzone.createElement("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>");
+				file.previewElement.appendChild(loadingButton);
+				THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
+					if (typeof result.name !== 'undefined' && typeof result.size !== 'undefined' && typeof result.type !== 'undefined') {
+						console.info(' result.name ' + JSON.stringify(result.name));
+						this.uploadPictureService.uploadPicture(result)
+							.subscribe((data: any) => {
+								console.log(' Upload File : ' + JSON.stringify(data));
+								if (data[0].url && data[0].url != "") {
+									THIS.dropzoneUploadedFiles.push({
+										"Id": 0,
+										"PropertyId": 0,
+										"Name": data[0].name,
+										"Url": data[0].url,
+										"ThumbnailUrl": data[0].thumbUrl
+									});
+									file.Url = data[0].url;
+									this.isValidImages = true;
+									file.previewElement.id = data[0].name;
+									console.log('this.dropzoneUploadedFiles2' + JSON.stringify(this.dropzoneUploadedFiles) + ' file.Url ' + file.Url);
+									//dropzoneUploadedFiles.push(file);
+									let removeButton = Dropzone.createElement("<a id='" + data[0].name + "' href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
+									let _thisDropzone = this.dropzone;
 
-					this.uploadPictureService.uploadPicture(result)
-						.subscribe((data: any) => {
-							console.log(' Upload File : ' + JSON.stringify(data));
-							if (data[0].url && data[0].url != "") {
-								this.dropzoneUploadedFiles.push({
-									"Id": 0,
-									"PropertyId": 0,
-									"Name": data[0].name,
-									"Url": data[0].url
-								});
-								file.Url = data[0].url;
-								this.isValidImages = true;
-								file.previewElement.id = data[0].name;
-								console.log('this.dropzoneUploadedFiles2' + JSON.stringify(this.dropzoneUploadedFiles) + ' file.Url ' + file.Url);
-								//dropzoneUploadedFiles.push(file);
-								let removeButton = Dropzone.createElement("<a id='" + data[0].name + "' href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
-								let _thisDropzone = this.dropzone;
+									let mockFileUrl = file.Url;
 
-								let mockFileUrl = file.Url;
+									removeButton.addEventListener("click", function (e: any) {
+										e.preventDefault();
+										e.stopPropagation();
+										_thisDropzone.removeFile(file);
+										console.log('THIS.dropzoneUploadedFiles next' + JSON.stringify(THIS.dropzoneUploadedFiles) + ' mockFileUrl ' + mockFileUrl);
 
-								removeButton.addEventListener("click", function (e: any) {
-									e.preventDefault();
-									e.stopPropagation();
-									_thisDropzone.removeFile(file);
-									console.log('THIS.dropzoneUploadedFiles next' + JSON.stringify(THIS.dropzoneUploadedFiles));
-
-									for (let obj of THIS.dropzoneUploadedFiles) {
-										if (obj.Url == mockFileUrl) {
-											THIS.dropzoneUploadedFiles.splice(this.dropzoneUploadedFiles.indexOf(obj), 1);
+										for (let obj of THIS.dropzoneUploadedFiles) {
+											
+											if (obj.Url == mockFileUrl) {
+												THIS.dropzoneUploadedFiles.splice(THIS.dropzoneUploadedFiles.indexOf(obj), 1);
+											}
 										}
-									}
 
-									console.log('THIS.dropzoneUploadedFiles one' + JSON.stringify(THIS.dropzoneUploadedFiles));
+										THIS.dropzoneUploadedFiles = (typeof THIS.dropzoneUploadedFiles == 'undefined') ? [] : THIS.dropzoneUploadedFiles;
+										console.log('THIS.dropzoneUploadedFiles' + JSON.stringify(THIS.dropzoneUploadedFiles));
+										if(THIS.dropzoneUploadedFiles.length <= 0){
+											THIS.isValidImages = false;
+										}
+									});
+									file.previewElement.appendChild(removeButton);
+									loadingButton.remove();
+									THIS.checkUploadingFlag();
+								}
+							},
+							(error: any) => {
+								console.log(' error ' + JSON.stringify(error));
+								this.loading = false;
+							});
+					} else {
+						console.log(' Image compression error ' + result);
+					}
+				});
 
-									THIS.dropzoneUploadedFiles = (typeof this.dropzoneUploadedFiles == 'undefined') ? [] : this.dropzoneUploadedFiles;
-									console.log('THIS.dropzoneUploadedFiles' + JSON.stringify(THIS.dropzoneUploadedFiles));
-									if(THIS.dropzoneUploadedFiles.length <= 0){
-										THIS.isValidImages = false;
-									}
-								});
-								file.previewElement.appendChild(removeButton);
-								loadingButton.remove();
-								THIS.checkUploadingFlag();
-							}
-						},
-						(error: any) => {
-							console.log(' error ' + JSON.stringify(error));
-							this.loading = false;
-						});
-				} else {
-					console.log(' Image compression error ' + result);
-				}
-			});
+			} else {
+				THIS.validImageTypeCount++;
+			}
 
 		}).on('resetFiles', function () {
 
@@ -914,8 +933,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			//$('div.selectorarrow').parent().remove();
 			//console.log(' THIS.isCalendarMouseHover2  ' + THIS.isCalendarMouseHover);
 		});
-
-
 	}
 
 	ngOnDestroy() {
@@ -957,5 +974,13 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 		this.visibleAnimate = false;
 		setTimeout(() => this.visible = false, 300);
+	}
+
+	public toggleMap(){
+		this.showOnMapText = (this.showOnMap == false)? "Hide map": "Show on map";
+		this.showOnMap = !this.showOnMap;
+		setTimeout(function(){
+			window.dispatchEvent(new Event("resize"));
+		}, 1);
 	}
 }

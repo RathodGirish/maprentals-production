@@ -383,7 +383,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             // if(visitorLocationDetails){
             //     THIS.latitude = visitorLocationDetails.lat;
             //     THIS.longitude = visitorLocationDetails.lon;
-            // } else {
+            // } else { 
             //     THIS.latitude = 49.895136;
             //     THIS.longitude = -97.13837439999998;
             // }
@@ -1490,7 +1490,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             Latitude: property.Latitude,
                             Longitude: property.Longitude,
                             Id: property.Id + "",
-                            PicUrl: property.Pictures[0].Url,
+                            PicUrl: property.Pictures[0].ThumbnailUrl,
                             Bed: property.Bed,
                             Bath: property.Bath,
                             Pet: property.Pet,
