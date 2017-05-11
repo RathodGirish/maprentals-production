@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     public isBoundJustChanged: boolean = false;
     public isInfowindowOpen: string = 'No';
-    public limitListingCount: number = 200;
+    public limitListingCount: number = 400;
     public markers: MarkerObject[] = [];
     public clusters: Cluster[] = [];
     public previousMarkers: any[] = [];
@@ -433,6 +433,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.setMapAndListSize(this.windowHeight);
         // this.limitListingCount = 1000;
         let THIS = this;
+        console.log(' this.limitListingCount ' + JSON.stringify(this.limitListingCount));
         // this.propertyService.getAllProperties()
         this.propertyService.getAllPropertiesByGeoLatLong(lat, lng, this.limitListingCount)
             .subscribe((data: any) => {
@@ -546,7 +547,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 this.currentMarker.opacity = 1;
                 this.currentMarker.visible = true;
                 let markerLabel = this.getMarkerLabel(markerItem);
-                this.currentMarker.label = (markerLabel == "1"? "": markerLabel); 
+                this.currentMarker.label = (markerLabel == "1")? "": markerLabel; 
 
                 this.currentMarker.iconUrl = (DAYDIFF > 0.5) ? GlobalVariable.PIN_PURPLE_20 : GlobalVariable.PIN_GREEN_20;
 
@@ -558,7 +559,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     let isMarkerExists = this.checkMarkerAlreadyExist(this.currentMarker);
 
                     if (!isMarkerExists) {
+                        // console.log(' markerItem.Title ' + markerItem.Title);
+                        // console.log(' this.currentMarker.label  ' + this.currentMarker.label);
                         this._markerManager.addMarker(this.currentMarker);
+                        // if(this.currentMarker.label == "1"){
+                        //     this.currentMarker.label = "";
+                        //     this._markerManager.updateLabel(this.currentMarker);
+                        // }
+                        
 
                         this.currentMarker.title = markerItem.DateListed;
                         this.previousMarkers.push(this.currentMarker);
@@ -676,7 +684,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
 
         $(document).on('click', 'a.list_rental_inforwindow', function (event) {
-            THIS.propertyDetails(event, markerItem.Id);
+            //THIS.propertyDetails(event, markerItem.Id);
         });
 
         node.addEventListener("mouseover", function (e: any) {
@@ -726,6 +734,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     public removeMarkers(prevMarkers: any) {
+        let THIS = this;
         console.log(' removeMarkers this.previousMarkers ' + JSON.stringify(this.previousMarkers.length) + 'prevMarkers.length' + prevMarkers.length);
         let currentPreMarkersList = [];
 
@@ -733,21 +742,83 @@ export class HomeComponent implements OnInit, AfterViewInit {
             currentPreMarkersList.push(mark);
         });
 
+        let changeMarkersLabels = [];
+        let count = 0;
+
         for (let markerKey in currentPreMarkersList) {
             if (currentPreMarkersList.hasOwnProperty(markerKey)) {
                 let removeMarkerItem = currentPreMarkersList[markerKey];
                 let removeflag: boolean = this.checkMarkerVisible(removeMarkerItem.latitude, removeMarkerItem.longitude);
                 let filterflag: boolean = this.checkMarkerWithFilters(removeMarkerItem.latitude, removeMarkerItem.longitude);
                 if (!removeflag || !filterflag) {
+                    
+                    for (let markerKey in THIS.previousMarkers) {
+                        let preMarkerItem = THIS.previousMarkers[markerKey];
+
+                       if(removeMarkerItem.label != '' && parseInt(removeMarkerItem.label) > 0 && preMarkerItem.latitude == removeMarkerItem.latitude && preMarkerItem.longitude == removeMarkerItem.longitude){
+                            console.log(' markerItem.label ' + JSON.stringify(removeMarkerItem.label));
+                            console.log(' property.Latitude ' + JSON.stringify(preMarkerItem.latitude) + ' property.Latitude ' + JSON.stringify(preMarkerItem.longitude));
+                            console.log(' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.latitude) + ' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.longitude));
+                            // this.changeMarkerLabel(preMarkerItem);
+                            preMarkerItem.label = "7";
+                            preMarkerItem.latitude = preMarkerItem.latitude + 0.9;
+                            preMarkerItem.longitude = preMarkerItem.longitude - 0.8;
+                            // THIS._markerManager.deleteMarker(preMarkerItem);
+                            this._markerManager.addMarker(preMarkerItem);
+                       }
+                    }
+
+                    // for (let markerKey in this.previousMarkers) {
+                    //     let preMarkerItem = this.previousMarkers[markerKey];
+                    //         if(removeMarkerItem.label != '' && parseInt(removeMarkerItem.label) > 0 && preMarkerItem.latitude == removeMarkerItem.latitude && preMarkerItem.longitude == removeMarkerItem.longitude){
+                    //             console.log(' preMarkerItem.label ' + JSON.stringify(preMarkerItem.label));
+                    //             preMarkerItem.label = "3";
+                    //             changeMarkersLabels.push(preMarkerItem);
+                                
+                    //             // preMarkerItem.iconUrl = GlobalVariable.PIN_GREEN_20;
+                    //             // this._markerManager.updateIcon(preMarkerItem);
+                    //            // this._markerManager.updateLabel(preMarkerItem);
+                    //            if(currentPreMarkersList.length >= count){
+                    //                 this.changeMarkerLabel(changeMarkersLabels);
+                    //             }
+                    //         }
+                    // }
+
                     this._markerManager.deleteMarker(removeMarkerItem);
                     this.previousMarkers.splice(this.previousMarkers.indexOf(removeMarkerItem), 1);
+                    
                 }
-            }
+                // if(parseInt(removeMarkerItem.label) > 1){
+                //     //removeMarkerItem.label = (parseInt(removeMarkerItem.label) <= 2)? "" : (parseInt(removeMarkerItem.label) + 1) + "";
+                //     //this._markerManager.updateLabel(removeMarkerItem);
+                //     this._markerManager.deleteMarker(removeMarkerItem);
+                //     this.previousMarkers.splice(this.previousMarkers.indexOf(removeMarkerItem), 1);
+                // }
+             }
         }
     }
 
+    public changeMarkerLabel(markerItems: any) {
+        let THIS = this;
+        for (let markerKey in markerItems) {
+            
+            let markerItem = markerItems[markerKey];
+            console.log(' currentPreMarkersList.length' + markerItems.length + ' markerItem.label' + markerItem.label);
+            //markerItem.label = "7";
+            THIS._markerManager.updateLabel(markerItem);
+        }
+
+        
+
+        // markerItem.latitude = markerItem.latitude + 0.7777777;
+        // markerItem.longitude = markerItem.longitude + 0.7777777;
+        // THIS._markerManager.updateMarkerPosition(markerItem);
+
+        // tempMarkerArray.push(property);
+            
+    }
+
     public getMarkerLabel(markerItem: any) {
-        let markerLabelCounter;
         let THIS = this;
         let tempMarkerArray = [];
         this.markers.map((property: any, index: any) => {
@@ -796,11 +867,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 "</div>";     
             } 
 
-            
-            HTML += "<div class='list_rental_inforwindow_div'></div>";
+            HTML += "<a href='/" + this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) + "/" + this.commonAppService.getParamFromPropertyType(thisProperty) + "/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='" + thisMarkerItem.Id + "' class='list_rental_inforwindow' id='markerItem.Id'>";
+            HTML += "<div class='list_rental_inforwindow_div'>";
             HTML += "<div id='' class='col-xs-12 col-sm-12 col-md-12 pad0' >" +
                 "<button class='closeWindowButton btn btn-danger hidden-sm  hidden-md  hidden-lg'>X</button>" +
-                "<a href='/" + this.commonAppService.convertUrlString(this.commonAppService.getCityFromAddress(thisMarkerItem.Address)) + "/" + this.commonAppService.getParamFromPropertyType(thisProperty) + "/" + this.commonAppService.convertUrlString(thisMarkerItem.Title) + "-" + thisMarkerItem.Id + "' data-id='" + thisMarkerItem.Id + "' class='list_rental_inforwindow' id='markerItem.Id'>" +
                 "<div class='col-xs-12 col-sm-12 pad0'>" +
                 "<div class='item'>" +
                 "<img src='" + thisMarkerItem.PicUrl + "' alt='' class='infowindow-property-pic thumbnail'>" +
@@ -811,7 +881,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 thisPropertyHTML + 
                 thisBedHTML+
                 "</span>" +
-                "</a>" +
                 "</div>";
             // console.log(' THIS.thisMarkersArray.length ' + THIS.thisMarkersArray.length);                
             // console.log(' markerKey ' + markerKey);                
@@ -820,6 +889,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
                     "<div class='col-xs-12 col-sm-12 pad0 infowindowBreak'><hr></div>" +
                     "</div>";
             }
+
+            HTML += '</div></a>';
 
         }
 
@@ -832,7 +903,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         $(document).on('mouseleave', 'div.list_rental_inforwindow_div', function () {
             THIS.setIsInfowindowOpenValue('No');
-            THIS._infoWindowManager.close(THIS.currentInfowindow);
+            //THIS._infoWindowManager.close(THIS.currentInfowindow);
         });
 
         return HTML;
@@ -1299,6 +1370,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
                         if (filterkey == 'Bed') {
                             var bedsValue = this.filterQueryObject[filterkey];
+                            
                             if (bedsValue.length > 0 && !this.commonAppService.isUndefined(rentalItem.Bed)) {
                                 if (bedsValue.indexOf(rentalItem.Bed) == -1 && rentalItem.Bed < 5) {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
@@ -1314,6 +1386,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                     filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                                     keepGoing = false;
                                 }
+                            }
+
+                            if(bedsValue.length > 0 && rentalItem.PropertyType == 'Room'){
+                                console.log('bedsValue ' + bedsValue);
+                                console.log('rentalItem.PropertyType ' + rentalItem.PropertyType);
+                                filteredListing.splice(filteredListing.indexOf(rentalItem), 1);
                             }
                         }
 
@@ -1602,17 +1680,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     public limitListingCountUpdate(currentZoom: number) {
         if (currentZoom <= 5) {
-            this.limitListingCount = 120;
+            this.limitListingCount = 180;
         } else if (currentZoom > 5 && currentZoom <= 8) {
-            this.limitListingCount = 150;
-        } else if (currentZoom > 8 && currentZoom <= 12) {
-            this.limitListingCount = 200;
-        } else if (currentZoom > 12 && currentZoom <= 15) {
             this.limitListingCount = 230;
+        } else if (currentZoom > 8 && currentZoom <= 12) {
+            this.limitListingCount = 280;
+        } else if (currentZoom > 12 && currentZoom <= 15) {
+            this.limitListingCount = 330;
         } else if (currentZoom > 15 && currentZoom <= 20) {
-            this.limitListingCount = 250;
+            this.limitListingCount = 380;
         } else if (currentZoom > 20) {
-            this.limitListingCount = 350;
+            this.limitListingCount = 450;
         }
     }
 

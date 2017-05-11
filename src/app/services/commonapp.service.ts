@@ -152,8 +152,8 @@ export class CommonAppService {
 	   	return (monthNames[dt.getMonth()] + ' ' + ('' + dt.getDate()).slice(-2));
 	}
 
-	public getFormattedDateMDY(date: any){
-		let dt= new Date(date);
+	public getFormattedDateMDY(timestamp: any){
+		let dt= new Date(parseInt(timestamp));
 		let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	   	return (monthNames[dt.getMonth()] + ' ' + ('0' + dt.getDate()).slice(-2) + ', ' + dt.getFullYear());
 

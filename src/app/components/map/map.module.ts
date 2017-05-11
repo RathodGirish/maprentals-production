@@ -4,14 +4,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MapComponent } from './map.component';
+// import { MapComponent } from './map.component';
 
 @NgModule({
     imports: [
         CommonModule
     ],
     declarations: [
-        MapComponent
+        // MapComponent
     ]
 })
 export class MapModule {

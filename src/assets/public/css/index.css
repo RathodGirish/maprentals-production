@@ -151,7 +151,7 @@ body {
     font-family: 'MontserratRegular', arial, serif;
 }
 .font-montserrat {
-    font-family: 'Montserrat';
+    font-family: 'Montserrat' !important;
 }
 .font-aveneair-light {
     font-family: 'AvenirLight', arial, serif;

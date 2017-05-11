@@ -248,7 +248,7 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 		            	}
 
 		            	//this.dateCreatedText = this.commonAppService.getFormattedDate(this.property.DateCreated);
-		            	this.dateCreatedText = this.commonAppService.getFormattedDateMDY(this.commonAppService.getCurrentTimeZoneDate(this.property.DateListed));
+		            	this.dateCreatedText = this.commonAppService.getFormattedDateMDY((this.property.DateListed));
 
 		            	if(this.commonAppService.isUndefined(this.property.RentInclude)){
 							this.property.RentInclude = [];

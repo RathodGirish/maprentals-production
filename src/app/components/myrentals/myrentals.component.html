@@ -53,7 +53,10 @@
                             </div>
                         </td>
                         <td class="cursor-pointer" (click)="propertyDetails($event, prop)">
-                            <a href="javascript:void(0)" ><img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb thumbnail"></a>
+                            <a href="javascript:void(0)" >
+                                <img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb thumbnail">
+                                <!--<img src="{{prop.Picture}}" class="table-thumb img-responsive">-->
+                            </a>
                         </td>
                         <td class="cursor-pointer" (click)="propertyDetails($event, prop)">
                             <a href="javascript:void(0)">{{commonAppService.formateAddress(prop.Address)}}</a>
@@ -69,7 +72,7 @@
                         </td>
                         <td class="cursor-pointer col-sm-2" (click)="propertyDetails($event, prop)">
                             <!-- <a href="javascript:void(0)">{{commonAppService.getFormattedDateMDY(prop.DateCreated)}}</a> -->
-                            <a href="javascript:void(0)">{{commonAppService.getFormattedDateMDY(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}</a>
+                            <a href="javascript:void(0)">{{commonAppService.getFormattedDateMDY(prop.DateListed)}}</a>
                         </td>
                         <td class="col-sm-2" style="min-width: 140px;">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 action-div pad5">
@@ -90,6 +93,7 @@
                     <div class='cursor-pointer col-xs-12 col-sm-10 col-md-10 pad0' >
                         <!--<a href="javascript:void(0)" >-->
                             <img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb img-responsive">
+                            <!--<img src="{{prop.Picture}}" class="table-thumb img-responsive">-->
                         <!--</a>-->
                     </div>
                     <div class='col-xs-12 col-sm-10 col-md-10 mrgT5 pad0' >
@@ -116,7 +120,7 @@
                     
                     <!-- <a class="col-xs-12 pad0 mrgB10 lightgray-text" href="javascript:void(0)">Listed: {{commonAppService.getFormattedDateMDY(prop.DateCreated)}}</a> -->
 
-                    <a class="col-xs-12 pad0 mrgB10 lightgray-text" href="javascript:void(0)">Listed: {{commonAppService.getFormattedDateMDY(commonAppService.getCurrentTimeZoneDate(prop.DateListed))}}</a>
+                    <a class="col-xs-12 pad0 mrgB10 lightgray-text" href="javascript:void(0)">Listed: {{commonAppService.getFormattedDateMDY(prop.DateListed)}}</a>
 
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 action-div pad0-xs pad5">
                         <span class='btn btn-success col-xs-3' (click)="editProperty($event, prop)"><i class='glyphicon glyphicon-pencil'></i></span>
