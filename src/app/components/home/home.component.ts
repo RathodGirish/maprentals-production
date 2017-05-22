@@ -450,7 +450,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 this.allFullProperties = [];
                 data.map((property: any, index: any) => {
 
-                    if (property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount && property.Pictures.length > 0) {
+                    if (property && this.checkMarkerVisible(property.Latitude, property.Longitude) && property.Id != "0" && index < this.limitListingCount) {
                         property.Address = this.commonAppService.formateAddress(property.Address);
                         this.allFullProperties.push(property);
                     }
@@ -752,21 +752,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 let filterflag: boolean = this.checkMarkerWithFilters(removeMarkerItem.latitude, removeMarkerItem.longitude);
                 if (!removeflag || !filterflag) {
                     
-                    for (let markerKey in THIS.previousMarkers) {
-                        let preMarkerItem = THIS.previousMarkers[markerKey];
+                    // for (let markerKey in THIS.previousMarkers) {
+                    //     let preMarkerItem = THIS.previousMarkers[markerKey];
 
-                       if(removeMarkerItem.label != '' && parseInt(removeMarkerItem.label) > 0 && preMarkerItem.latitude == removeMarkerItem.latitude && preMarkerItem.longitude == removeMarkerItem.longitude){
-                            console.log(' markerItem.label ' + JSON.stringify(removeMarkerItem.label));
-                            console.log(' property.Latitude ' + JSON.stringify(preMarkerItem.latitude) + ' property.Latitude ' + JSON.stringify(preMarkerItem.longitude));
-                            console.log(' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.latitude) + ' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.longitude));
-                            // this.changeMarkerLabel(preMarkerItem);
-                            preMarkerItem.label = "7";
-                            preMarkerItem.latitude = preMarkerItem.latitude + 0.9;
-                            preMarkerItem.longitude = preMarkerItem.longitude - 0.8;
-                            // THIS._markerManager.deleteMarker(preMarkerItem);
-                            this._markerManager.addMarker(preMarkerItem);
-                       }
-                    }
+                    //    if(removeMarkerItem.label != '' && parseInt(removeMarkerItem.label) > 0 && preMarkerItem.latitude == removeMarkerItem.latitude && preMarkerItem.longitude == removeMarkerItem.longitude){
+                    //         console.log(' markerItem.label ' + JSON.stringify(removeMarkerItem.label));
+                    //         console.log(' property.Latitude ' + JSON.stringify(preMarkerItem.latitude) + ' property.Latitude ' + JSON.stringify(preMarkerItem.longitude));
+                    //         console.log(' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.latitude) + ' markerItem.Latitude ' + JSON.stringify(removeMarkerItem.longitude));
+                    //         // this.changeMarkerLabel(preMarkerItem);
+                    //         preMarkerItem.label = "7";
+                    //         preMarkerItem.latitude = preMarkerItem.latitude + 0.9;
+                    //         preMarkerItem.longitude = preMarkerItem.longitude - 0.8;
+                    //         // THIS._markerManager.deleteMarker(preMarkerItem);
+                    //         this._markerManager.addMarker(preMarkerItem);
+                    //    }
+                    // }
 
                     // for (let markerKey in this.previousMarkers) {
                     //     let preMarkerItem = this.previousMarkers[markerKey];
@@ -1568,7 +1568,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                             Latitude: property.Latitude,
                             Longitude: property.Longitude,
                             Id: property.Id + "",
-                            PicUrl: property.Pictures[0].ThumbnailUrl,
+                            PicUrl: (!this.commonAppService.isUndefined(property.Pictures))?property.Pictures[0].ThumbnailUrl:'https://maprental.azureedge.net/property-pictures/201705110444078659.png',
                             Bed: property.Bed,
                             Bath: property.Bath,
                             Pet: property.Pet,

@@ -82,38 +82,49 @@ export class NavbarComponent implements OnInit {
 
   checkAuth(event: any) {
     this.isLoginByRentalLink = true;
-    event.stopPropagation();
     this.isCollapsed = false;
+    event = window.event;
     if (this.currentUser == null) {
-      document.getElementById('maprentalsNavbarBtn').click();
+      event.preventDefault();
+			event.stopPropagation();
+      $('#maprentalsNavbarBtn').click();
+      $('.navbar-collapse').addClass('collapse');
       this.openModal('loginModalBtn');
     } else {
-      //this.router.navigateByUrl('/test', true);
-      //this.router.navigate(['/manageProperty/' + 'new'], true);
-      window.location.href = "manageProperty/new/true";
-      // this.router.navigate( [
-      //   'manageProperty', { Id: 'new'}
-      // ]);
+      // event.startPropagation();
+      window.location.assign('manageProperty/new/true');
+      // setTimeout(function(){document.location.href = "manageProperty/new/true";},250);
+      
+      // window.location.href = "manageProperty/new/true";
+      
     }
   }
 
   login() {
     this.isLoginByRentalLink = false;
-    document.getElementById('maprentalsNavbarBtn').click();
+    $('#maprentalsNavbarBtn').click();
+    $('.navbar-collapse').addClass('collapse');
+    this.isCollapsed = true;
     this.openModal('loginModalBtn');
   }
 
   openModal(ButtonId: string) {
-    document.getElementById(ButtonId).click();
+    $('#'+ButtonId).click();
+    // document.getElementById(ButtonId).click();
   }
 
   logout(event: any) {
+    
     event.stopPropagation();
     this.localStorage.removeItem('currentUser');
-    this.renderer.invokeElementMethod(this.navbarbrand.nativeElement, 'click', []);
+    this.goToHomePage();
+    window.location.assign('/');
+    // event.startPropagation();
+    // this.renderer.invokeElementMethod(this.navbarbrand.nativeElement, 'click', []);
   }
 
   goToHomePage() {
+    console.log(' goToHomePage called');
     this.localStorage.removeItem('storageFilters');
     this.localStorage.removeItem('storageMap');
     // this.router.navigate( [

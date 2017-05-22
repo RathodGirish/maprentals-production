@@ -14,6 +14,7 @@ import { Observable } from 'rxjs/Observable';
 import { DatepickerModule } from 'ng2-bootstrap/datepicker';
 import { IMyOptions, IMyDateModel } from 'ngx-mydatepicker';
 import { Ng2ImgToolsService } from 'ng2-img-tools';
+import { Ng2ImgMaxService } from 'ng2-img-max';
 import { PopoverModule } from 'ng2-bootstrap/popover';
 import { AppComponent } from '../../app.component';
 
@@ -30,6 +31,7 @@ declare var jQuery: any;
 		ProfileService,
 		UploadPictureService,
 		Ng2ImgToolsService,
+		Ng2ImgMaxService,
 		CommonAppService,
 		CoolLocalStorage,
 		DatepickerModule
@@ -69,6 +71,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	public dropzone: any;
 	public dropzoneUploadedFiles: any[] = [];
 	public dropzoneUploadedFilesQueue: any[] = [];
+	public uploadedFiles: any[] = [];
 	public selectedPropertyType: string = "";
 	public selectedAgreement: string = "";
 	public selectedEmailOnly: boolean = false;
@@ -93,8 +96,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	@ViewChild("Address")
 	public searchElementRef: ElementRef;
 
-	@ViewChild("dropzone-drop-area")
-	public dropzoneElementRef: ElementRef;
+	// @ViewChild("dropzone-drop-area")
+	// public dropzoneElementRef: ElementRef;
 
 	/*---- Datetime picker ----*/
 	public placeholder = "Date";
@@ -106,6 +109,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 
 	public visible = false;
 	public visibleAnimate = false;
+	public visibleUploading = false;
+	public visibleUploadingAnimate = false;
 	public showOnMap = false;
 	public showOnMapText = 'Show on map';
 
@@ -125,7 +130,7 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		public profileService: ProfileService,
 		public renderer: Renderer,
 		public mapsAPILoader: MapsAPILoader,
-		public ng2ImgToolsService: Ng2ImgToolsService,
+		public ng2ImgToolsService: Ng2ImgMaxService,
 		public ngZone: NgZone,
 		localStorage: CoolLocalStorage,
 		@Inject(ElementRef) elementRef: ElementRef) {
@@ -133,6 +138,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		this.elementRef = elementRef;
 
 	}
+
+	public counter = 0;
 
 	ngOnInit() {
 		let THIS = this;
@@ -199,12 +206,12 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 					this.setMapPosition({ 'latitude': this.property.Latitude, 'longitude': this.property.Longitude, 'address': this.property.Address });
 
 					this.isActive = this.property.IsActive;
-					if (this.property.IsActive == true) {
+					// if (this.property.IsActive == true) {
 
-						let event = new MouseEvent('click', { bubbles: true });
-						this.renderer.invokeElementMethod(this.isActiveToggle.nativeElement, 'dispatchEvent', [event]);
-						this.changeIsActive();
-					}
+					// 	let event = new MouseEvent('click', { bubbles: true });
+					// 	this.renderer.invokeElementMethod(this.isActiveToggle.nativeElement, 'dispatchEvent', [event]);
+					// 	this.changeIsActive();
+					// }
 
 					if (this.property.DateAvailable != null && this.property.DateAvailable != '') {
 						let date = new Date(this.commonAppService.getDateByTimestamp(this.property.DateAvailable));
@@ -236,9 +243,9 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			this.isEdit = false;
 			this.loadingBtnSpinner = '<span> Upload</span>';
 			this.initProperty();
-			let event = new MouseEvent('click', { bubbles: true });
-			this.renderer.invokeElementMethod(this.isActiveToggle.nativeElement, 'dispatchEvent', [event]);
-			this.changeIsActive();
+			// let event = new MouseEvent('click', { bubbles: true });
+			// this.renderer.invokeElementMethod(this.isActiveToggle.nativeElement, 'dispatchEvent', [event]);
+			// this.changeIsActive();
 
 			//this.dropzone.emit("resetFiles");
 			this.dropzoneUploadedFiles = [];
@@ -312,8 +319,8 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		});
 
 		if(THIS.imageUploadingFlag == false){
-			jQuery(this.elementRef.nativeElement).find('.dropzone-drop-area').sortable({
-				items: '.dz-preview',
+			jQuery(this.elementRef.nativeElement).find('.fileup-btn').sortable({
+				items: '.fileup-file',
 				cursor: 'move',
 				opacity: 0.5,
 				containment: '#dropzoneFileUpload',
@@ -322,15 +329,16 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 				stop: function () {
 
 					THIS.dropzoneUploadedFilesQueue = [];
-					$('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
+					$('#dropzoneFileUpload .fileup-btn .fileup-file').each(function (count, el) {           
 						let Name = el.getAttribute('id');
 						console.log(' Name ' + Name + ' count ' + count);
-						THIS.dropzoneUploadedFiles.forEach(function(file) {
-							console.log(' file ' + JSON.stringify(file));
-						if (file.Name === Name) {
+						THIS.uploadedFiles.forEach(function(file, index) {
+							let initFileName = 'file-upload-image-' + (index) + '-init';
+							console.log(' file ' + JSON.stringify(file.Id) + ' | ' + initFileName);
+							if (file.Id === Name || initFileName == Name) {
 								file.Index = count + 1;
 								THIS.dropzoneUploadedFilesQueue.push(file);
-						} 
+							} 
 						});
 					});
 					console.log(' THIS.dropzoneUploadedFilesQueue ' + JSON.stringify(THIS.dropzoneUploadedFilesQueue));
@@ -338,10 +346,270 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			});
 		}
 
-		// $(window).trigger('resize');
-		// window.dispatchEvent(new Event('resize'));
-		// google.maps.event.trigger(this.map, 'resize');
+		THIS.counter = 0;
+
+		jQuery.fileup({
+			url: 'https://maprentalsapiqa.azurewebsites.net/api/Picture/Upload',
+			inputID: 'upload-image',
+			queueID: 'upload-image-queue',
+			extraFields: {'height': 100, 'width': 100},
+			autostart: false,
+			onStart: function(file_number, file) {
+				
+			},
+			onSelect: function(file) {
+				// console.info(' file.size ' + JSON.stringify(file.size * 1000));
+				let loadingButton = "<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>";
+				THIS.imageUploadingFlag = true;
+				
+				THIS.addImageLoader(THIS.counter);
+
+				THIS.uploadPictureWithResize(file, THIS.counter, function(err, data){
+					console.log('err' + JSON.stringify(err) + ' data ' + data);
+				});
+				
+				THIS.counter++;
+            },
+			onSuccess: function(response, file_number, file) {
+				console.log('onSuccess' + JSON.stringify(response) + ' file_number ' + file_number);
+				
+			},
+			onError: function(event, file, file_number) {
+				console.log('onError');
+			},
+			onRemove: function(file_number, total, file) {
+				console.log('onRemove' + JSON.stringify(file_number) + ' total ' + total);
+				THIS.removeImageFromList(file_number.file_number);
+			}
+		});
+
+		$(document).on('click', 'span.remove-image', function () {
+           jQuery('#file-upload-' + this.id + '-init').remove();
+		   THIS.removeImageFromListById(this.id);
+        });
 		
+	}
+
+	public fileChange(event: any){
+		if(event.currentFiles.length>0){
+		this.processFile(event.currentFiles[0]);
+		}
+	}
+
+	private processFile(file:File){
+      this.resizeImage(file);
+  	}
+
+	private resizeImage(file:File){
+		console.info("Starting resize for file:", file);
+			this.ng2ImgToolsService.resize([file], 1500, 800).subscribe( result =>{
+				console.log("Resize result:", result);
+				//all good
+			}, error => {
+					console.error("Resize error:", error);
+			}
+		);
+	}
+
+	public uploadPictureWithResize(file, counter, callback){
+		let THIS = this;
+
+		THIS.ng2ImgToolsService.resizeImage(file, 1500, 800).subscribe((result) => {		
+
+			THIS.uploadPictureService.uploadPicture(result)
+			.subscribe((data: any) => {
+				console.log(' Upload File : ' + JSON.stringify(data));
+				
+				let bodyJSON = data[0];
+				let uploadImageObject = {
+					"Id": 'file-upload-image-' + (counter),
+					"PropertyId": 0,
+					"Index": (counter+1),
+					"Name": bodyJSON.name,
+					"Url": bodyJSON.url,
+					"ThumbnailUrl": bodyJSON.thumbUrl
+				}
+				THIS.uploadedFiles.push(uploadImageObject);
+				THIS.removeImageLoader(counter);
+				THIS.checkUploadingFlag();
+				callback(null, true);
+			},
+			(error: any) => {
+				console.log(' error ' + JSON.stringify(error));
+				callback(error, false);
+			});
+		});
+	}
+
+	public getResizeImage(file: any, callback){
+		let THIS = this;
+
+		THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
+			callback(null, result);
+		},
+		(error: any) => {
+			alert(' ng2ImgToolsService ' + JSON.stringify(error));
+			var img = document.createElement('img');
+
+			img.onload = function(){
+				console.log(img.width);
+			}
+
+			img.src = file.url;
+			callback(error, img);
+			// callback(error, false);
+		});
+	}
+
+
+	public compress(source_img_obj, quality, maxWidth, output_format, callback){
+		
+		var mime_type = "image/jpeg";
+		if(typeof output_format !== "undefined" && output_format=="png"){
+			mime_type = "image/png";
+		}
+		
+		maxWidth = maxWidth || 1000;
+		var natW = source_img_obj.naturalWidth;
+		var natH = source_img_obj.naturalHeight;
+		var ratio = natH / natW;
+		if (natW > maxWidth) {
+			natW = maxWidth;
+			natH = ratio * maxWidth;
+		}
+		
+		var cvs = document.createElement('canvas');
+		cvs.width = natW;
+		cvs.height = natH;
+		
+		console.log('quality ' + quality);
+		// var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0, natW, natH);
+		
+		var newImageData = cvs.toDataURL(mime_type, quality/100);
+		var result_image_obj = new Image();
+		
+		result_image_obj.src = newImageData;
+		console.log('result_image_obj ' + result_image_obj);
+		callback(null, result_image_obj);
+	}
+
+	public resizeImageToSpecificWidth(wantedWidth, wantedHeight, datas, callback) {
+			// We create an image to receive the Data URI
+			var img = document.createElement('img');
+
+			// When the event "onload" is triggered we can resize the image.
+			img.onload = function()
+				{        
+					// We create a canvas and get its context.
+					var canvas = document.createElement('canvas');
+					var ctx = canvas.getContext('2d');
+
+					// We set the dimensions at the wanted size.
+					canvas.width = wantedWidth;
+					canvas.height = wantedHeight;
+
+					// We resize the image with the canvas method drawImage();
+					ctx.drawImage(canvas, 0, 0, wantedWidth, wantedHeight);
+
+					var dataURI = canvas.toDataURL();
+
+					/////////////////////////////////////////
+					// Use and treat your Data URI here !! //
+					/////////////////////////////////////////
+				};
+
+			// We put the Data URI in the image's src attribute
+			img.src = datas;
+			
+			callback(img);
+
+			///------------------------------------------------------
+			// // create an off-screen canvas
+			// var canvas = document.createElement('canvas'),
+			// 	ctx = canvas.getContext('2d');
+
+			// // set its dimension to target size
+			// canvas.width = wantedWidth;
+			// canvas.height = wantedHeight;
+			
+
+			// // draw source image into the off-screen canvas:
+			// //ctx.drawImage(datas, 0, 0, wantedWidth, wantedHeight);
+			// console.log('wantedHeight' + wantedHeight);
+
+			// var img = new Image;
+
+			// img.src = canvas.toDataURL();
+
+			///----------------------------------------------------------------------
+			// // encode image to data-uri with base64 version of compressed image
+			// callback(img);
+			
+			// var reader = new FileReader();
+			// // reader.onload = function(event) {
+			// var img = new Image();
+			// //img.onload = function() {
+			// 	console.log('width ' + width + ' img.width ' +img.width);
+			// 	if (img.width > width) {
+			// 		var oc = document.createElement('canvas'), octx = oc.getContext('2d');
+			// 		oc.width = img.width;
+			// 		oc.height = img.height;
+			// 		octx.drawImage(img, 0, 0);
+			// 		while (oc.width * 0.5 > width) {
+			// 			oc.width *= 0.5;
+			// 			oc.height *= 0.5;
+			// 			octx.drawImage(oc, 0, 0, oc.width, oc.height);
+			// 		}
+			// 		oc.width = width;
+			// 		oc.height = oc.width * img.height / img.width;
+
+			// 		octx.drawImage(img, 0, 0, oc.width, oc.height);
+			// 		// document.getElementById('great-image').src = oc.toDataURL();
+			// 		callback(oc.toDataURL());
+			// 	} else {
+			// 		// document.getElementById('small-image').src = img.src;
+			// 		callback(img);
+			// 	}
+	}
+	
+
+	public removeImageFromList(counter){
+		let THIS = this;
+		THIS.uploadedFiles.forEach(function(file, index) {
+			if (file.Index == counter) {
+				THIS.uploadedFiles.splice(THIS.uploadedFiles.indexOf(file), 1);
+			} 
+		});
+	}
+
+	public removeImageFromListById(Id: any){
+		let THIS = this;
+		THIS.uploadedFiles.forEach(function(file, index) {
+			let initImageId = (Id.substr(Id.length - 1)) + '-init';
+			console.log(' file ' + JSON.stringify(file.Id) + 'initImageId ' + initImageId);
+			if (file.Id == initImageId) {
+				THIS.uploadedFiles.splice(THIS.uploadedFiles.indexOf(file), 1);
+			} 
+		});
+		console.log(' THIS.uploadedFiles ' + JSON.stringify(THIS.uploadedFiles));
+	}
+
+	public addImageLoader(id: any){
+		let imageDivId = "#file-upload-image-" + id;
+
+		setTimeout(function() {
+			jQuery(imageDivId).append("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i></button>");
+			jQuery(imageDivId + ' .preview').addClass("opacity5");
+		}, 1000);
+	}
+
+	public removeImageLoader(id: any){
+		let imageDivId = "#file-upload-image-" + id;
+		console.log(' imageDivId ' + imageDivId);
+		setTimeout(function() {
+			jQuery(imageDivId + ' .uploadingBtnSpinner').remove();
+			jQuery(imageDivId + ' .preview').removeClass("opacity5");
+		}, 1000);
 	}
 
 	public initPictures(Pictures: any[]) {
@@ -351,42 +619,45 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		for (let index in Pictures) {
 			let _thisPicture = Pictures[index];
 
-			let _thisDropzone = this.dropzone;
-			let _thisDropzoneUploadedFiles: any[] = this.dropzoneUploadedFiles;
-			_thisDropzoneUploadedFiles.push({
-				"Id": _thisPicture.Id,
+			// let _thisDropzoneUploadedFiles: any[] = this.dropzoneUploadedFiles;
+			// _thisDropzoneUploadedFiles.push({
+			// 	"Id": _thisPicture.Id,
+			// 	"PropertyId": _thisPicture.PropertyId,
+			// 	"Name": _thisPicture.Name,
+			// 	"Url": _thisPicture.Url,
+			// 	"ThumbnailUrl": _thisPicture.thumbUrl
+			// });
+
+			THIS.uploadedFiles.push({
+				"Id": index + '-init',
 				"PropertyId": _thisPicture.PropertyId,
 				"Name": _thisPicture.Name,
 				"Url": _thisPicture.Url,
-				"ThumbnailUrl": _thisPicture.thumbUrl
+				"ThumbnailUrl": _thisPicture.ThumbnailUrl
 			});
 
-			let mockFile: any = new File([], _thisPicture.Name);
-
-			this.dropzone.options.addedfile.call(this.dropzone, mockFile);
-			this.dropzone.options.thumbnail.call(this.dropzone, mockFile, _thisPicture.Url);
-			this.dropzone.emit("complete", mockFile);
-			let removeButton = Dropzone.createElement("<a href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
-			removeButton.addEventListener("click", function (e: any) {
-				e.preventDefault();
-				e.stopPropagation();
-				// this.parent().remove();
-				_thisDropzone.removeFile(mockFile);
-
-				for (let obj of _thisDropzoneUploadedFiles) {
-					if (obj.Url == _thisPicture.Url) {
-						_thisDropzoneUploadedFiles.splice(_thisDropzoneUploadedFiles.indexOf(obj), 1);
-					}
-				}
-				console.log(' inner _thisDropzoneUploadedFiles ' + JSON.stringify(_thisDropzoneUploadedFiles));
-				if(THIS.dropzoneUploadedFiles.length <= 0){
-					THIS.isValidImages = false;
-				}
-			});
-			mockFile.previewElement.appendChild(removeButton);
-			mockFile.previewElement.id = _thisPicture.Name;
-			this.dropzoneUploadedFiles = _thisDropzoneUploadedFiles;
+			let HTML = THIS.getDropImageHTML(_thisPicture, index);
+			jQuery('#upload-image-queue').append(HTML);
 		}
+		console.log(' initPictures uploadedFiles ' + THIS.uploadedFiles);
+	}
+
+	public getDropImageHTML(item: any, index: any){
+		let HTML = "<div id='file-upload-image-" + index + "-init' class='fileup-file image'>"+
+				"<div class='preview'>"+
+					"<img src='"+ item.ThumbnailUrl + "' alt=''>"+
+				"</div>"+				
+				"<div class='data'>"+
+					"<div class='description'>"+
+					"</div>"+
+					"<div class='controls'>"+
+						"<span class='remove remove-image' id='image-" + index + "' title='Remove'></span>"+
+					"</div>"+
+				"</div>"+
+			"</div>";
+
+		return HTML;				
+
 	}
 
 	public updateLocation(event: any) {
@@ -723,30 +994,40 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		}
 		this.property.Description = this.htmlDescription;
 
-		if(this.dropzoneUploadedFilesQueue.length != 0 && this.dropzoneUploadedFilesQueue.length == this.dropzoneUploadedFiles.length){
-			this.dropzoneUploadedFiles = this.dropzoneUploadedFilesQueue;
+		// if(this.dropzoneUploadedFilesQueue.length != 0 && this.dropzoneUploadedFilesQueue.length == this.dropzoneUploadedFiles.length){
+		// 	this.dropzoneUploadedFiles = this.dropzoneUploadedFilesQueue;
+		// } else {
+		// 	$('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
+		// 		let Name = el.getAttribute('id');
+		// 		console.log(' Name ' + Name + ' count ' + count);
+		// 		THIS.dropzoneUploadedFiles.forEach(function(file, index) {
+		// 			console.log(' file ' + JSON.stringify(file) + 'index ' + index);
+		// 			if (file.Name === Name) {
+		// 				THIS.dropzoneUploadedFiles[index].Index = count + 1;
+		// 			} 
+		// 		});
+		// 	});
+		// }
+
+		if(this.dropzoneUploadedFilesQueue.length != 0 && this.dropzoneUploadedFilesQueue.length == this.uploadedFiles.length){
+			this.uploadedFiles = this.dropzoneUploadedFilesQueue;
 		} else {
-			
 			$('#dropzoneFileUpload .dropzone-drop-area .dz-preview').each(function (count, el) {           
 				let Name = el.getAttribute('id');
 				console.log(' Name ' + Name + ' count ' + count);
-				THIS.dropzoneUploadedFiles.forEach(function(file, index) {
-					console.log(' file ' + JSON.stringify(file) + 'index ' + index);
-					if (file.Name === Name) {
-						THIS.dropzoneUploadedFiles[index].Index = count + 1;
+				THIS.uploadedFiles.forEach(function(file, index) {
+					if (file.Id === Name) {
+						THIS.uploadedFiles[index].Index = count + 1;
 					} 
 				});
 			});
 		}
 
-		delete this.property['Pictures'];
-		this.property.Pictures = this.dropzoneUploadedFiles;
+		// delete this.property['Pictures'];
+		// this.property.Pictures = this.dropzoneUploadedFiles;
 
-		if (this.dropzoneUploadedFiles.length <= 0) {
-			this.isValidImages = false;
-			$('.validation-modal-body').append('<p class="text-danger"> * Pictures</p>');
-			isValidForm = false;
-		}
+		delete this.property['Pictures'];
+		this.property.Pictures = this.uploadedFiles;
 
 		if (!isValidForm) {
 			this.openModal();
@@ -826,113 +1107,6 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 			//window.location.reload();
 			//return;
 		}
-		this.dropzone = new Dropzone('div#dropzoneFileUpload', {
-			url: (files: any) => {
-				this.filesUploading.emit(files);
-			},
-			autoProcessQueue: false,
-			uploadMultiple: true,
-			parallelUploads: 20,
-			hiddenInputContainer: '#dropzone-drop-area',
-			dictDefaultMessage: "Click/Drag images here to upload",
-			acceptedFiles: 'image/*',
-			clickable: '#dropzone-drop-area',
-			previewsContainer: '#dropzone-drop-area',
-			previewTemplate: '<div class="dz-preview dz-file-preview"><div class="dz-details"><img data-dz-thumbnail/></div></div>'
-		});
-		this.dropzone.autoDiscover = false;
-
-		this.dropzone.on('addedfile', (file: any) => {
-			THIS.validImageTypeCount = 0;
-			if (file.type == "image/jpeg" || file.type == "image/png") {
-				
-				console.info(' ng2ImgToolsService file.size ' + JSON.stringify(file.size) + ' \ file.type' + file.type);
-				THIS.imageUploadingFlag = true;
-				let loadingButton = Dropzone.createElement("<button type='button' class='uploadingBtnSpinner'><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate cursor-pointer'></i><button>");
-				file.previewElement.appendChild(loadingButton);
-				THIS.ng2ImgToolsService.resize([file], 1200, 700).subscribe((result) => {
-					if (typeof result.name !== 'undefined' && typeof result.size !== 'undefined' && typeof result.type !== 'undefined') {
-						console.info(' result.name ' + JSON.stringify(result.name));
-						this.uploadPictureService.uploadPicture(result)
-							.subscribe((data: any) => {
-								console.log(' Upload File : ' + JSON.stringify(data));
-								if (data[0].url && data[0].url != "") {
-									THIS.dropzoneUploadedFiles.push({
-										"Id": 0,
-										"PropertyId": 0,
-										"Name": data[0].name,
-										"Url": data[0].url,
-										"ThumbnailUrl": data[0].thumbUrl
-									});
-									file.Url = data[0].url;
-									this.isValidImages = true;
-									file.previewElement.id = data[0].name;
-									console.log('this.dropzoneUploadedFiles2' + JSON.stringify(this.dropzoneUploadedFiles) + ' file.Url ' + file.Url);
-									//dropzoneUploadedFiles.push(file);
-									let removeButton = Dropzone.createElement("<a id='" + data[0].name + "' href=\"#\" class='glyphicon glyphicon-remove cursor-pointer'></a>");
-									let _thisDropzone = this.dropzone;
-
-									let mockFileUrl = file.Url;
-
-									removeButton.addEventListener("click", function (e: any) {
-										e.preventDefault();
-										e.stopPropagation();
-										_thisDropzone.removeFile(file);
-										console.log('THIS.dropzoneUploadedFiles next' + JSON.stringify(THIS.dropzoneUploadedFiles) + ' mockFileUrl ' + mockFileUrl);
-
-										for (let obj of THIS.dropzoneUploadedFiles) {
-											
-											if (obj.Url == mockFileUrl) {
-												THIS.dropzoneUploadedFiles.splice(THIS.dropzoneUploadedFiles.indexOf(obj), 1);
-											}
-										}
-
-										THIS.dropzoneUploadedFiles = (typeof THIS.dropzoneUploadedFiles == 'undefined') ? [] : THIS.dropzoneUploadedFiles;
-										console.log('THIS.dropzoneUploadedFiles' + JSON.stringify(THIS.dropzoneUploadedFiles));
-										if(THIS.dropzoneUploadedFiles.length <= 0){
-											THIS.isValidImages = false;
-										}
-									});
-									file.previewElement.appendChild(removeButton);
-									loadingButton.remove();
-									THIS.checkUploadingFlag();
-								}
-							},
-							(error: any) => {
-								console.log(' error ' + JSON.stringify(error));
-								this.loading = false;
-							});
-					} else {
-						console.log(' Image compression error ' + result);
-					}
-				});
-
-			} else {
-				THIS.validImageTypeCount++;
-			}
-
-		}).on('resetFiles', function () {
-
-			// if(this.files.length != 0){
-			//     for(let i=0; i<this.files.length; i++){
-			//         this.files[i].previewElement.remove();
-			//     }
-			//     this.files.length = 0;
-			// }
-		}).on('uploadprogress', function (file, progress) {
-			console.log('progress' + progress);
-		});
-
-		$(document).on("mouseenter", "div.selectorarrow", function () {
-			THIS.isCalendarMouseHover = true;
-			//console.log(' THIS.isCalendarMouseHover1  ' + THIS.isCalendarMouseHover);
-		});
-
-		$(document).on("mouseleave", "div.selectorarrow", function () {
-			THIS.isCalendarMouseHover = false;
-			//$('div.selectorarrow').parent().remove();
-			//console.log(' THIS.isCalendarMouseHover2  ' + THIS.isCalendarMouseHover);
-		});
 	}
 
 	ngOnDestroy() {
@@ -940,9 +1114,11 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 	}
 
 	public checkUploadingFlag(){
-		let isUploading = $('#dropzoneFileUpload .dropzone-drop-area').find('.dz-preview button.uploadingBtnSpinner').length;
+		let isUploading = $('.fileup-btn').find('button.uploadingBtnSpinner').length;
+		console.log(' isUploading ' + isUploading);
 		if(isUploading == 0){
 			this.imageUploadingFlag = false;
+			// this.hideUploadingModal();
 		}
 	}
 
@@ -982,5 +1158,19 @@ export class ManagePropertyComponent implements OnInit, AfterViewInit, OnDestroy
 		setTimeout(function(){
 			window.dispatchEvent(new Event("resize"));
 		}, 1);
+	}
+
+
+	public openUploadingModal() {
+		this.visibleUploading = true;
+		setTimeout(() => this.visibleUploadingAnimate = true);
+	}
+
+	public hideUploadingModal(): void {
+		$('.validation-modal-body p').remove();
+		$('.validation-modal-body').append('<p>The following required fields were left blank</p>');
+
+		this.visibleUploadingAnimate = false;
+		setTimeout(() => this.visibleUploading = false, 300);
 	}
 }

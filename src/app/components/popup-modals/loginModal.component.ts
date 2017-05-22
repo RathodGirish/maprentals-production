@@ -87,13 +87,14 @@ export class LoginModalComponent implements OnInit {
 	            		//this.putCookie('currentUser', data.Response);
 	            		this.localStorage.setObject('currentUser', data.Response);
 	            		this.hide();
-	            		this.commonAppService.setCurrentUser(data.Response);
-	            		console.log(' this.isLoginByRentalLink ' + this.isLoginByRentalLink);
+	            		// this.commonAppService.setCurrentUser(data.Response);
 	            		if(this.isLoginByRentalLink == false){
-	            			window.location.href = "myrentals/true";
+							window.location.assign('myrentals/true');
+	            			// window.location.href = "myrentals/true";
 							//setTimeout(()=>this.router.navigate(['myrentals', {Reload: true}]));
 	            		} else {
-	            			window.location.href = "manageProperty/new/true";
+							window.location.assign('manageProperty/new/true');
+	            			// window.location.href = "manageProperty/new/true";
 							//setTimeout(()=>this.router.navigate(['manageProperty', { Id: 'new', Reload: true}]));
 	            		}
 	            	} else {

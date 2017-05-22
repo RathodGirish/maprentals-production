@@ -3,9 +3,9 @@
     <div class="clearfix navbar-header">
       <a href="javascript:void(0)" (click)="isCollapsed = !isCollapsed" class="navbar-toggler pull-xs-right hidden-sm-up hidden-sm hidden-md hidden-lg"
         aria-controls="maprentalsNavbar" #maprentalsNavbarBtn id="maprentalsNavbarBtn" aria-label="Toggle navigation">
-        <i class="glyphicon" [class.glyphicon-option-vertical]="isCollapsed == true" [class.glyphicon-remove]="isCollapsed == false"></i>
+        <i class="glyphicon more-icon" [class.glyphicon-option-vertical]="isCollapsed == true" [class.glyphicon-remove]="isCollapsed == false"></i>
         </a>
-        <a #navbarbrand class="navbar-brand jura-font" (click)="goToHomePage()" href="/">
+        <a #navbarbrand id="navbarbrand" class="navbar-brand jura-font" (click)="goToHomePage()" href="/">
           <img src="assets/public/img/logo.png" class='hidden-xs' />
           <img src="assets/public/img/logo-small.png" class='hidden-sm hidden-md hidden-lg' />
         </a>
@@ -14,7 +14,7 @@
     <div class="navbar-toggleable-xs navbar-collapse" id="#maprentalsNavbar" [attr.aria-expanded]="!isCollapsed" [ngClass]="{collapse: isCollapsed}">
       <ul class="nav navbar-nav navbar-right">
         <li class="hidden-sm hidden-md hidden-lg">
-          <a (click)='checkAuth($event); isCollapsed = !isCollapsed;' class="btnlogin">List Rental</a>
+          <a href="manageProperty/new/true"  (click)='checkAuth($event); isCollapsed = !isCollapsed;' class="btnlogin">List Rental</a>
         </li>
 
         <li class='hidden-sm hidden-md hidden-lg' *ngIf="currentUser == null">
@@ -72,7 +72,7 @@
         </li>
 
         <li class='hidden-xs listRentalFreeLi pad0'>
-          <span class="btnlstrental cursor-pointer" id="btnlstrental" (click)="checkAuth($event)"><img src="assets/public/img/free-ribbon.png" class='free-img' /><b class="padR15">List a Rental</b></span>
+          <span class="btnlstrental cursor-pointer" id="btnlstrental" (click)="checkAuth($event);"><img src="assets/public/img/free-ribbon.png" class='free-img' /><b class="padR15">List a Rental</b></span>
         </li>
       </ul>
     </div>

@@ -8,7 +8,7 @@
 </div>
 
 <section id="managePropertySection" class="container">
-
+    
     <form id="propertyForm" #propertyForm="ngForm" novalidate (ngSubmit)="manageProperty($event, propertyForm.value, propertyForm.valid)" class="form-horizontal">
         <div class="modal-body">
             <div class="row">
@@ -366,18 +366,15 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 pad10-xs">
-                    <div class="dropzone" id="dropzoneFileUpload">
-                        <div class="dz-message" (click)="dropzonedroparea.click()" data-dz-message><span>Click/Drag here to upload images</span></div>
-                        <div id="dropzone-drop-area" #dropzonedroparea class="dropzone-drop-area" [ngClass]="((property.Pictures.length <= 0 && isEdit == true) || (imageUploadingFlag == false && dropzoneUploadedFiles.length <= 0))? 'hidden-xs': ''">
-                            <div *ngIf="fileDropped" class="centered noselect clickthrough">
-                                <ng-content></ng-content>
-                            </div>
-                        </div>
-                    </div>
-                    <small *ngIf="!isValidImages" class="text-danger col-xs-12 col-sm-12 col-md-12 col-lg-12 pad0">
-                        Upload minimum 1 image and maximum 10 images.
-                    </small>
+                <div id="dropzoneFileUpload" class="col-xs-12 col-sm-12 pad10-xs">
+                    <div class="queue dropzone fileup-btn col-lg-12">
+                        <a class="">
+                            Click/Drag here to upload images
+                            <input type="file" id="upload-image" multiple>
+                        </a>
+                        <div id="upload-image-queue" class="queue"></div>  
+                    </div>  
+
                     <small *ngIf="validImageTypeCount > 0" class="text-danger col-xs-12 col-sm-12 col-md-12 col-lg-12 pad0">
                         Please upload only png or jpeg files.
                     </small>
@@ -401,8 +398,8 @@
                 </div>
                 <div class="col-md-2 col-sm-3 col-xs-12 pad0-xs">
                     <div class="col-sm-12 col-xs-12 pad0-xs">
+                        <button #uploadPropertyBtn id="uploadPropertyBtn" type="submit" class="btn btn-primary btn-lg col-xs-12" innerHTML="{{loadingBtnSpinner}}"></button>
                         <!--<button #uploadPropertyBtn id="uploadPropertyBtn" [disabled]='!isValidImages || imageUploadingFlag' type="submit" class="btn btn-primary btn-lg col-xs-12" innerHTML="{{loadingBtnSpinner}}"></button>-->
-                        <button #uploadPropertyBtn id="uploadPropertyBtn" [disabled]='!isValidImages || imageUploadingFlag' type="submit" class="btn btn-primary btn-lg col-xs-12" innerHTML="{{loadingBtnSpinner}}"></button>
                     </div>
                 </div>
             </div>
@@ -426,6 +423,28 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" (click)="hideModal()">Ok</button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleUploadingAnimate}"
+       [ngStyle]="{'display': visibleUploading ? 'block' : 'none', 'opacity': visibleUploadingAnimate ? 1 : 0}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--<div class="modal-header clearfix">
+                <div class="col-sm-12 pad0">
+                    <button type="button" (click)="hideModal()" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                </div>
+            </div>-->
+            <div class="modal-body clearfix">
+                <div class="uploading-modal-body">
+                    <p>Loading is really slow right now. Expect up to 30 seconds to upload image. We're working on the issue.</p>
+                </div>
+            </div>
+            <!--<div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="hideModal()">Ok</button>
+            </div>-->
         </div>
     </div>
 </div>

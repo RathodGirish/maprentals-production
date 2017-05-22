@@ -194,6 +194,9 @@ export class PropertyDetailComponent implements OnInit, AfterViewInit, OnDestroy
 						$("meta[property='og\\:url']").attr('content', 'https://maprental.azureedge.net');
 						$("meta[property='og\\:title']").attr('content', this.property.Title);
 						$("meta[name='og\\:description']").attr('content', this.property.Description);
+						if(THIS.commonAppService.isUndefined(this.property.Pictures)){
+							this.property.Pictures.push(this.commonAppService.getDefaultPictures(this.property)); 
+						}
 						$("meta[property='og\\:image']").attr('content', this.property.Pictures[0].Url);
 		            	//this.setMetaData(this.property);
 						// $(window).prerenderReady = true;

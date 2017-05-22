@@ -462,6 +462,17 @@ export class CommonAppService {
 			return picsList;
 		}
 	}
+
+	public getDefaultPictures(property: any){
+		return {
+			"Id": 1,
+			"PropertyId": property.Id,
+			"Name": "20170430050321123.jpg",
+			"Url": "https://maprental.azureedge.net/property-pictures/201705110444077878.png",
+			"ThumbnailUrl": "https://maprental.azureedge.net/property-pictures/201705110444078659.png",
+			"Index": 1
+		}
+	}
 }
 
 interface Wrapped<T> {

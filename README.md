@@ -28,6 +28,29 @@ Installation steps
 
     ng -serve -host 0.0.0.0
 
-8. Build Application for Staging or Live server
+---------------------------------------------------------------------------------------------------------
+
+TO upload app on azure server.
+
+1. Change configuration file for stagin and live server:
+    a. str-maprentals2/src/index.html      [Line : 82, 83]
+
+         ga('create', 'UA-94002983-1', 'auto');  // staging
+        //  ga('create', 'UA-93262825-1', 'auto');  // live
+
+
+    b. /src/app/services   [Line : 2, 3]
+
+        // BASE_API_URL: 'https://maprental.azurewebsites.net', // Live
+        BASE_API_URL: 'https://maprentalsapiqa.azurewebsites.net',  // Staging server
+
+2. Build Application for Staging or Live server
 
     ng build --prod --aot    
+
+
+    [It will create dist folder in current directory. 
+    Now, Copy & past dist content into dev-buil for staging and 
+    release-build for production]
+
+3. Commit and push code.    

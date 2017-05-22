@@ -887,10 +887,16 @@ ul.topnav li.icon {
 .uploader:hover {
     color: #999;
 }
-.uploadingBtnSpinner{
+/*.uploadingBtnSpinner{
     position: relative;
     bottom: 66px;
     color: #333;
+}*/
+.uploadingBtnSpinner{
+    position: absolute;
+    bottom: 35px;
+    color: #333;
+    left: 35px;
 }
 .filePhoto {
     display: none;
@@ -2894,4 +2900,42 @@ multiselect .dropdown-menu > li > a i {
         padding: 6px 6px;
         font-size: 12px;
     }  
+}
+
+/*------------------- Image upload -----------------------------------*/
+.fileup-file .data .description, .fileup-file .data .controls .upload, .fileup-file .data .controls .abort{
+    display: none;
+}
+
+.fileup-file.image .data{
+    margin-left: 3px !important;
+    /*display: none;*/
+}
+
+.fileup-file{
+    display: inline-block;
+    float: left;
+    margin: 5px;
+    padding: 0px;
+}
+
+.fileup-btn{
+    min-height: 180px;
+    width: 100%;
+    padding: 10px;
+}
+
+.fileup-file.image .preview{
+    height: 60px;
+    width: 80px;
+    margin-bottom: 7px;
+}
+
+.fileup-file.image .preview img{
+    height: 100%;
+    width: 100%;
+}
+
+.opacity5{
+    opacity: 0.5;
 }

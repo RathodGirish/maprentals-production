@@ -54,7 +54,7 @@
                         </td>
                         <td class="cursor-pointer" (click)="propertyDetails($event, prop)">
                             <a href="javascript:void(0)" >
-                                <img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb thumbnail">
+                                <img src="{{(prop.Pictures.length > 0)? prop.Pictures[0].ThumbnailUrl : 'https://maprental.azureedge.net/property-pictures/201705110444078659.png'}}" class="table-thumb thumbnail">
                                 <!--<img src="{{prop.Picture}}" class="table-thumb img-responsive">-->
                             </a>
                         </td>
@@ -91,10 +91,8 @@
             <div *ngFor="let prop of myrentals | customFilter:Search" class="col-xs-12 mobile-table pad0-xs">
                 <div class="pad5-xs col-xs-5">
                     <div class='cursor-pointer col-xs-12 col-sm-10 col-md-10 pad0' >
-                        <!--<a href="javascript:void(0)" >-->
-                            <img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb img-responsive">
-                            <!--<img src="{{prop.Picture}}" class="table-thumb img-responsive">-->
-                        <!--</a>-->
+                        <img src="{{(prop.Pictures.length > 0)? prop.Pictures[0].ThumbnailUrl : 'https://maprental.azureedge.net/property-pictures/201705110444078659.png'}}" class="table-thumb thumbnail">
+                        <!--<img src="{{(prop.Pictures[0].ThumbnailUrl != null)? prop.Pictures[0].ThumbnailUrl : prop.Pictures[0].Url}}" class="table-thumb img-responsive">-->
                     </div>
                     <div class='col-xs-12 col-sm-10 col-md-10 mrgT5 pad0' >
                         <label class="toggle col-xs-12 col-sm-12 bigToggle" >
